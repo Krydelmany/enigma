@@ -1,442 +1,299 @@
-// Definição do objeto state
-const state = {
-    dataset: [],         // Conjunto de dados a ser ordenado
-    algorithm: 'bubble', // Algoritmo de ordenação selecionado (padrão: Bubble Sort)
-    isPlaying: false,    // Estado de execução do algoritmo
-    animationSpeed: 'normal', // Velocidade da animação
-    theme: 'light'       // Tema da aplicação
-};
+// src/renderer.js
 
-// Definição do objeto elements
-const elements = {
-    dataSize: document.getElementById('dataSize'),
-    dataSizeValue: document.getElementById('dataSizeValue'),
-    algorithmSelect: document.getElementById('algorithmSelect'),
-    controlButtons: {
-        start: document.getElementById('startBtn'),
-        pause: document.getElementById('pauseBtn'),
-        reset: document.getElementById('resetBtn')
-    },
-    statusMessage: document.getElementById('statusMessage'),
-    themeToggle: document.getElementById('themeToggle'),
-    exportBtn: document.getElementById('exportBtn'),
-    saveSettingsBtn: document.getElementById('saveSettingsBtn'),
-    resetSettingsBtn: document.getElementById('resetSettingsBtn')
-    // Adicione outros elementos conforme necessário
-};
+import * as d3 from 'd3'; // Certifique-se de importar o D3
+import { SortingVisualizer, AlgorithmAnalytics } from './scripts/chart';
+import { bubbleSort } from './scripts/algorithms/bubbleSort';
+import { insertSort } from './scripts/algorithms/insertSort';
+import { quickSort } from './scripts/algorithms/quickSort';
+import { mergeSort } from './scripts/algorithms/mergeSort';
 
-document.addEventListener('DOMContentLoaded', () => {
-    const navItems = document.querySelectorAll('.nav-item'); // Botões do menu lateral
-    const contentSections = document.querySelectorAll('.content-section'); // Seções do conteúdo
+class SortingApp {
+    constructor() {
+        try {
+            // Initialize visualizers
+            this.initializeVisualizers();
 
-    navItems.forEach(item => {
-        item.addEventListener('click', () => {
-            // Remove a classe "active" de todos os botões e seções
-            navItems.forEach(nav => nav.classList.remove('active'));
-            contentSections.forEach(section => section.classList.remove('active'));
+            // Initialize state
+            this.initializeState();
 
-            // Adiciona a classe "active" no botão e seção clicados
-            item.classList.add('active');
-            const sectionId = item.getAttribute('data-section');
-            document.getElementById(`${sectionId}Section`).classList.add('active');
+            // Cache DOM elements
+            this.initializeDOMElements();
 
-            // Atualiza o título da seção
-            const sectionTitle = document.getElementById('sectionTitle');
-            sectionTitle.textContent = item.querySelector('span').textContent;
-        });
-    });
-});
+            // Create control buttons
+            this.createControlButtons();
 
-// Extensão do objeto algorithms no renderer.js
-const algorithms = {
-    bubble: {
-        name: 'Bubble Sort',
-        async sort(arr) {
-            const n = arr.length;
-            let metrics = { comparisons: 0, swaps: 0, time: 0 };
-            const startTime = performance.now();
-            
-            for (let i = 0; i < n - 1; i++) {
-                for (let j = 0; j < n - i - 1; j++) {
-                    metrics.comparisons++;
-                    if (arr[j] > arr[j + 1]) {
-                        metrics.swaps++;
-                        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
-                        await new Promise(resolve => setTimeout(resolve, getAnimationDelay()));
-                        updateDataVisualization();
-                    }
-                }
-            }
-            
-            metrics.time = performance.now() - startTime;
-            return metrics;
-        }
-    },
-    
-    quick: {
-        name: 'Quick Sort',
-        async sort(arr) {
-            const metrics = { comparisons: 0, swaps: 0, time: 0 };
-            const startTime = performance.now();
-            
-            async function partition(low, high) {
-                const pivot = arr[high];
-                let i = low - 1;
-                
-                for (let j = low; j < high; j++) {
-                    metrics.comparisons++;
-                    if (arr[j] < pivot) {
-                        i++;
-                        metrics.swaps++;
-                        [arr[i], arr[j]] = [arr[j], arr[i]];
-                        await new Promise(resolve => setTimeout(resolve, getAnimationDelay()));
-                        updateDataVisualization();
-                    }
-                }
-                
-                metrics.swaps++;
-                [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
-                await new Promise(resolve => setTimeout(resolve, getAnimationDelay()));
-                updateDataVisualization();
-                
-                return i + 1;
-            }
-            
-            async function quickSort(low, high) {
-                if (low < high) {
-                    const pi = await partition(low, high);
-                    await quickSort(low, pi - 1);
-                    await quickSort(pi + 1, high);
-                }
-            }
-            
-            await quickSort(0, arr.length - 1);
-            metrics.time = performance.now() - startTime;
-            return metrics;
-        }
-    },
-    
-    merge: {
-        name: 'Merge Sort',
-        async sort(arr) {
-            const metrics = { comparisons: 0, swaps: 0, time: 0 };
-            const startTime = performance.now();
-            
-            async function merge(l, m, r) {
-                const n1 = m - l + 1;
-                const n2 = r - m;
-                const L = arr.slice(l, m + 1);
-                const R = arr.slice(m + 1, r + 1);
-                
-                let i = 0, j = 0, k = l;
-                
-                while (i < n1 && j < n2) {
-                    metrics.comparisons++;
-                    if (L[i] <= R[j]) {
-                        arr[k] = L[i];
-                        i++;
-                    } else {
-                        arr[k] = R[j];
-                        j++;
-                    }
-                    metrics.swaps++;
-                    k++;
-                    await new Promise(resolve => setTimeout(resolve, getAnimationDelay()));
-                    updateDataVisualization();
-                }
-                
-                while (i < n1) {
-                    arr[k] = L[i];
-                    i++;
-                    k++;
-                    metrics.swaps++;
-                    await new Promise(resolve => setTimeout(resolve, getAnimationDelay()));
-                    updateDataVisualization();
-                }
-                
-                while (j < n2) {
-                    arr[k] = R[j];
-                    j++;
-                    k++;
-                    metrics.swaps++;
-                    await new Promise(resolve => setTimeout(resolve, getAnimationDelay()));
-                    updateDataVisualization();
-                }
-            }
-            
-            async function mergeSort(l, r) {
-                if (l < r) {
-                    const m = Math.floor(l + (r - l) / 2);
-                    await mergeSort(l, m);
-                    await mergeSort(m + 1, r);
-                    await merge(l, m, r);
-                }
-            }
-            
-            await mergeSort(0, arr.length - 1);
-            metrics.time = performance.now() - startTime;
-            return metrics;
-        }
-    },
-    
-    insertion: {
-        name: 'Insertion Sort',
-        async sort(arr) {
-            const metrics = { comparisons: 0, swaps: 0, time: 0 };
-            const startTime = performance.now();
-            
-            for (let i = 1; i < arr.length; i++) {
-                let key = arr[i];
-                let j = i - 1;
-                
-                while (j >= 0) {
-                    metrics.comparisons++;
-                    if (arr[j] > key) {
-                        metrics.swaps++;
-                        arr[j + 1] = arr[j];
-                        j--;
-                        await new Promise(resolve => setTimeout(resolve, getAnimationDelay()));
-                        updateDataVisualization();
-                    } else {
-                        break;
-                    }
-                }
-                
-                arr[j + 1] = key;
-                metrics.swaps++;
-                await new Promise(resolve => setTimeout(resolve, getAnimationDelay()));
-                updateDataVisualization();
-            }
-            
-            metrics.time = performance.now() - startTime;
-            return metrics;
+            // Bind events
+            this.bindEvents();
+
+            // Initialize array
+            this.generateNewArray();
+        } catch (error) {
+            console.error('Failed to initialize SortingApp:', error);
+            throw error;
         }
     }
-};
 
-// Função para mapear velocidade de animação
-function getAnimationDelay() {
-    // Mapeia a velocidade de animação para um valor em milissegundos
-    switch (state.animationSpeed) {
-        case 'slow':
-            return 500;
-        case 'fast':
-            return 50;
-        case 'normal':
-        default:
-            return 200;
-    }
-}
-
-// Função para atualizar as métricas na UI
-function updateMetrics(metrics) {
-    document.getElementById('comparisons').textContent = `Comparações: ${metrics.comparisons}`;
-    document.getElementById('swaps').textContent = `Trocas: ${metrics.swaps}`;
-    document.getElementById('time').textContent = `Tempo: ${metrics.time.toFixed(2)}ms`;
-}
-
-// Função para gerar dados aleatórios
-function generateRandomData(size) {
-    state.dataset = Array.from({ length: size }, () => Math.floor(Math.random() * 100) + 1);
-    updateDataVisualization();
-    
-    // Atualiza o valor exibido do tamanho da lista
-    elements.dataSizeValue.textContent = size;
-}
-
-// Função para atualizar visualização de dados com D3.js
-function updateDataVisualization() {
-    const container = d3.select('.visualization-container');
-    if (container.empty()) {
-        console.error('Container para visualização não encontrado');
-        return;
+    initializeVisualizers() {
+        this.sortingVisualizer = new SortingVisualizer('#sorting-container');
+        this.algorithmAnalytics = new AlgorithmAnalytics('#performance-container');
     }
 
-    // Limpa a visualização atual
-    container.selectAll('*').remove();
+    initializeState() {
+        this.currentArray = [];
+        this.isSorting = false;
+        this.performanceData = [];
+        this.comparisons = 0;
+    }
 
-    const width = container.node().clientWidth;
-    const height = container.node().clientHeight;
+    initializeDOMElements() {
+        this.elements = {
+            executionTime: document.getElementById('execution-time'),
+            algorithmSelect: document.getElementById('algorithm-select'),
+            sizeInput: document.getElementById('size-input'),
+            speedInput: document.getElementById('speed-input'),
+            newArrayButton: document.getElementById('new-array-button'),
+            startButton: document.getElementById('start-button'),
+            comparisonsSpan: document.getElementById('comparisons'),
+            performanceContainer: document.querySelector('#performance-container')
+        };
 
-    // Cria o SVG para o gráfico
-    const svg = container.append('svg')
-        .attr('width', width)
-        .attr('height', height);
-
-    const xScale = d3.scaleBand()
-        .domain(d3.range(state.dataset.length))
-        .range([0, width])
-        .padding(0.1);
-
-    const yScale = d3.scaleLinear()
-        .domain([0, d3.max(state.dataset)])
-        .range([height, 0]);
-
-    svg.selectAll('.bar')
-        .data(state.dataset)
-        .enter()
-        .append('rect')
-        .attr('class', 'bar')
-        .attr('x', (d, i) => xScale(i))
-        .attr('y', d => yScale(d))
-        .attr('width', xScale.bandwidth())
-        .attr('height', d => height - yScale(d))
-        .attr('fill', '#3498db');
-
-    // Opcional: Adicionar eixos
-    const xAxis = d3.axisBottom(xScale).tickFormat(i => i + 1).tickValues(state.dataset.map((d, i) => i));
-    const yAxis = d3.axisLeft(yScale);
-
-    svg.append('g')
-        .attr('transform', `translate(0, ${height})`)
-        .call(xAxis)
-        .selectAll('text')
-        .attr('font-size', '10px');
-
-    svg.append('g')
-        .call(yAxis);
-}
-
-// Extensão do objeto statsManager no renderer.js
-const statsManager = {
-    stats: [],
-
-    addStats(algorithmName, metrics, dataSize) {
-        this.stats.push({
-            algorithm: algorithmName,
-            dataSize,
-            ...metrics,
-            timestamp: new Date()
-        });
-        this.updateVisualization();
-    },
-
-    clearStats() {
-        this.stats = [];
-        this.updateVisualization();
-    },
-
-    async updateVisualization() {
-        const statsSection = document.querySelector('#statsSection .chart-container');
-        if (!statsSection) {
-            console.error('Container para gráficos não encontrado');
-            return;
+        if (!Object.values(this.elements).every(element => element)) {
+            throw new Error('Failed to initialize required DOM elements');
         }
+    }
 
-        // Agrupa estatísticas por algoritmo
-        const algorithmStats = {};
-        this.stats.forEach(stat => {
-            if (!algorithmStats[stat.algorithm]) {
-                algorithmStats[stat.algorithm] = [];
+    createControlButtons() {
+        const clearButton = document.createElement('button');
+        clearButton.textContent = 'Limpar Dados';
+        clearButton.onclick = () => this.clearPerformanceData();
+        clearButton.classList.add('button', 'button--danger'); // Adicionado
+    
+        const exportButton = document.createElement('button');
+        exportButton.textContent = 'Exportar CSV';
+        exportButton.onclick = () => this.exportPerformanceData();
+        exportButton.classList.add('button', 'button--info'); // Adicionado
+    
+        this.elements.performanceContainer.appendChild(clearButton);
+        this.elements.performanceContainer.appendChild(exportButton);
+    }
+    
+
+    bindEvents() {
+        // Usar this.elements em vez de referências diretas
+        this.elements.newArrayButton.addEventListener('click', () => this.generateNewArray());
+        this.elements.startButton.addEventListener('click', () => this.startSorting());
+        this.elements.sizeInput.addEventListener('change', () => this.generateNewArray());
+    }
+
+    generateNewArray() {
+        const size = Math.max(1, Math.min(1000, parseInt(this.elements.sizeInput.value) || 10));
+        this.elements.sizeInput.value = size; // Normaliza o input
+        this.currentArray = Array.from({ length: size },
+            () => Math.floor(Math.random() * 100) + 1);
+        this.sortingVisualizer.update(this.currentArray);
+        this.resetStats();
+    }
+
+    clearPerformanceData() {
+        this.performanceData = [];
+        if (this.algorithmAnalytics) {
+            this.algorithmAnalytics.clear();
+        }
+        // Release blob URLs
+        if (this.lastExportUrl) {
+            URL.revokeObjectURL(this.lastExportUrl);
+            this.lastExportUrl = null;
+        }
+    }
+
+    resetStats() {
+        this.comparisons = 0;
+        this.elements.comparisonsSpan.textContent = '0';
+    }
+
+    exportPerformanceData() {
+        const header = 'algorithm,size,time,comparisons\n';
+        const csv = header + this.performanceData
+            .map(d => `${d.algorithm},${d.size},${d.time},${d.comparisons}`)
+            .join('\n');
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'sorting-performance.csv';
+        a.click();
+    }
+
+    async startSorting() {
+        if (this.isSorting) return;
+
+        const initialComparisons = this.comparisons;
+        const startTime = performance.now();
+
+        try {
+            this.isSorting = true;
+            this.toggleControls(false);
+
+            const algorithm = this.getSelectedAlgorithm();
+            if (!algorithm) {
+                throw new Error('Invalid algorithm selected');
             }
-            algorithmStats[stat.algorithm].push(stat);
-        });
 
-        // Criar visualizações D3.js
-        await this.createComparisonChart(statsSection, algorithmStats);
-    },
+            const delay = parseInt(this.elements.speedInput.value) || 50;
+            await this.runSort(algorithm, [...this.currentArray], delay);
 
-    async createComparisonChart(container, stats) {
-        // Limpa o container
-        container.innerHTML = '';
+            const endTime = performance.now();
+            this.updatePerformanceData({
+                time: endTime - startTime,
+                comparisons: this.comparisons - initialComparisons
+            });
 
-        // Prepara dados para o gráfico
-        const chartData = Object.keys(stats).map(algorithm => {
-            const algorithmStats = stats[algorithm];
-            return {
-                algorithm,
-                avgComparisons: this.average(algorithmStats.map(s => s.comparisons)),
-                avgSwaps: this.average(algorithmStats.map(s => s.swaps)),
-                avgTime: this.average(algorithmStats.map(s => s.time))
+            this.elements.executionTime.textContent = `${(endTime - startTime).toFixed(2)} ms`;
+        } catch (error) {
+            console.error('Sorting error:', error);
+        } finally {
+            this.isSorting = false;
+            this.toggleControls(true);
+        }
+    }
+
+
+    getSelectedAlgorithm() {
+        const algorithms = {
+            bubble: bubbleSort,
+            insert: insertSort,
+            quick: quickSort,
+            merge: mergeSort
+        };
+        // Fix: Use this.elements
+        return algorithms[this.elements.algorithmSelect.value];
+    }
+
+    /**
+     * Executa o algoritmo de ordenação selecionado.
+     * @param {Function} algorithm - Função do algoritmo de ordenação.
+     * @param {Array} array - Array a ser ordenado.
+     * @param {number} delay - Atraso entre as operações para visualização.
+     */
+    async runSort(algorithm, array, delay) {
+        try {
+            let arr = [...array];
+
+            const onUpdate = async (newArray, swappingIndices = [], specialIndices = []) => {
+                arr = [...newArray];
+                this.sortingVisualizer.update(arr, [], swappingIndices, specialIndices);
+                if (swappingIndices.length > 0) {
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
             };
-        });
 
-        if (chartData.length === 0) {
-            container.innerHTML = '<p>Nenhum dado para exibir.</p>';
-            return;
+            const onCompare = async (indices, specialIndices = []) => {
+                this.comparisons++;
+                this.elements.comparisonsSpan.textContent = this.comparisons;
+                this.sortingVisualizer.update(arr, indices, [], specialIndices);
+                await new Promise(resolve => setTimeout(resolve, delay));
+            };
+
+            if (!algorithm) {
+                throw new Error('Algorithm not provided');
+            }
+
+            await algorithm(arr, onUpdate, onCompare, delay);
+            return arr;
+
+        } catch (error) {
+            console.error('Error during sorting:', error);
+            throw error;
+        }
+    }
+
+    destroy() {
+        // Store bound handlers
+        const handlers = {
+            newArray: () => this.generateNewArray(),
+            startSort: () => this.startSorting(),
+            sizeChange: () => this.generateNewArray()
+        };
+
+        // Remove with proper handlers
+        this.elements.newArrayButton.removeEventListener('click', handlers.newArray);
+        this.elements.startButton.removeEventListener('click', handlers.startSort);
+        this.elements.sizeInput.removeEventListener('change', handlers.sizeChange);
+
+        // Cleanup
+        this.clearPerformanceData();
+        if (this.sortingVisualizer) this.sortingVisualizer.destroy();
+        if (this.algorithmAnalytics) this.algorithmAnalytics.destroy();
+    }
+
+
+    updatePerformanceData(metrics) {
+        if (!metrics?.time || !metrics?.comparisons) {
+            throw new Error('Invalid metrics data');
         }
 
-        // Configuração do gráfico
-        const margin = { top: 20, right: 30, bottom: 40, left: 60 };
-        const width = 600 - margin.left - margin.right;
-        const height = 400 - margin.top - margin.bottom;
+        const newDataPoint = {
+            algorithm: this.elements.algorithmSelect.value,
+            size: this.currentArray.length,
+            time: metrics.time,
+            comparisons: metrics.comparisons
+        };
 
-        // Cria SVG
-        const svg = d3.select(container)
-            .append('svg')
-            .attr('width', width + margin.left + margin.right)
-            .attr('height', height + margin.top + margin.bottom)
-            .append('g')
-            .attr('transform', `translate(${margin.left},${margin.top})`);
+        this.performanceData.push(newDataPoint);
 
-        // Escalas
-        const x0 = d3.scaleBand()
-            .range([0, width])
-            .padding(0.1)
-            .domain(chartData.map(d => d.algorithm));
+        try {
+            const groupedData = this.groupPerformanceData();
+            this.algorithmAnalytics.update(groupedData);
 
-        const y = d3.scaleLinear()
-            .range([height, 0])
-            .domain([0, d3.max(chartData, d => Math.max(d.avgComparisons, d.avgSwaps, d.avgTime)) * 1.1]);
-
-        // Eixos
-        svg.append('g')
-            .attr('transform', `translate(0,${height})`)
-            .call(d3.axisBottom(x0));
-
-        svg.append('g')
-            .call(d3.axisLeft(y));
-
-        // Barras para comparações
-        svg.selectAll('.bar-comparisons')
-            .data(chartData)
-            .enter()
-            .append('rect')
-            .attr('class', 'bar-comparisons')
-            .attr('x', d => x0(d.algorithm))
-            .attr('width', x0.bandwidth() / 2)
-            .attr('y', d => y(d.avgComparisons))
-            .attr('height', d => height - y(d.avgComparisons))
-            .attr('fill', '#3498db');
-
-        // Barras para trocas
-        svg.selectAll('.bar-swaps')
-            .data(chartData)
-            .enter()
-            .append('rect')
-            .attr('class', 'bar-swaps')
-            .attr('x', d => x0(d.algorithm) + x0.bandwidth() / 2)
-            .attr('width', x0.bandwidth() / 2)
-            .attr('y', d => y(d.avgSwaps))
-            .attr('height', d => height - y(d.avgSwaps))
-            .attr('fill', '#e67e22');
-
-        // Legenda
-        const legend = svg.append('g')
-            .attr('font-family', 'sans-serif')
-            .attr('font-size', 10)
-            .attr('text-anchor', 'start')
-            .selectAll('g')
-            .data(['Comparações', 'Trocas'])
-            .enter()
-            .append('g')
-            .attr('transform', (d, i) => `translate(0,${i * 20})`);
-            
-        legend.append('rect')
-            .attr('x', width - 19)
-            .attr('width', 19)
-            .attr('height', 19)
-            .attr('fill', (d, i) => i === 0 ? '#3498db' : '#e67e22');
-            
-        legend.append('text')
-            .attr('x', width - 24)
-            .attr('y', 9.5)
-            .attr('dy', '0.32em')
-            .text(d => d);
-    },
-
-    average(arr) {
-        if (arr.length === 0) return 0;
-        return arr.reduce((a, b) => a + b, 0) / arr.length;
+            const uniqueAlgorithms = [...new Set(this.performanceData.map(d => d.algorithm))];
+            this.algorithmAnalytics.timeChart.updateLegend(uniqueAlgorithms);
+            this.algorithmAnalytics.comparisonChart.updateLegend(uniqueAlgorithms);
+        } catch (error) {
+            console.error('Error updating performance data:', error);
+        }
     }
-};
+
+
+
+    groupPerformanceData() {
+        return Object.values(
+            this.performanceData.reduce((acc, item) => {
+                const key = `${item.algorithm}-${item.size}`;
+                if (!acc[key]) {
+                    acc[key] = {
+                        algorithm: item.algorithm,
+                        size: item.size,
+                        time: [],
+                        comparisons: []
+                    };
+                }
+                acc[key].time.push(item.time);
+                acc[key].comparisons.push(item.comparisons);
+                return acc;
+            }, {})
+        ).map(group => ({
+            ...group,
+            time: d3.mean(group.time) || 0,
+            comparisons: d3.mean(group.comparisons) || 0
+        }));
+    }
+
+    toggleControls(enabled) {
+        Object.entries({
+            algorithmSelect: enabled,
+            sizeInput: enabled,
+            speedInput: enabled,
+            newArrayButton: enabled,
+            startButton: enabled
+        }).forEach(([key, value]) => {
+            this.elements[key].disabled = !value;
+        });
+
+        this.elements.startButton.textContent = enabled ? 'Iniciar Ordenação' : 'Ordenando...';
+    }
+}
+
+// Inicializar aplicação quando o DOM estiver pronto
+document.addEventListener('DOMContentLoaded', () => {
+    new SortingApp();
+});

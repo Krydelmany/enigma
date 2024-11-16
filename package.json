@@ -3,14 +3,34 @@
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rm -rf dist",
+    "build": "webpack",
+    "start": "npm run build && electron .",
+    "dev": "webpack --watch",
+    "package": "electron-packager . Enigma --overwrite"
   },
   "author": "Giovani Claro Moraes",
   "license": "ISC",
-  "description": "",
+  "description": "Ferramenta computacional para análise de algoritmos de ordenação",
+  "keywords": [
+    "Electron",
+    "D3.js",
+    "Sorting Algorithms",
+    "Webpack"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Krydelmany/enigma.git"
+  },
   "devDependencies": {
-    "electron": "^33.2.0"
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "babel-loader": "^9.2.1",
+    "css-loader": "^7.1.2",
+    "electron": "^33.2.0",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.96.1",
+    "webpack-cli": "^5.1.4"
   },
   "dependencies": {
     "d3": "^7.9.0"

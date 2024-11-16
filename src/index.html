@@ -3,172 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Visualizador de algoritmos de ordenação com análise em tempo real">
-    <title>Visualizador de Algoritmos</title>
-    
-    <!-- Estilos -->
+    <meta name="description" content="Visualizador e análise de algoritmos de ordenação com diferentes métodos como Bubble Sort, Insertion Sort, Quick Sort e Merge Sort">
+    <meta name="theme-color" content="#ffffff">
+    <title>Análise de Algoritmos de Ordenação</title>
     <link rel="stylesheet" href="styles/main.css">
-    
-    <!-- Scripts externos -->
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar" role="navigation">
-            <div class="sidebar-header">
-                <img src="assets/icons/logo.svg" alt="Logo do Visualizador" class="logo" width="120" height="40">
-            </div>
-            
-            <nav class="nav">
-                <ul class="nav-list">
-                    <li>
-                        <button class="nav-item active" data-section="home" aria-current="page">
-                            <i data-lucide="layout-dashboard"></i>
-                            <span>Dashboard</span>
-                        </button>
-                    </li>
-                    <li>
-                        <button class="nav-item" data-section="data">
-                            <i data-lucide="database"></i>
-                            <span>Dados</span>
-                        </button>
-                    </li>
-                    <li>
-                        <button class="nav-item" data-section="algorithms">
-                            <i data-lucide="binary"></i>
-                            <span>Algoritmos</span>
-                        </button>
-                    </li>
-                    <li>
-                        <button class="nav-item" data-section="stats">
-                            <i data-lucide="bar-chart"></i>
-                            <span>Análise</span>
-                        </button>
-                    </li>
-                </ul>
-            </nav>
-            
-            <div class="sidebar-footer">
-                <button class="nav-item" id="settingsBtn">
-                    <i data-lucide="settings"></i>
-                    <span>Configurações</span>
-                </button>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main">
-            <header class="header">
-                <h1 class="header-title" id="pageTitle">Dashboard</h1>
-                <div class="header-actions">
-                    <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema">
-                        <i data-lucide="sun"></i>
-                    </button>
-                </div>
-            </header>
-
-            <!-- Content Area -->
-            <div class="content">
-                <!-- Dashboard -->
-                <section id="homeSection" class="section active" aria-label="Dashboard">
-                    <div class="dashboard-grid">
-                        <div class="card">
-                            <h2>Início Rápido</h2>
-                            <p>Selecione um algoritmo para começar a visualização.</p>
-                        </div>
+    <div class="container">
+        <header class="header">
+            <div class="header__content">
+                <h1 class="header__title">Análise de Algoritmos de Ordenação</h1>
+                <div class="theme-switcher">
+                    <div class="theme-switcher__toggle" role="switch" aria-checked="false">
+                        <input 
+                            type="checkbox" 
+                            id="dark-mode-toggle" 
+                            class="theme-switcher__input"
+                            aria-label="Alternar modo escuro">
+                        <label for="dark-mode-toggle" class="theme-switcher__label">
+                            <span class="visually-hidden">Modo Escuro</span>
+                        </label>
+                        <span class="theme-switcher__text">Modo Escuro</span>
                     </div>
-                </section>
-
-                <!-- Data Generation -->
-                <section id="dataSection" class="section" aria-label="Geração de Dados">
-                    <div class="card">
-                        <div class="card-header">
-                            <h2>Configuração dos Dados</h2>
-                        </div>
-                        <div class="card-content">
-                            <div class="input-group">
-                                <label for="dataSize">Tamanho do Array</label>
-                                <input type="range" id="dataSize" min="5" max="100" value="50">
-                                <span class="value" id="dataSizeValue">50</span>
-                            </div>
-                            
-                            <div class="button-group">
-                                <button class="btn" id="generateData">Gerar Dados</button>
-                                <button class="btn" id="importData">Importar</button>
-                            </div>
-                        </div>
+                </div>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <section class="control-panel" aria-labelledby="control-panel-title">
+                <h2 id="control-panel-title" class="visually-hidden">Painel de Controle</h2>
+                
+                <div class="control-panel__algorithms">
+                    <label for="algorithm-select" class="control-panel__label">Algoritmo:</label>
+                    <select 
+                        id="algorithm-select" 
+                        class="control-panel__select"
+                        aria-label="Selecione o algoritmo de ordenação">
+                        <option value="bubble">Bubble Sort</option>
+                        <option value="insert">Insertion Sort</option>
+                        <option value="quick">Quick Sort</option>
+                        <option value="merge">Merge Sort</option>
+                    </select>
+                </div>
+                
+                <div class="control-panel__inputs">
+                    <div class="input-group">
+                        <label for="size-input" class="input-group__label">Tamanho do Array:</label>
+                        <input 
+                            type="number" 
+                            id="size-input" 
+                            class="input-group__input"
+                            min="5" 
+                            max="1000" 
+                            value="30"
+                            aria-label="Defina o tamanho do array">
                     </div>
                     
-                    <div class="card">
-                        <div id="dataPreview" class="visualization"></div>
+                    <div class="input-group">
+                        <label for="speed-input" class="input-group__label">Velocidade (ms):</label>
+                        <input 
+                            type="number" 
+                            id="speed-input" 
+                            class="input-group__input"
+                            min="1" 
+                            max="1000" 
+                            value="50"
+                            aria-label="Defina a velocidade da animação">
                     </div>
-                </section>
+                </div>
+                
+                <div class="control-panel__buttons">
+                    <button 
+                        id="new-array-button" 
+                        class="button button--secondary"
+                        aria-label="Gerar novo array">
+                        Novo Array
+                    </button>
+                    <button 
+                        id="start-button" 
+                        class="button button--primary"
+                        aria-label="Iniciar ordenação">
+                        Iniciar Ordenação
+                    </button>
+                </div>
+            </section>
 
-                <!-- Algorithm Visualization -->
-                <section id="algorithmsSection" class="section" aria-label="Visualização de Algoritmos">
-                    <div class="card">
-                        <div class="card-header">
-                            <select id="algorithmSelect" class="select">
-                                <option value="bubble">Bubble Sort</option>
-                                <option value="quick">Quick Sort</option>
-                                <option value="merge">Merge Sort</option>
-                                <option value="insertion">Insertion Sort</option>
-                            </select>
-                        </div>
-                        
-                        <div class="visualization" id="algorithmVisualization"></div>
-                        
-                        <div class="controls">
-                            <button class="btn" id="playBtn">
-                                <i data-lucide="play"></i> Iniciar
-                            </button>
-                            <button class="btn" id="pauseBtn">
-                                <i data-lucide="pause"></i> Pausar
-                            </button>
-                            <button class="btn" id="resetBtn">
-                                <i data-lucide="rotate-ccw"></i> Reiniciar
-                            </button>
-                            
-                            <div class="input-group">
-                                <label for="speed">Velocidade</label>
-                                <input type="range" id="speed" min="1" max="5" value="3">
-                            </div>
-                        </div>
+            <section class="statistics" aria-labelledby="statistics-title">
+                <h2 id="statistics-title" class="visually-hidden">Estatísticas</h2>
+                <div class="statistics__content" role="status" aria-live="polite">
+                    <div class="statistics__item">
+                        <span class="statistics__label">Comparações:</span>
+                        <span id="comparisons" class="statistics__value">0</span>
                     </div>
-                </section>
-
-                <!-- Statistics -->
-                <section id="statsSection" class="section" aria-label="Estatísticas">
-                    <div class="card">
-                        <div id="statsChart" class="visualization"></div>
-                        <div class="metrics-grid">
-                            <div class="metric">
-                                <span class="metric-label">Comparações</span>
-                                <span class="metric-value" id="comparisons">0</span>
-                            </div>
-                            <div class="metric">
-                                <span class="metric-label">Trocas</span>
-                                <span class="metric-value" id="swaps">0</span>
-                            </div>
-                            <div class="metric">
-                                <span class="metric-label">Tempo</span>
-                                <span class="metric-value" id="time">0ms</span>
-                            </div>
-                        </div>
+                    <div class="statistics__item">
+                        <span class="statistics__label">Tempo de execução:</span>
+                        <span id="execution-time" class="statistics__value">0 ms</span>
                     </div>
-                </section>
-            </div>
-
-            <!-- Status Bar -->
-            <footer class="status-bar">
-                <span id="status">Pronto</span>
-            </footer>
+                </div>
+            </section>
+            
+            <section class="visualization" aria-labelledby="visualization-title">
+                <h2 id="visualization-title" class="visually-hidden">Visualização da Ordenação</h2>
+                <div 
+                    id="sorting-container" 
+                    class="visualization__sorting"
+                    role="region" 
+                    aria-label="Visualização da ordenação em tempo real">
+                </div>
+                <div 
+                    id="performance-container" 
+                    class="visualization__performance"
+                    role="region" 
+                    aria-label="Gráfico de performance dos algoritmos">
+                </div>
+            </section>
         </main>
     </div>
 
-    <!-- Scripts da aplicação -->
-    <script type="module" src="js/app.js"></script>
+    <script>
+        class ThemeSwitcher {
+            constructor() {
+                this.toggle = document.getElementById('dark-mode-toggle');
+                this.body = document.body;
+                this.init();
+            }
+
+            init() {
+                // Verifica preferência do sistema
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const savedTheme = localStorage.getItem('dark-mode');
+
+                // Aplica tema baseado na preferência salva ou do sistema
+                if (savedTheme === 'enabled' || (!savedTheme && prefersDark)) {
+                    this.enableDarkMode();
+                }
+
+                this.attachEventListeners();
+            }
+
+            attachEventListeners() {
+                this.toggle.addEventListener('change', () => {
+                    if (this.toggle.checked) {
+                        this.enableDarkMode();
+                    } else {
+                        this.disableDarkMode();
+                    }
+                });
+
+                // Atualiza quando a preferência do sistema mudar
+                window.matchMedia('(prefers-color-scheme: dark)')
+                    .addEventListener('change', e => {
+                        if (!localStorage.getItem('dark-mode')) {
+                            if (e.matches) {
+                                this.enableDarkMode();
+                            } else {
+                                this.disableDarkMode();
+                            }
+                        }
+                    });
+            }
+
+            enableDarkMode() {
+                this.toggle.checked = true;
+                this.body.classList.add('dark-mode');
+                this.toggle.setAttribute('aria-checked', 'true');
+                localStorage.setItem('dark-mode', 'enabled');
+            }
+
+            disableDarkMode() {
+                this.toggle.checked = false;
+                this.body.classList.remove('dark-mode');
+                this.toggle.setAttribute('aria-checked', 'false');
+                localStorage.setItem('dark-mode', 'disabled');
+            }
+        }
+
+        // Inicializa o theme switcher quando o DOM estiver pronto
+        document.addEventListener('DOMContentLoaded', () => {
+            new ThemeSwitcher();
+        });
+    </script>
+    
+    <script src="../dist/bundle.js"></script>
 </body>
 </html>
