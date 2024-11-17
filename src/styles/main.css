@@ -23,6 +23,7 @@
   --danger-hover-color: #c82333;
   --info-color: #17a2b8;
   --info-hover-color: #138496;
+  --grid-line-color: #e0e0e0;
 }
 
 body.dark-mode {
@@ -47,6 +48,17 @@ body.dark-mode {
   --danger-hover-color: #c0392b;
   --info-color: #3498db;
   --info-hover-color: #2980b9;
+  --grid-line-color-dark: #555555;
+}
+
+::selection {
+  background-color: var(--button-bg);
+  color: var(--button-text-color);
+}
+
+::-moz-selection {
+  background-color: var(--button-bg);
+  color: var(--button-text-color);
 }
 
 /* Reset de Estilos */
@@ -69,6 +81,79 @@ body {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+}
+
+/* Tooltip styles */
+.sorting-tooltip, .performance-tooltip {
+  pointer-events: none;
+  position: absolute;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 1000;
+  background-color: var(--tooltip-bg);
+  color: var(--tooltip-text-color);
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  box-shadow: 0px 2px 4px rgba(0,0,0,0.3);
+}
+
+body.dark-mode .sorting-tooltip,
+body.dark-mode .performance-tooltip {
+  /* Mantém os estilos definidos anteriormente */
+}
+
+/* Estilos para as linhas de grade */
+.grid-lines line {
+  stroke: var(--grid-line-color, #e0e0e0); /* Usar variável com fallback */
+  stroke-dasharray: 3, 3;
+}
+
+body.dark-mode .grid-lines line {
+  stroke: var(--grid-line-color-dark, #555555); /* Variável para dark mode com fallback */
+}
+
+/* Legenda */
+.legend .legend-item {
+  cursor: pointer;
+}
+
+.legend .legend-item rect {
+  width: 12px;
+  height: 12px;
+  rx: 2px;
+  ry: 2px;
+}
+
+.legend .legend-item text {
+  font-size: 12px;
+  fill: var(--text-color);
+}
+
+body.dark-mode .legend .legend-item text {
+  fill: var(--text-color);
+}
+
+/* Títulos e Rótulos */
+.chart-title {
+  font-size: 18px;
+  font-weight: bold;
+  fill: var(--chart-title-color);
+}
+
+body.dark-mode .chart-title {
+  fill: var(--chart-title-color);
+}
+
+.x-label,
+.y-label {
+  font-size: 14px;
+  fill: var(--axis-color);
+}
+
+body.dark-mode .x-label,
+body.dark-mode .y-label {
+  fill: var(--axis-color);
 }
 
 /* Container Principal */
@@ -139,7 +224,20 @@ body {
   transition: transform 0.2s;
 }
 
-/* Adicione estes novos estilos */
+.theme-switcher__input:checked + .theme-switcher__label {
+  background-color: var(--button-bg);
+}
+
+.theme-switcher__input:checked + .theme-switcher__label::after {
+  transform: translateX(26px);
+}
+
+.theme-switcher__text {
+  font-size: 0.875rem;
+  color: var(--text-color);
+}
+
+/* Seleção de Algoritmo */
 #algorithm-select {
   width: 100%;
   padding: 0.5rem;
@@ -161,6 +259,34 @@ body {
   border-color: var(--button-bg);
 }
 
+/* Botões */
+.button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.button--primary {
+  background-color: var(--button-bg);
+  color: var(--button-text-color);
+}
+
+.button--primary:hover {
+  background-color: var(--button-hover-bg);
+}
+
+.button--secondary {
+  background-color: #4caf50;
+  color: white;
+}
+
+.button--secondary:hover {
+  background-color: #388e3c;
+}
+
 .button--danger {
   background-color: var(--danger-color);
   color: white;
@@ -179,17 +305,38 @@ body {
   background-color: var(--info-hover-color);
 }
 
-.theme-switcher__input:checked + .theme-switcher__label {
-  background-color: var(--button-bg);
+.button:disabled {
+  background-color: var(--button-disabled-bg);
+  cursor: not-allowed;
 }
 
-.theme-switcher__input:checked + .theme-switcher__label::after {
-  transform: translateX(26px);
+.button--utility {
+  padding: 10px 8px;        /* Reduced padding */
+  font-size: 11px;         /* Smaller font */
+  min-width: 60px;         /* Reduced minimum width */
+  max-width: 525px;        /* Increased maximum width */
+  margin-left: 4px;        /* Reduced margin */
+  white-space: nowrap;     /* Prevent text wrapping */
+  overflow: hidden;        /* Hide overflow text */
+  text-overflow: ellipsis; /* Show ellipsis for overflow */
 }
 
-.theme-switcher__text {
-  font-size: 0.875rem;
-  color: var(--text-color);
+.button--danger.button--utility,
+.button--info.button--utility {
+  /* Remove duplicate padding/font declarations */
+  /* They inherit from .button--utility */
+}
+
+.button--info.button--utility {
+  /* Inherit info colors but use utility size */
+  padding: 6px 12px;
+  font-size: 12px;
+}
+.utility-buttons {
+  display: flex;
+  gap: 4px;               /* Space between buttons */
+  justify-content: flex-end;
+  margin-top: 8px;
 }
 
 /* Painel de Controle */
@@ -244,39 +391,6 @@ body {
   outline: none;
 }
 
-/* Botões */
-.button {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.button--primary {
-  background-color: var(--button-bg);
-  color: var(--button-text-color);
-}
-
-.button--primary:hover {
-  background-color: var(--button-hover-bg);
-}
-
-.button--secondary {
-  background-color: #4caf50;
-  color: white;
-}
-
-.button--secondary:hover {
-  background-color: #388e3c;
-}
-
-.button:disabled {
-  background-color: var(--button-disabled-bg);
-  cursor: not-allowed;
-}
-
 /* Statistics */
 .statistics {
   margin-bottom: 1.5rem;
@@ -313,15 +427,6 @@ body {
   gap: 1.5rem;
 }
 
-.button--info {
-  background-color: #17a2b8;
-  color: white;
-}
-
-.button--info:hover {
-  background-color: #138496;
-}
-
 .visualization__sorting {
   border: 1px solid var(--control-border);
   border-radius: 6px;
@@ -338,6 +443,7 @@ body {
   min-height: 300px;
 }
 
+/* Barras */
 .bar {
   fill: var(--bar-default); /* Azul padrão */
   transition: fill 0.2s ease, height 0.1s ease-in-out, y 0.1s ease-in-out;
@@ -359,10 +465,12 @@ body {
   filter: brightness(0.9);
 }
 
+/* Linhas */
 .line {
   transition: d 0.3s ease;
 }
 
+/* Pontos */
 .dot {
   transition: all 0.2s ease;
   cursor: pointer;
@@ -371,74 +479,3 @@ body {
 .dot:hover {
   r: 6 !important;
 }
-
-
-/* Tooltip styles */
-.sorting-tooltip, .performance-tooltip {
-  pointer-events: none;
-  position: absolute;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  z-index: 1000;
-  background-color: var(--tooltip-bg);
-  color: var(--tooltip-text-color);
-  padding: 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  box-shadow: 0px 2px 4px rgba(0,0,0,0.3);
-}
-
-body.dark-mode .sorting-tooltip,
-body.dark-mode .performance-tooltip {
-  /* Ajustes de cor para dark mode, se necessário */
-}
-
-.x-axis line,
-.y-axis line,
-.x-axis path,
-.y-axis path {
-  stroke: #ccc;
-}
-
-body.dark-mode .x-axis line,
-body.dark-mode .y-axis line,
-body.dark-mode .x-axis path,
-body.dark-mode .y-axis path {
-  stroke: #555;
-}
-
-.x-axis text,
-.y-axis text {
-  font-size: 12px;
-  fill: var(--axis-color);
-}
-
-.x-label,
-.y-label {
-  font-size: 12px;
-  fill: var(--axis-color);
-}
-
-
-.chart-title {
-  font-weight: 600;
-  font-size: 16px;
-  fill: var(--chart-title-color);
-}
-
-body.dark-mode .chart-title {
-  fill: var(--chart-title-color);
-}
-
-.legend text {
-  font-size: 12px;
-  fill: var(--text-color);
-}
-
-body.dark-mode .legend text {
-  fill: var(--text-color);
-}
-
-/* Botão de Toggle Dark Mode já definido acima */
-
-/* Media Queries para Responsividade já incluídas acima */

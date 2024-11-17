@@ -1,12 +1,10 @@
-// src/scripts/chart.js
-
 import * as d3 from 'd3';
 
 export class SortingVisualizer {
   constructor(containerId) {
     this.container = d3.select(containerId);
     this.margin = { top: 30, right: 30, bottom: 50, left: 50 };
-    this.width = 1100 - this.margin.left - this.margin.right;
+    this.width = 1150 - this.margin.left - this.margin.right;
     this.height = 500 - this.margin.top - this.margin.bottom;
 
     // Configuração do SVG principal
@@ -67,7 +65,7 @@ export class SortingVisualizer {
     // Atualizar escalas
     this.xScale.domain(data.map((d, i) => i));
     this.yScale.domain([0, d3.max(data) * 1.1]);
-  
+
     // Atualizar eixos
     if (data.length <= 30) {
       this.xAxis.call(d3.axisBottom(this.xScale));
@@ -75,7 +73,7 @@ export class SortingVisualizer {
       this.xAxis.call(d3.axisBottom(this.xScale).tickValues([]));
     }
     this.yAxis.call(d3.axisLeft(this.yScale));
-  
+
     // Definir a cor dos textos dos eixos após a chamada do eixo
     this.xAxis.selectAll('text').attr('fill', 'var(--axis-color)');
     this.yAxis.selectAll('text').attr('fill', 'var(--axis-color)');
@@ -157,7 +155,12 @@ export class AlgorithmAnalytics {
       'Tamanho do Array',
       'Número de Comparações'
     );
+
+    // Inicializa os gráficos com dados vazios para desenhar as linhas de grade
+    this.timeChart.update([]);
+    this.comparisonChart.update([]);
   }
+
 
   update(data) {
     if (!Array.isArray(data) || data.length === 0) {
@@ -191,26 +194,30 @@ export class AlgorithmAnalytics {
     this.comparisonChart.clear();
   }
 }
-
 class PerformanceChart {
   constructor(container, title, xLabel, yLabel) {
-    this.margin = { top: 40, right: 30, bottom: 50, left: 60 };
-    this.width = 400 - this.margin.left - this.margin.right;
-    this.height = 300 - this.margin.top - this.margin.bottom;
+    this.margin = { top: 40, right: 120, bottom: 50, left: 70 };
+    this.width = 600 - this.margin.left - this.margin.right;
+    this.height = 400 - this.margin.top - this.margin.bottom;
 
+    // Enhanced SVG setup with better styling
     this.svg = d3.select(container)
       .append('svg')
-      .attr('width', this.width + this.margin.left + this.margin.right + 100) // Espaço extra para legenda
+      .attr('width', this.width + this.margin.left + this.margin.right)
       .attr('height', this.height + this.margin.top + this.margin.bottom)
       .append('g')
       .attr('transform', `translate(${this.margin.left},${this.margin.top})`);
 
-    // Escalas
+    // Improved scales with better color palette for algorithm visualization
     this.xScale = d3.scaleLinear().range([0, this.width]);
     this.yScale = d3.scaleLinear().range([this.height, 0]);
-    this.colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+    this.colorScale = d3.scaleOrdinal()
+      .range(['#2196F3', '#FF5722', '#4CAF50', '#9C27B0', '#FFC107']); // Material design colors
 
-    // Eixos
+    // Add grid lines for better readability
+    this.addGridLines();
+
+    // Enhanced axes with better styling
     this.xAxis = this.svg.append('g')
       .attr('class', 'x-axis')
       .attr('transform', `translate(0,${this.height})`);
@@ -218,16 +225,66 @@ class PerformanceChart {
     this.yAxis = this.svg.append('g')
       .attr('class', 'y-axis');
 
-    // Rótulos
+    // Enhanced labels with better positioning and styling
+    this.addChartLabels(title, xLabel, yLabel);
+
+    // Improved line generator with smoother curves
+    this.line = d3.line()
+      .x(d => this.xScale(d.size))
+      .y(d => this.yScale(d.value))
+      .curve(d3.curveCardinal.tension(0.7));
+
+    // Enhanced tooltip with better styling
+    this.tooltip = d3.select('body')
+      .append('div')
+      .attr('class', 'performance-tooltip')
+      .style('opacity', 0)
+      .style('position', 'absolute')
+      .style('background', 'rgba(255, 255, 255, 0.9)')
+      .style('padding', '10px')
+      .style('border', '1px solid #ddd')
+      .style('border-radius', '4px')
+      .style('box-shadow', '0 2px 4px rgba(0,0,0,0.1)')
+      .style('pointer-events', 'none')
+      .style('font-size', '12px');
+  }
+
+  // Adicionar os métodos ausentes aqui
+  processData(data) {
+    return data.map(d => ({
+      algorithm: d.algorithm,
+      size: d.size,
+      value: d.value
+    }));
+  }
+
+  groupByAlgorithm(data) {
+    return d3.group(data, d => d.algorithm);
+  }
+
+  addGridLines() {
+    // Add X grid lines
+    this.svg.append('g')
+      .attr('class', 'grid-lines x-grid')
+      .style('stroke', '#e0e0e0')
+      .style('stroke-dasharray', '3,3');
+
+    // Add Y grid lines
+    this.svg.append('g')
+      .attr('class', 'grid-lines y-grid')
+      .style('stroke', '#e0e0e0')
+      .style('stroke-dasharray', '3,3');
+  }
+
+  addChartLabels(title, xLabel, yLabel) {
     this.svg.append('text')
       .attr('class', 'chart-title')
       .attr('x', this.width / 2)
       .attr('y', -20)
       .attr('text-anchor', 'middle')
-      .style('font-size', '16px')
-      .style('font-weight', 'bold')
       .text(title);
 
+    // X Label
     this.svg.append('text')
       .attr('class', 'x-label')
       .attr('text-anchor', 'middle')
@@ -235,6 +292,7 @@ class PerformanceChart {
       .attr('y', this.height + 40)
       .text(xLabel);
 
+    // Y Label
     this.svg.append('text')
       .attr('class', 'y-label')
       .attr('text-anchor', 'middle')
@@ -242,17 +300,38 @@ class PerformanceChart {
       .attr('x', -this.height / 2)
       .attr('y', -50)
       .text(yLabel);
+  }
 
-    // Linha de tendência
-    this.line = d3.line()
-      .x(d => this.xScale(d.size))
-      .y(d => this.yScale(d.value))
-      .curve(d3.curveMonotoneX);
+  updateGridLines() {
+    // Update X grid lines
+    const xGridLines = this.svg.select('.x-grid')
+      .selectAll('line')
+      .data(this.xScale.ticks(10));
 
-    this.tooltip = d3.select('body')
-      .append('div')
-      .attr('class', 'performance-tooltip')
-      .style('opacity', 0);
+    xGridLines.enter()
+      .append('line')
+      .merge(xGridLines)
+      .attr('x1', d => this.xScale(d))
+      .attr('x2', d => this.xScale(d))
+      .attr('y1', 0)
+      .attr('y2', this.height);
+
+    xGridLines.exit().remove();
+
+    // Update Y grid lines
+    const yGridLines = this.svg.select('.y-grid')
+      .selectAll('line')
+      .data(this.yScale.ticks(10));
+
+    yGridLines.enter()
+      .append('line')
+      .merge(yGridLines)
+      .attr('x1', 0)
+      .attr('x2', this.width)
+      .attr('y1', d => this.yScale(d))
+      .attr('y2', d => this.yScale(d));
+
+    yGridLines.exit().remove();
   }
 
   update(data) {
@@ -265,72 +344,22 @@ class PerformanceChart {
       const processedData = this.processData(data);
       const algorithmGroups = this.groupByAlgorithm(processedData);
 
-      this.updateScales(processedData);
+      // Atualizar escalas com base nos dados ou definir domínios padrão
+      if (data.length > 0) {
+        this.updateScales(processedData);
+      } else {
+        // Definir domínios padrão quando não há dados
+        this.xScale.domain([0, 100]); // Ajuste conforme necessário
+        this.yScale.domain([0, 100]); // Ajuste conforme necessário
+      }
+
+      this.updateGridLines();
       this.updateAxes();
       this.updateLines(algorithmGroups);
       this.updateLegend(Array.from(algorithmGroups.keys()));
       this.addInteractivity();
     } catch (error) {
       console.error('Error updating chart:', error);
-    }
-  }
-
-  processData(data) {
-    return data.map(d => ({
-      algorithm: d.algorithm,
-      size: d.size,
-      value: d.value
-    }));
-  }
-
-  groupByAlgorithm(data) {
-    return new Map(
-      Array.from(
-        d3.group(data, d => d.algorithm)
-      )
-    );
-  }
-
-  updateAxes() {
-    try {
-      this.xAxis.call(d3.axisBottom(this.xScale));
-      this.yAxis.call(d3.axisLeft(this.yScale));
-  
-      // Definir a cor dos textos dos eixos após a chamada do eixo
-      this.xAxis.selectAll('text').attr('fill', 'var(--axis-color)');
-      this.yAxis.selectAll('text').attr('fill', 'var(--axis-color)');
-    } catch (error) {
-      console.error('Error updating axes:', error);
-    }
-  }
-  
-
-  updateLegend(algorithms) {
-    try {
-      this.svg.selectAll('.legend').remove();
-
-      const legend = this.svg.append('g')
-        .attr('class', 'legend')
-        .attr('transform', `translate(${this.width + 20}, 20)`); // Move a legenda para a direita
-
-      algorithms.forEach((algo, i) => {
-        const legendRow = legend.append('g')
-          .attr('transform', `translate(0, ${i * 20})`);
-
-        legendRow.append('rect')
-          .attr('width', 10)
-          .attr('height', 10)
-          .attr('fill', this.colorScale(algo));
-
-        legendRow.append('text')
-          .attr('x', 15)
-          .attr('y', 10)
-          .attr('text-anchor', 'start')
-          .style('font-size', '12px')
-          .text(algo);
-      });
-    } catch (error) {
-      console.error('Error updating legend:', error);
     }
   }
 
@@ -346,24 +375,111 @@ class PerformanceChart {
     }
   }
 
+
+  updateAxes() {
+    try {
+      // Enhanced X axis
+      this.xAxis.transition().duration(500)
+        .call(d3.axisBottom(this.xScale)
+          .ticks(10)
+          .tickFormat(d => `${d}`))
+        .selectAll('text')
+        .style('font-size', '12px')
+        .style('fill', 'var(--axis-color)');
+
+      // Enhanced Y axis
+      this.yAxis.transition().duration(500)
+        .call(d3.axisLeft(this.yScale)
+          .ticks(10)
+          .tickFormat(d => `${d}ms`))
+        .selectAll('text')
+        .style('font-size', '12px')
+        .style('fill', 'var(--axis-color)');
+    } catch (error) {
+      console.error('Error updating axes:', error);
+    }
+  }
+
+  updateLegend(algorithms) {
+    try {
+      this.svg.selectAll('.legend').remove();
+
+      const legend = this.svg.append('g')
+        .attr('class', 'legend')
+        .attr('transform', `translate(${this.width + 20}, 0)`);
+
+      const legendItems = legend.selectAll('.legend-item')
+        .data(algorithms)
+        .enter()
+        .append('g')
+        .attr('class', 'legend-item')
+        .attr('transform', (d, i) => `translate(0, ${i * 25})`);
+
+      // Add colored rectangles
+      legendItems.append('rect')
+        .attr('width', 12)
+        .attr('height', 12)
+        .attr('rx', 2)
+        .attr('ry', 2)
+        .style('fill', d => this.colorScale(d));
+
+      // Add algorithm names
+      legendItems.append('text')
+        .attr('x', 20)
+        .attr('y', 9)
+        .style('font-size', '12px')
+        .style('fill', 'var(--axis-color)')
+        .text(d => d);
+
+      // Add interactivity to legend
+      legendItems
+        .style('cursor', 'pointer')
+        .on('mouseover', (event, algorithm) => {
+          // Highlight the corresponding line
+          this.svg.selectAll('.line-path')
+            .filter(d => d[0].algorithm !== algorithm)
+            .style('opacity', 0.2);
+        })
+        .on('mouseout', () => {
+          // Restore all lines
+          this.svg.selectAll('.line-path')
+            .style('opacity', 1);
+        });
+
+    } catch (error) {
+      console.error('Error updating legend:', error);
+    }
+  }
+
   updateLines(algorithmGroups) {
     try {
       // Remove existing lines
       this.svg.selectAll('.line-group').remove();
 
-      // Draw new lines for each algorithm
+      // Draw new lines for each algorithm with animations
       algorithmGroups.forEach((data, algorithm) => {
-        const lineGroup = this.svg.append('g').attr('class', 'line-group');
+        const lineGroup = this.svg.append('g')
+          .attr('class', 'line-group');
 
-        // Draw line path
-        lineGroup.append('path')
+        // Draw line path with animation
+        const path = lineGroup.append('path')
           .datum(data)
+          .attr('class', 'line-path')
           .attr('fill', 'none')
           .attr('stroke', this.colorScale(algorithm))
-          .attr('stroke-width', 2)
+          .attr('stroke-width', 2.5)
           .attr('d', this.line);
 
-        // Draw data points
+        // Add line animation
+        const pathLength = path.node().getTotalLength();
+        path
+          .attr('stroke-dasharray', pathLength)
+          .attr('stroke-dashoffset', pathLength)
+          .transition()
+          .duration(1000)
+          .attr('stroke-dashoffset', 0);
+
+        // Draw data points with animations
         lineGroup.selectAll('.dot')
           .data(data)
           .enter()
@@ -371,8 +487,11 @@ class PerformanceChart {
           .attr('class', 'dot')
           .attr('cx', d => this.xScale(d.size))
           .attr('cy', d => this.yScale(d.value))
-          .attr('r', 4)
-          .attr('fill', this.colorScale(algorithm));
+          .attr('r', 0)
+          .attr('fill', this.colorScale(algorithm))
+          .transition()
+          .duration(1000)
+          .attr('r', 5);
       });
     } catch (error) {
       console.error('Error updating lines:', error);
@@ -383,20 +502,40 @@ class PerformanceChart {
     try {
       this.svg.selectAll('.dot')
         .on('mouseover', (event, d) => {
-          d3.select(event.currentTarget).attr('r', 6);
+          // Enlarge dot
+          d3.select(event.currentTarget)
+            .transition()
+            .duration(200)
+            .attr('r', 8)
+            .style('stroke', '#fff')
+            .style('stroke-width', 2);
 
-          // Mostrar o tooltip
+          // Show tooltip with enhanced styling
           this.tooltip
             .style('opacity', 1)
-            .html(`Algoritmo: ${d.algorithm}<br>Tamanho: ${d.size}<br>Valor: ${d.value.toFixed(2)}`)
+            .html(`
+              <div style="font-weight: bold; margin-bottom: 5px; color: ${this.colorScale(d.algorithm)}">
+                ${d.algorithm}
+              </div>
+              <div style="margin-bottom: 3px">Array Size: ${d.size}</div>
+              <div>Time: ${d.value.toFixed(2)}ms</div>
+            `)
             .style('left', `${event.pageX + 15}px`)
-            .style('top', `${event.pageY - 40}px`);
+            .style('top', `${event.pageY - 60}px`);
         })
         .on('mouseout', (event) => {
-          d3.select(event.currentTarget).attr('r', 4);
+          // Restore dot size
+          d3.select(event.currentTarget)
+            .transition()
+            .duration(200)
+            .attr('r', 5)
+            .style('stroke', 'none');
 
-          // Esconder o tooltip
-          this.tooltip.style('opacity', 0);
+          // Hide tooltip
+          this.tooltip
+            .transition()
+            .duration(200)
+            .style('opacity', 0);
         });
     } catch (error) {
       console.error('Error adding interactivity:', error);
@@ -405,18 +544,33 @@ class PerformanceChart {
 
   clear() {
     try {
-      // Remove all line groups and legends
-      this.svg.selectAll('.line-group').remove();
-      this.svg.selectAll('.legend').remove();
+      // Remove all elements with transitions
+      this.svg.selectAll('.line-group')
+        .transition()
+        .duration(500)
+        .style('opacity', 0)
+        .remove();
 
-      // Clear axes
-      this.xAxis.selectAll('*').remove();
-      this.yAxis.selectAll('*').remove();
+      this.svg.selectAll('.legend')
+        .transition()
+        .duration(500)
+        .style('opacity', 0)
+        .remove();
+
+      // Clear axes with transitions
+      this.xAxis.transition().duration(500).call(d3.axisBottom(this.xScale.domain([0, 0])));
+      this.yAxis.transition().duration(500).call(d3.axisLeft(this.yScale.domain([0, 0])));
+
+      // Clear grid lines
+      this.svg.selectAll('.grid-lines line')
+        .transition()
+        .duration(500)
+        .style('opacity', 0)
+        .remove();
+
     } catch (error) {
       console.error('Error clearing chart:', error);
     }
-    // Clear event listeners
-    this.svg.selectAll('.dot').on('mouseover', null).on('mouseout', null);
   }
 }
 

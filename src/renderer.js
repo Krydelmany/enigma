@@ -1,11 +1,40 @@
 // src/renderer.js
 
-import * as d3 from 'd3'; // Certifique-se de importar o D3
 import { SortingVisualizer, AlgorithmAnalytics } from './scripts/chart';
 import { bubbleSort } from './scripts/algorithms/bubbleSort';
 import { insertSort } from './scripts/algorithms/insertSort';
 import { quickSort } from './scripts/algorithms/quickSort';
 import { mergeSort } from './scripts/algorithms/mergeSort';
+import { heapSort } from './scripts/algorithms/heapSort';
+import { selectSort } from './scripts/algorithms/selectSort';
+import { shellSort } from './scripts/algorithms/shellSort';
+
+
+/**
+ * Formata o tempo de execução em uma unidade legível.
+ * @param {number} milliseconds - O tempo em milissegundos.
+ * @returns {string} - Tempo formatado.
+ */
+function formatExecutionTime(milliseconds) {
+    const seconds = Math.floor(milliseconds / 1000);
+    const ms = milliseconds % 1000;
+
+    if (seconds < 60) {
+        return `${seconds}s ${ms}ms`; // Exibe em segundos e milissegundos
+    }
+
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+
+    if (minutes < 60) {
+        return `${minutes}m ${remainingSeconds}s`; // Exibe em minutos e segundos
+    }
+
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+
+    return `${hours}h ${remainingMinutes}m ${remainingSeconds}s`; // Exibe em horas, minutos e segundos
+}
 
 class SortingApp {
     constructor() {
@@ -66,20 +95,18 @@ class SortingApp {
         const clearButton = document.createElement('button');
         clearButton.textContent = 'Limpar Dados';
         clearButton.onclick = () => this.clearPerformanceData();
-        clearButton.classList.add('button', 'button--danger'); // Adicionado
-    
+        clearButton.classList.add('button', 'button--danger', 'button--utility');
+
         const exportButton = document.createElement('button');
         exportButton.textContent = 'Exportar CSV';
         exportButton.onclick = () => this.exportPerformanceData();
-        exportButton.classList.add('button', 'button--info'); // Adicionado
-    
+        exportButton.classList.add('button', 'button--info', 'button--utility');
+
         this.elements.performanceContainer.appendChild(clearButton);
         this.elements.performanceContainer.appendChild(exportButton);
     }
-    
 
     bindEvents() {
-        // Usar this.elements em vez de referências diretas
         this.elements.newArrayButton.addEventListener('click', () => this.generateNewArray());
         this.elements.startButton.addEventListener('click', () => this.startSorting());
         this.elements.sizeInput.addEventListener('change', () => this.generateNewArray());
@@ -109,6 +136,7 @@ class SortingApp {
     resetStats() {
         this.comparisons = 0;
         this.elements.comparisonsSpan.textContent = '0';
+        this.elements.executionTime.textContent = '0s 0ms';
     }
 
     exportPerformanceData() {
@@ -148,7 +176,8 @@ class SortingApp {
                 comparisons: this.comparisons - initialComparisons
             });
 
-            this.elements.executionTime.textContent = `${(endTime - startTime).toFixed(2)} ms`;
+            // Atualizar a exibição do tempo formatado
+            this.elements.executionTime.textContent = formatExecutionTime(endTime - startTime);
         } catch (error) {
             console.error('Sorting error:', error);
         } finally {
@@ -157,15 +186,16 @@ class SortingApp {
         }
     }
 
-
     getSelectedAlgorithm() {
         const algorithms = {
             bubble: bubbleSort,
             insert: insertSort,
             quick: quickSort,
-            merge: mergeSort
+            merge: mergeSort,
+            heap: heapSort,
+            select: selectSort,
+            shell: shellSort
         };
-        // Fix: Use this.elements
         return algorithms[this.elements.algorithmSelect.value];
     }
 
@@ -207,28 +237,8 @@ class SortingApp {
         }
     }
 
-    destroy() {
-        // Store bound handlers
-        const handlers = {
-            newArray: () => this.generateNewArray(),
-            startSort: () => this.startSorting(),
-            sizeChange: () => this.generateNewArray()
-        };
-
-        // Remove with proper handlers
-        this.elements.newArrayButton.removeEventListener('click', handlers.newArray);
-        this.elements.startButton.removeEventListener('click', handlers.startSort);
-        this.elements.sizeInput.removeEventListener('change', handlers.sizeChange);
-
-        // Cleanup
-        this.clearPerformanceData();
-        if (this.sortingVisualizer) this.sortingVisualizer.destroy();
-        if (this.algorithmAnalytics) this.algorithmAnalytics.destroy();
-    }
-
-
     updatePerformanceData(metrics) {
-        if (!metrics?.time || !metrics?.comparisons) {
+        if (!metrics?.time || metrics.comparisons === undefined) {
             throw new Error('Invalid metrics data');
         }
 
@@ -242,41 +252,12 @@ class SortingApp {
         this.performanceData.push(newDataPoint);
 
         try {
-            const groupedData = this.groupPerformanceData();
-            this.algorithmAnalytics.update(groupedData);
-
-            const uniqueAlgorithms = [...new Set(this.performanceData.map(d => d.algorithm))];
-            this.algorithmAnalytics.timeChart.updateLegend(uniqueAlgorithms);
-            this.algorithmAnalytics.comparisonChart.updateLegend(uniqueAlgorithms);
+            this.algorithmAnalytics.update(this.performanceData);
         } catch (error) {
             console.error('Error updating performance data:', error);
         }
     }
 
-
-
-    groupPerformanceData() {
-        return Object.values(
-            this.performanceData.reduce((acc, item) => {
-                const key = `${item.algorithm}-${item.size}`;
-                if (!acc[key]) {
-                    acc[key] = {
-                        algorithm: item.algorithm,
-                        size: item.size,
-                        time: [],
-                        comparisons: []
-                    };
-                }
-                acc[key].time.push(item.time);
-                acc[key].comparisons.push(item.comparisons);
-                return acc;
-            }, {})
-        ).map(group => ({
-            ...group,
-            time: d3.mean(group.time) || 0,
-            comparisons: d3.mean(group.comparisons) || 0
-        }));
-    }
 
     toggleControls(enabled) {
         Object.entries({
