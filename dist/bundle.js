@@ -35,7 +35,7 @@ function _bubbleSort() {
         case 0:
           n = arr.length;
           lastSorted = n;
-          swapCount = 0; // Initialize swap counter
+          swapCount = 0;
         case 3:
           swapped = false;
           j = 0;
