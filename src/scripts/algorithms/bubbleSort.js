@@ -3,35 +3,34 @@
 export async function bubbleSort(arr, onUpdate, onCompare, delay) {
     let n = arr.length;
     let swapped;
-    let lastSorted = n; // Mantém o limite do último elemento ordenado
+    let lastSorted = n;
+    let swapCount = 0;
 
     do {
         swapped = false;
 
         for (let j = 0; j < lastSorted - 1; j++) {
-            const minIndex = arr[j] < arr[j + 1] ? j : j + 1;
-
-            // Chamar onCompare com índices comparados e minIndex como specialIndices
-            await onCompare([j, j + 1], [minIndex]);
+            await onCompare([j, j + 1], []);
 
             if (arr[j] > arr[j + 1]) {
-                // Trocar se necessário
+                // Swap elements
                 [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
                 swapped = true;
+                swapCount++; // Increment swap counter
 
-                // Chamar onUpdate com swappingIndices
-                await onUpdate([...arr], [j, j + 1]);
+                await onUpdate([...arr], [j, j + 1], []);
+                await new Promise(resolve => setTimeout(resolve, delay));
             } else {
-                // Chamar onUpdate sem swappingIndices
-                await onUpdate([...arr]);
+                await onUpdate([...arr], [], []);
             }
         }
 
         lastSorted--;
     } while (swapped);
 
-    // Passada final: destacar todos os elementos como ordenados
+    // Final update to highlight sorted elements
     await onUpdate([...arr], [], Array.from({ length: n }, (_, i) => i));
 
-    return arr;
+    // Return both the sorted array and swap count
+    return { sortedArray: arr, swapCount };
 }

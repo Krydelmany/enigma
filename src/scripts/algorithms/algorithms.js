@@ -5,5 +5,8 @@ export const ALGORITHMS = {
     MERGE: 'merge',
     HEAP: 'heap',
     SELECT: 'select',
-    SHELL: 'shell'
+    SHELL: 'shell',
+    COUNTING: 'counting',
+    BUCKET: 'bucket',
+    RADIX: 'radix'
   };

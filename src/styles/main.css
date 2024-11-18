@@ -271,12 +271,22 @@ body.dark-mode .y-label {
 
 .button--primary {
   background-color: var(--button-bg);
-  color: var(--button-text-color);
+  color: white;
 }
 
 .button--primary:hover {
   background-color: var(--button-hover-bg);
 }
+
+.button--warning {
+  background-color: #ffc107;
+  color: white;
+}
+
+.button--warning:hover {
+  background-color: #e0a800;
+}
+
 
 .button--secondary {
   background-color: #4caf50;
@@ -446,7 +456,7 @@ body.dark-mode .y-label {
 /* Barras */
 .bar {
   fill: var(--bar-default); /* Azul padrão */
-  transition: fill 0.2s ease, height 0.1s ease-in-out, y 0.1s ease-in-out;
+  /* transition: fill 0.1s ease, height 0.1s ease-in-out, y 0.1s ease-in-out; efeito das barras ao mudar de posicao*/
 }
 
 .bar.highlight {
@@ -478,4 +488,63 @@ body.dark-mode .y-label {
 
 .dot:hover {
   r: 6 !important;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+
+.input-group__label {
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.input-group input[type="number"] {
+    padding: 8px;
+    margin-bottom: 8px;
+    border: 1px solid var(--control-border);
+    border-radius: 4px;
+    background-color: var(--container-bg);
+    color: var(--text-color);
+}
+
+.input-group input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    background: transparent;
+}
+
+/* Estilos para o slider */
+.input-group input[type="range"]::-webkit-slider-runnable-track {
+    height: 8px;
+    background: var(--control-border);
+    border-radius: 4px;
+}
+
+.input-group input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--button-bg);
+    border-radius: 50%;
+    cursor: pointer;
+    margin-top: -6px;
+}
+
+/* Para navegadores Firefox */
+.input-group input[type="range"]::-moz-range-track {
+    height: 8px;
+    background: var(--control-border);
+    border-radius: 4px;
+}
+
+.input-group input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: var(--button-bg);
+    border-radius: 50%;
+    cursor: pointer;
 }

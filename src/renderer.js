@@ -8,7 +8,9 @@ import { mergeSort } from './scripts/algorithms/mergeSort';
 import { heapSort } from './scripts/algorithms/heapSort';
 import { selectSort } from './scripts/algorithms/selectSort';
 import { shellSort } from './scripts/algorithms/shellSort';
-
+import { radixSort } from './scripts/algorithms/radixSort';
+import { countingSort } from './scripts/algorithms/countingSort';
+import { bucketSort } from './scripts/algorithms/bucketSort';
 
 /**
  * Formata o tempo de execução em uma unidade legível.
@@ -69,6 +71,7 @@ class SortingApp {
 
     initializeState() {
         this.currentArray = [];
+        this.initialArray = [];
         this.isSorting = false;
         this.performanceData = [];
         this.comparisons = 0;
@@ -79,13 +82,16 @@ class SortingApp {
             executionTime: document.getElementById('execution-time'),
             algorithmSelect: document.getElementById('algorithm-select'),
             sizeInput: document.getElementById('size-input'),
+            sizeRange: document.getElementById('size-range'),
             speedInput: document.getElementById('speed-input'),
+            speedRange: document.getElementById('speed-range'), // Adicionado
             newArrayButton: document.getElementById('new-array-button'),
             startButton: document.getElementById('start-button'),
+            resetArrayButton: document.getElementById('reset-array-button'), // Adicionado
             comparisonsSpan: document.getElementById('comparisons'),
-            performanceContainer: document.querySelector('#performance-container')
+            performanceContainer: document.querySelector('#performance-container'),
         };
-
+    
         if (!Object.values(this.elements).every(element => element)) {
             throw new Error('Failed to initialize required DOM elements');
         }
@@ -105,11 +111,30 @@ class SortingApp {
         this.elements.performanceContainer.appendChild(clearButton);
         this.elements.performanceContainer.appendChild(exportButton);
     }
-
     bindEvents() {
         this.elements.newArrayButton.addEventListener('click', () => this.generateNewArray());
         this.elements.startButton.addEventListener('click', () => this.startSorting());
-        this.elements.sizeInput.addEventListener('change', () => this.generateNewArray());
+    
+        // Sincroniza tamanho do array
+        this.elements.sizeRange.addEventListener('input', () => {
+            this.elements.sizeInput.value = this.elements.sizeRange.value;
+            this.generateNewArray();
+        });
+        this.elements.sizeInput.addEventListener('input', () => {
+            this.elements.sizeRange.value = this.elements.sizeInput.value;
+            this.generateNewArray();
+        });
+    
+        // Sincroniza velocidade
+        this.elements.speedRange.addEventListener('input', () => {
+            this.elements.speedInput.value = this.elements.speedRange.value;
+        });
+        this.elements.speedInput.addEventListener('input', () => {
+            this.elements.speedRange.value = this.elements.speedInput.value;
+        });
+    
+        // Event listener para o botão de reset
+        this.elements.resetArrayButton.addEventListener('click', () => this.resetToInitialArray());
     }
 
     generateNewArray() {
@@ -117,6 +142,7 @@ class SortingApp {
         this.elements.sizeInput.value = size; // Normaliza o input
         this.currentArray = Array.from({ length: size },
             () => Math.floor(Math.random() * 100) + 1);
+        this.initialArray = [...this.currentArray];
         this.sortingVisualizer.update(this.currentArray);
         this.resetStats();
     }
@@ -158,6 +184,10 @@ class SortingApp {
         const initialComparisons = this.comparisons;
         const startTime = performance.now();
 
+        if (!this.initialArray.length || this.initialArray.toString() !== this.currentArray.toString()) {
+            this.initialArray = [...this.currentArray];
+        }
+
         try {
             this.isSorting = true;
             this.toggleControls(false);
@@ -186,6 +216,18 @@ class SortingApp {
         }
     }
 
+    resetToInitialArray() {
+        if (this.isSorting) return;
+
+        if (this.initialArray.length) {
+            this.currentArray = [...this.initialArray];
+            this.sortingVisualizer.update(this.currentArray);
+            this.resetStats();
+        } else {
+            console.warn('Nenhum array inicial armazenado.');
+        }
+    }
+
     getSelectedAlgorithm() {
         const algorithms = {
             bubble: bubbleSort,
@@ -194,7 +236,10 @@ class SortingApp {
             merge: mergeSort,
             heap: heapSort,
             select: selectSort,
-            shell: shellSort
+            shell: shellSort,
+            counting: countingSort,
+            bucket: bucketSort,
+            radix: radixSort
         };
         return algorithms[this.elements.algorithmSelect.value];
     }
@@ -264,12 +309,14 @@ class SortingApp {
             algorithmSelect: enabled,
             sizeInput: enabled,
             speedInput: enabled,
+            sizeRange: enabled,
             newArrayButton: enabled,
+            speedRange: enabled,
             startButton: enabled
         }).forEach(([key, value]) => {
             this.elements[key].disabled = !value;
         });
-
+        this.elements.resetArrayButton.disabled = !enabled;
         this.elements.startButton.textContent = enabled ? 'Iniciar Ordenação' : 'Ordenando...';
     }
 }

@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Visualizador e análise de algoritmos de ordenação com diferentes métodos como Bubble Sort, Insertion Sort, Quick Sort e Merge Sort">
+    <meta name="description"
+        content="Visualizador e análise de algoritmos com diferentes métodos como Bubble Sort, Insertion Sort, Quick Sort e outros">
     <meta name="theme-color" content="#ffffff">
-    <title>Análise de Algoritmos de Ordenação</title>
+    <title>Enigma</title>
     <link rel="stylesheet" href="styles/main.css">
 </head>
+
 <body>
     <div class="container">
         <header class="header">
             <div class="header__content">
-                <h1 class="header__title">Análise de Algoritmos de Ordenação</h1>
+                <h1 class="header__title">📊 Análise de Algoritmos</h1>
                 <div class="theme-switcher">
                     <div class="theme-switcher__toggle" role="switch" aria-checked="false">
-                        <input 
-                            type="checkbox" 
-                            id="dark-mode-toggle" 
-                            class="theme-switcher__input"
+                        <input type="checkbox" id="dark-mode-toggle" class="theme-switcher__input"
                             aria-label="Alternar modo escuro">
                         <label for="dark-mode-toggle" class="theme-switcher__label">
                             <span class="visually-hidden">Modo Escuro</span>
@@ -28,16 +28,14 @@
                 </div>
             </div>
         </header>
-        
+
         <main class="main-content">
             <section class="control-panel" aria-labelledby="control-panel-title">
                 <h2 id="control-panel-title" class="visually-hidden">Painel de Controle</h2>
-                
+
                 <div class="control-panel__algorithms">
                     <label for="algorithm-select" class="control-panel__label">Algoritmo:</label>
-                    <select 
-                        id="algorithm-select" 
-                        class="control-panel__select"
+                    <select id="algorithm-select" class="control-panel__select"
                         aria-label="Selecione o algoritmo de ordenação">
                         <option value="bubble">Bubble Sort</option>
                         <option value="insert">Insertion Sort</option>
@@ -46,47 +44,39 @@
                         <option value="merge">Merge Sort</option>
                         <option value="heap">Heap Sort</option>
                         <option value="shell">Shell Sort</option>
+                        <option value="counting">Counting Sort</option>
+                        <option value="bucket">Bucket Sort</option> 
+                        <option value="radix">Radix Sort</option>
                     </select>
                 </div>
-                
+
                 <div class="control-panel__inputs">
                     <div class="input-group">
-                        <label for="size-input" class="input-group__label">Tamanho do Array:</label>
-                        <input 
-                            type="number" 
-                            id="size-input" 
-                            class="input-group__input"
-                            min="5" 
-                            max="1000" 
-                            value="30"
-                            aria-label="Defina o tamanho do array">
+                        <label class="input-group__label">
+                            Tamanho do Array:
+                        </label>
+                        <input type="number" id="size-input" min="5" max="1000" value="30" step="1" aria-label="Digite o tamanho do array">
+                        <input type="range" id="size-range" min="5" max="1000" value="30" step="1" aria-label="Defina o tamanho do array">
                     </div>
-                    
                     <div class="input-group">
-                        <label for="speed-input" class="input-group__label">Velocidade (ms):</label>
-                        <input 
-                            type="number" 
-                            id="speed-input" 
-                            class="input-group__input"
-                            min="1" 
-                            max="1000" 
-                            value="50"
-                            aria-label="Defina a velocidade da animação">
+                        <label class="input-group__label">
+                            Velocidade (ms):
+                        </label>
+                        <input type="number" id="speed-input" min="1" max="1000" value="50" step="1" aria-label="Digite a velocidade da animação">
+                        <input type="range" id="speed-range" min="1" max="1000" value="50" step="1" aria-label="Defina a velocidade da animação">
                     </div>
                 </div>
-                
+
                 <div class="control-panel__buttons">
-                    <button 
-                        id="new-array-button" 
-                        class="button button--secondary"
-                        aria-label="Gerar novo array">
+                    <button id="new-array-button" class="button button--secondary" aria-label="Gerar novo array">
                         Novo Array
                     </button>
-                    <button 
-                        id="start-button" 
-                        class="button button--primary"
-                        aria-label="Iniciar ordenação">
+                    <button id="start-button" class="button button--primary" aria-label="Iniciar ordenação">
                         Iniciar Ordenação
+                    </button>
+                    <button id="reset-array-button" class="button button--warning"
+                        aria-label="Retornar ao array inicial">
+                        Vetor Inicial
                     </button>
                 </div>
             </section>
@@ -98,25 +88,23 @@
                         <span class="statistics__label">Comparações:</span>
                         <span id="comparisons" class="statistics__value">0</span>
                     </div>
+                    <div class="statistics__item" id="swap-count" >
+                        <span class="statistics__label">Total Swaps:</span>
+                        <span class="statistics__value">0</span>
+                    </div>
                     <div class="statistics__item">
                         <span class="statistics__label">Tempo de execução:</span>
                         <span id="execution-time" class="statistics__value">0 ms</span>
                     </div>
                 </div>
             </section>
-            
+
             <section class="visualization" aria-labelledby="visualization-title">
                 <h2 id="visualization-title" class="visually-hidden">Visualização da Ordenação</h2>
-                <div 
-                    id="sorting-container" 
-                    class="visualization__sorting"
-                    role="region" 
+                <div id="sorting-container" class="visualization__sorting" role="region"
                     aria-label="Visualização da ordenação em tempo real">
                 </div>
-                <div 
-                    id="performance-container" 
-                    class="visualization__performance"
-                    role="region" 
+                <div id="performance-container" class="visualization__performance" role="region"
                     aria-label="Gráfico de performance dos algoritmos">
                 </div>
             </section>
@@ -186,7 +174,8 @@
             new ThemeSwitcher();
         });
     </script>
-    
+
     <script src="../dist/bundle.js"></script>
 </body>
+
 </html>
