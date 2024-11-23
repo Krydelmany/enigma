@@ -1,43 +1,75 @@
 import * as d3 from 'd3';
 
 export class SortingVisualizer {
-  constructor(containerId) {
+  constructor(containerId, options = {}) {
+    if (typeof d3 === 'undefined') {
+      throw new Error('D3.js is required');
+    }
+
+    this.config = {
+      animationDuration: 200,
+      barColors: {
+        default: 'var(--bar-color, #4285f4)',
+        swapping: 'var(--swapping-color, #db4437)',
+        highlight: 'var(--highlight-color, #f4b400)',
+        special: 'var(--special-color, #0f9d58)'
+      },
+      ...options
+    };
+
     this.container = d3.select(containerId);
-    this.margin = { top: 30, right: 30, bottom: 50, left: 50 };
-    this.width = 1150 - this.margin.left - this.margin.right;
-    this.height = 500 - this.margin.top - this.margin.bottom;
+    this.setupResponsiveLayout();
+    this.setupVisualization();
+    this.setupResizeHandler();
+    this.setupAccessibility();
+  }
 
-    // Configuração do SVG principal
-    this.svg = this.container
-      .append('svg')
-      .attr('width', this.width + this.margin.left + this.margin.right)
-      .attr('height', this.height + this.margin.top + this.margin.bottom)
-      .append('g')
-      .attr('transform', `translate(${this.margin.left},${this.margin.top})`);
+  setupVisualization() {
+    try {
+      this.svg = this.container
+        .append('svg')
+        .attr(
+          'viewBox',
+          `0 0 ${this.width + this.margin.left + this.margin.right} ${
+            this.height + this.margin.top + this.margin.bottom
+          }`
+        )
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .append('g')
+        .attr('transform', `translate(${this.margin.left},${this.margin.top})`);
 
-    // Escalas
-    this.xScale = d3.scaleBand()
-      .range([0, this.width])
-      .padding(0.1);
+      this.setupScalesAndAxes();
+      this.setupLabels();
+      this.setupTooltip();
+    } catch (error) {
+      console.error('Error setting up visualization:', error);
+      throw error;
+    }
+  }
 
-    this.yScale = d3.scaleLinear()
-      .range([this.height, 0]);
+  setupAccessibility() {
+    this.svg
+      .attr('role', 'img')
+      .attr('aria-label', 'Sorting visualization chart')
+      .attr('tabindex', '0');
+  }
 
-    // Eixos
-    this.xAxis = this.svg.append('g')
-      .attr('class', 'x-axis')
-      .attr('transform', `translate(0,${this.height})`);
+  setupTooltip() {
+    this.tooltip = d3.select('body')
+      .append('div')
+      .attr('class', 'tooltip')
+      .style('opacity', 0)
+      .style('position', 'absolute')
+      .style('pointer-events', 'none');
+  }
 
-    this.yAxis = this.svg.append('g')
-      .attr('class', 'y-axis');
-
-    // Rótulos dos eixos
+  setupLabels() {
     this.svg.append('text')
       .attr('class', 'x-label')
       .attr('text-anchor', 'middle')
       .attr('x', this.width / 2)
       .attr('y', this.height + 40)
-      .text('Índice do Array');
+      .text('Index');
 
     this.svg.append('text')
       .attr('class', 'y-label')
@@ -45,57 +77,89 @@ export class SortingVisualizer {
       .attr('transform', 'rotate(-90)')
       .attr('x', -this.height / 2)
       .attr('y', -40)
-      .text('Valor');
-
-    // Tooltip
-    this.tooltip = this.container
-      .append('div')
-      .attr('class', 'sorting-tooltip')
-      .style('opacity', 0);
+      .text('Value');
   }
 
-  /**
-   * Atualiza a visualização das barras.
-   * @param {Array} data - Array de números a serem visualizados.
-   * @param {Array} highlightIndices - Índices a serem destacados em amarelo.
-   * @param {Array} swappingIndices - Índices a serem destacados em vermelho.
-   * @param {Array} specialIndices - Índices a serem destacados em verde.
-   */
+  setupResponsiveLayout() {
+    const containerWidth = this.container.node().getBoundingClientRect().width;
+    this.margin = { top: 30, right: 30, bottom: 50, left: 50 };
+    this.width = containerWidth - this.margin.left - this.margin.right;
+    this.height =
+      Math.min(500, window.innerHeight * 0.6) -
+      this.margin.top -
+      this.margin.bottom;
+  }
+
+  setupScalesAndAxes() {
+    this.xScale = d3.scaleBand().range([0, this.width]).padding(0.1);
+
+    this.yScale = d3.scaleLinear().range([this.height, 0]);
+
+    this.xAxis = this.svg
+      .append('g')
+      .attr('class', 'x-axis')
+      .attr('transform', `translate(0,${this.height})`);
+
+    this.yAxis = this.svg.append('g').attr('class', 'y-axis');
+  }
+
+  setupResizeHandler() {
+    let resizeTimeout;
+    const resizeObserver = new ResizeObserver(() => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        this.setupResponsiveLayout();
+        if (this.currentData) {
+          this.update(this.currentData);
+        }
+      }, 250); // Debounce resize events
+    });
+    resizeObserver.observe(this.container.node());
+  }
+
   update(data, highlightIndices = [], swappingIndices = [], specialIndices = []) {
-    // Atualizar escalas
+    this.currentData = data;
+
     this.xScale.domain(data.map((d, i) => i));
     this.yScale.domain([0, d3.max(data) * 1.1]);
 
-    // Atualizar eixos
-    if (data.length <= 30) {
-      this.xAxis.call(d3.axisBottom(this.xScale));
-    } else {
-      this.xAxis.call(d3.axisBottom(this.xScale).tickValues([]));
-    }
-    this.yAxis.call(d3.axisLeft(this.yScale));
+    this.updateAxes();
 
-    // Definir a cor dos textos dos eixos após a chamada do eixo
-    this.xAxis.selectAll('text').attr('fill', 'var(--axis-color)');
-    this.yAxis.selectAll('text').attr('fill', 'var(--axis-color)');
+    const bars = this.svg.selectAll('.bar').data(data);
 
-    // Selecionar as barras existentes
-    const bars = this.svg.selectAll('.bar')
-      .data(data);
-
-    // Remover barras antigas
     bars.exit().remove();
 
-    // Adicionar novas barras (se necessário)
-    const barsEnter = bars.enter()
-      .append('rect')
-      .attr('class', 'bar')
-      .attr('x', (d, i) => this.xScale(i))
-      .attr('width', this.xScale.bandwidth())
-      .attr('y', d => this.yScale(d))
-      .attr('height', d => this.height - this.yScale(d));
+    const barsEnter = bars.enter().append('rect').attr('class', 'bar');
 
-    // Atualizar todas as barras (novas e existentes)
-    bars.merge(barsEnter)
+    this.updateBars(bars.merge(barsEnter), highlightIndices, swappingIndices, specialIndices);
+
+    this.setupEnhancedTooltip(bars.merge(barsEnter));
+  }
+
+  updateAxes() {
+    this.xAxis
+      .transition()
+      .duration(this.config.animationDuration)
+      .call(
+        this.currentData.length <= 30
+          ? d3.axisBottom(this.xScale)
+          : d3.axisBottom(this.xScale).tickValues([])
+      )
+      .selectAll('text')
+      .attr('fill', 'var(--axis-color)');
+
+    this.yAxis
+      .transition()
+      .duration(this.config.animationDuration)
+      .call(d3.axisLeft(this.yScale))
+      .selectAll('text')
+      .attr('fill', 'var(--axis-color)');
+  }
+
+  updateBars(bars, highlightIndices, swappingIndices, specialIndices) {
+    bars
+      .transition()
+      .duration(this.config.animationDuration)
       .attr('x', (d, i) => this.xScale(i))
       .attr('width', this.xScale.bandwidth())
       .attr('y', d => this.yScale(d))
@@ -107,13 +171,22 @@ export class SortingVisualizer {
         else if (specialIndices.includes(i)) classes += ' special';
         return classes;
       });
+  }
+  
 
-    // Adicionar eventos de mouse
-    bars.merge(barsEnter)
+  setupEnhancedTooltip(bars) {
+    bars
       .on('mouseover', (event, d) => {
+        const i = this.currentData.indexOf(d);
         this.tooltip
           .style('opacity', 1)
-          .html(`Valor: ${d}`)
+          .html(`
+            <div class="tooltip-content">
+              <strong>Valor:</strong> ${d}<br>
+              <strong>Índice:</strong> ${i}<br>
+              <strong>Posição:</strong> ${i + 1}/${this.currentData.length}
+            </div>
+          `)
           .style('left', `${event.pageX + 15}px`)
           .style('top', `${event.pageY - 40}px`);
       })
@@ -121,7 +194,20 @@ export class SortingVisualizer {
         this.tooltip.style('opacity', 0);
       });
   }
+
+  destroy() {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+    }
+    if (this.tooltip) {
+      this.tooltip.remove();
+    }
+    if (this.svg) {
+      this.svg.remove();
+    }
+  }
 }
+
 
 export class AlgorithmAnalytics {
   constructor(containerId) {
@@ -156,11 +242,9 @@ export class AlgorithmAnalytics {
       'Número de Comparações'
     );
 
-    // Inicializa os gráficos com dados vazios para desenhar as linhas de grade
     this.timeChart.update([]);
     this.comparisonChart.update([]);
   }
-
 
   update(data) {
     if (!Array.isArray(data) || data.length === 0) {
@@ -172,7 +256,7 @@ export class AlgorithmAnalytics {
       console.error('Each data object must contain algorithm, size, time, and comparisons properties.');
       return;
     }
-    // Criar cópias dos dados para cada gráfico
+
     const timeData = data.map(d => ({
       algorithm: d.algorithm,
       size: d.size,
@@ -194,13 +278,13 @@ export class AlgorithmAnalytics {
     this.comparisonChart.clear();
   }
 }
-class PerformanceChart {
+
+export class PerformanceChart {
   constructor(container, title, xLabel, yLabel) {
     this.margin = { top: 40, right: 120, bottom: 50, left: 70 };
     this.width = 600 - this.margin.left - this.margin.right;
     this.height = 400 - this.margin.top - this.margin.bottom;
 
-    // Enhanced SVG setup with better styling
     this.svg = d3.select(container)
       .append('svg')
       .attr('width', this.width + this.margin.left + this.margin.right)
@@ -208,16 +292,13 @@ class PerformanceChart {
       .append('g')
       .attr('transform', `translate(${this.margin.left},${this.margin.top})`);
 
-    // Improved scales with better color palette for algorithm visualization
     this.xScale = d3.scaleLinear().range([0, this.width]);
     this.yScale = d3.scaleLinear().range([this.height, 0]);
     this.colorScale = d3.scaleOrdinal()
-      .range(['#2196F3', '#FF5722', '#4CAF50', '#9C27B0', '#FFC107']); // Material design colors
+      .range(['#2196F3', '#FF5722', '#4CAF50', '#9C27B0', '#FFC107']);
 
-    // Add grid lines for better readability
     this.addGridLines();
 
-    // Enhanced axes with better styling
     this.xAxis = this.svg.append('g')
       .attr('class', 'x-axis')
       .attr('transform', `translate(0,${this.height})`);
@@ -225,16 +306,13 @@ class PerformanceChart {
     this.yAxis = this.svg.append('g')
       .attr('class', 'y-axis');
 
-    // Enhanced labels with better positioning and styling
     this.addChartLabels(title, xLabel, yLabel);
 
-    // Improved line generator with smoother curves
     this.line = d3.line()
       .x(d => this.xScale(d.size))
       .y(d => this.yScale(d.value))
       .curve(d3.curveCardinal.tension(0.7));
 
-    // Enhanced tooltip with better styling
     this.tooltip = d3.select('body')
       .append('div')
       .attr('class', 'performance-tooltip')
@@ -249,7 +327,6 @@ class PerformanceChart {
       .style('font-size', '12px');
   }
 
-  // Adicionar os métodos ausentes aqui
   processData(data) {
     return data.map(d => ({
       algorithm: d.algorithm,
@@ -263,13 +340,11 @@ class PerformanceChart {
   }
 
   addGridLines() {
-    // Add X grid lines
     this.svg.append('g')
       .attr('class', 'grid-lines x-grid')
       .style('stroke', '#e0e0e0')
       .style('stroke-dasharray', '3,3');
 
-    // Add Y grid lines
     this.svg.append('g')
       .attr('class', 'grid-lines y-grid')
       .style('stroke', '#e0e0e0')
@@ -284,7 +359,6 @@ class PerformanceChart {
       .attr('text-anchor', 'middle')
       .text(title);
 
-    // X Label
     this.svg.append('text')
       .attr('class', 'x-label')
       .attr('text-anchor', 'middle')
@@ -292,7 +366,6 @@ class PerformanceChart {
       .attr('y', this.height + 40)
       .text(xLabel);
 
-    // Y Label
     this.svg.append('text')
       .attr('class', 'y-label')
       .attr('text-anchor', 'middle')
@@ -300,38 +373,6 @@ class PerformanceChart {
       .attr('x', -this.height / 2)
       .attr('y', -50)
       .text(yLabel);
-  }
-
-  updateGridLines() {
-    // Update X grid lines
-    const xGridLines = this.svg.select('.x-grid')
-      .selectAll('line')
-      .data(this.xScale.ticks(10));
-
-    xGridLines.enter()
-      .append('line')
-      .merge(xGridLines)
-      .attr('x1', d => this.xScale(d))
-      .attr('x2', d => this.xScale(d))
-      .attr('y1', 0)
-      .attr('y2', this.height);
-
-    xGridLines.exit().remove();
-
-    // Update Y grid lines
-    const yGridLines = this.svg.select('.y-grid')
-      .selectAll('line')
-      .data(this.yScale.ticks(10));
-
-    yGridLines.enter()
-      .append('line')
-      .merge(yGridLines)
-      .attr('x1', 0)
-      .attr('x2', this.width)
-      .attr('y1', d => this.yScale(d))
-      .attr('y2', d => this.yScale(d));
-
-    yGridLines.exit().remove();
   }
 
   update(data) {
@@ -344,13 +385,11 @@ class PerformanceChart {
       const processedData = this.processData(data);
       const algorithmGroups = this.groupByAlgorithm(processedData);
 
-      // Atualizar escalas com base nos dados ou definir domínios padrão
       if (data.length > 0) {
         this.updateScales(processedData);
       } else {
-        // Definir domínios padrão quando não há dados
-        this.xScale.domain([0, 100]); // Ajuste conforme necessário
-        this.yScale.domain([0, 100]); // Ajuste conforme necessário
+        this.xScale.domain([0, 100]);
+        this.yScale.domain([0, 100]);
       }
 
       this.updateGridLines();
@@ -375,10 +414,8 @@ class PerformanceChart {
     }
   }
 
-
   updateAxes() {
     try {
-      // Enhanced X axis
       this.xAxis.transition().duration(500)
         .call(d3.axisBottom(this.xScale)
           .ticks(10)
@@ -387,11 +424,10 @@ class PerformanceChart {
         .style('font-size', '12px')
         .style('fill', 'var(--axis-color)');
 
-      // Enhanced Y axis
       this.yAxis.transition().duration(500)
         .call(d3.axisLeft(this.yScale)
           .ticks(10)
-          .tickFormat(d => `${d}ms`))
+          .tickFormat(d => `${d}`))
         .selectAll('text')
         .style('font-size', '12px')
         .style('fill', 'var(--axis-color)');
@@ -400,68 +436,43 @@ class PerformanceChart {
     }
   }
 
-  updateLegend(algorithms) {
-    try {
-      this.svg.selectAll('.legend').remove();
+  updateGridLines() {
+    const xGridLines = this.svg.select('.x-grid')
+      .selectAll('line')
+      .data(this.xScale.ticks(10));
 
-      const legend = this.svg.append('g')
-        .attr('class', 'legend')
-        .attr('transform', `translate(${this.width + 20}, 0)`);
+    xGridLines.enter()
+      .append('line')
+      .merge(xGridLines)
+      .attr('x1', d => this.xScale(d))
+      .attr('x2', d => this.xScale(d))
+      .attr('y1', 0)
+      .attr('y2', this.height);
 
-      const legendItems = legend.selectAll('.legend-item')
-        .data(algorithms)
-        .enter()
-        .append('g')
-        .attr('class', 'legend-item')
-        .attr('transform', (d, i) => `translate(0, ${i * 25})`);
+    xGridLines.exit().remove();
 
-      // Add colored rectangles
-      legendItems.append('rect')
-        .attr('width', 12)
-        .attr('height', 12)
-        .attr('rx', 2)
-        .attr('ry', 2)
-        .style('fill', d => this.colorScale(d));
+    const yGridLines = this.svg.select('.y-grid')
+      .selectAll('line')
+      .data(this.yScale.ticks(10));
 
-      // Add algorithm names
-      legendItems.append('text')
-        .attr('x', 20)
-        .attr('y', 9)
-        .style('font-size', '12px')
-        .style('fill', 'var(--axis-color)')
-        .text(d => d);
+    yGridLines.enter()
+      .append('line')
+      .merge(yGridLines)
+      .attr('x1', 0)
+      .attr('x2', this.width)
+      .attr('y1', d => this.yScale(d))
+      .attr('y2', d => this.yScale(d));
 
-      // Add interactivity to legend
-      legendItems
-        .style('cursor', 'pointer')
-        .on('mouseover', (event, algorithm) => {
-          // Highlight the corresponding line
-          this.svg.selectAll('.line-path')
-            .filter(d => d[0].algorithm !== algorithm)
-            .style('opacity', 0.2);
-        })
-        .on('mouseout', () => {
-          // Restore all lines
-          this.svg.selectAll('.line-path')
-            .style('opacity', 1);
-        });
-
-    } catch (error) {
-      console.error('Error updating legend:', error);
-    }
+    yGridLines.exit().remove();
   }
 
   updateLines(algorithmGroups) {
     try {
-      // Remove existing lines
       this.svg.selectAll('.line-group').remove();
 
-      // Draw new lines for each algorithm with animations
       algorithmGroups.forEach((data, algorithm) => {
-        const lineGroup = this.svg.append('g')
-          .attr('class', 'line-group');
+        const lineGroup = this.svg.append('g').attr('class', 'line-group');
 
-        // Draw line path with animation
         const path = lineGroup.append('path')
           .datum(data)
           .attr('class', 'line-path')
@@ -470,7 +481,6 @@ class PerformanceChart {
           .attr('stroke-width', 2.5)
           .attr('d', this.line);
 
-        // Add line animation
         const pathLength = path.node().getTotalLength();
         path
           .attr('stroke-dasharray', pathLength)
@@ -479,7 +489,6 @@ class PerformanceChart {
           .duration(1000)
           .attr('stroke-dashoffset', 0);
 
-        // Draw data points with animations
         lineGroup.selectAll('.dot')
           .data(data)
           .enter()
@@ -498,11 +507,55 @@ class PerformanceChart {
     }
   }
 
+  updateLegend(algorithms) {
+    try {
+      this.svg.selectAll('.legend').remove();
+
+      const legend = this.svg.append('g')
+        .attr('class', 'legend')
+        .attr('transform', `translate(${this.width + 20}, 0)`);
+
+      const legendItems = legend.selectAll('.legend-item')
+        .data(algorithms)
+        .enter()
+        .append('g')
+        .attr('class', 'legend-item')
+        .attr('transform', (d, i) => `translate(0, ${i * 25})`);
+
+      legendItems.append('rect')
+        .attr('width', 12)
+        .attr('height', 12)
+        .attr('rx', 2)
+        .attr('ry', 2)
+        .style('fill', d => this.colorScale(d));
+
+      legendItems.append('text')
+        .attr('x', 20)
+        .attr('y', 9)
+        .style('font-size', '12px')
+        .style('fill', 'var(--axis-color)')
+        .text(d => d);
+
+      legendItems
+        .style('cursor', 'pointer')
+        .on('mouseover', (event, algorithm) => {
+          this.svg.selectAll('.line-path')
+            .filter(d => d[0].algorithm !== algorithm)
+            .style('opacity', 0.2);
+        })
+        .on('mouseout', () => {
+          this.svg.selectAll('.line-path')
+            .style('opacity', 1);
+        });
+    } catch (error) {
+      console.error('Error updating legend:', error);
+    }
+  }
+
   addInteractivity() {
     try {
       this.svg.selectAll('.dot')
         .on('mouseover', (event, d) => {
-          // Enlarge dot
           d3.select(event.currentTarget)
             .transition()
             .duration(200)
@@ -510,7 +563,6 @@ class PerformanceChart {
             .style('stroke', '#fff')
             .style('stroke-width', 2);
 
-          // Show tooltip with enhanced styling
           this.tooltip
             .style('opacity', 1)
             .html(`
@@ -518,20 +570,18 @@ class PerformanceChart {
                 ${d.algorithm}
               </div>
               <div style="margin-bottom: 3px">Array Size: ${d.size}</div>
-              <div>Time: ${d.value.toFixed(2)}ms</div>
+              <div>Value: ${d.value.toFixed(2)}</div>
             `)
             .style('left', `${event.pageX + 15}px`)
             .style('top', `${event.pageY - 60}px`);
         })
         .on('mouseout', (event) => {
-          // Restore dot size
           d3.select(event.currentTarget)
             .transition()
             .duration(200)
             .attr('r', 5)
             .style('stroke', 'none');
 
-          // Hide tooltip
           this.tooltip
             .transition()
             .duration(200)
@@ -544,7 +594,6 @@ class PerformanceChart {
 
   clear() {
     try {
-      // Remove all elements with transitions
       this.svg.selectAll('.line-group')
         .transition()
         .duration(500)
@@ -557,21 +606,16 @@ class PerformanceChart {
         .style('opacity', 0)
         .remove();
 
-      // Clear axes with transitions
       this.xAxis.transition().duration(500).call(d3.axisBottom(this.xScale.domain([0, 0])));
       this.yAxis.transition().duration(500).call(d3.axisLeft(this.yScale.domain([0, 0])));
 
-      // Clear grid lines
       this.svg.selectAll('.grid-lines line')
         .transition()
         .duration(500)
         .style('opacity', 0)
         .remove();
-
     } catch (error) {
       console.error('Error clearing chart:', error);
     }
   }
 }
-
-export { PerformanceChart };

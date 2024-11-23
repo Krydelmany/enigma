@@ -1505,6 +1505,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "./node_modules/d3/src/index.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -1513,102 +1516,155 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 
 var SortingVisualizer = /*#__PURE__*/function () {
   function SortingVisualizer(containerId) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     _classCallCheck(this, SortingVisualizer);
+    if (typeof d3__WEBPACK_IMPORTED_MODULE_0__ === 'undefined') {
+      throw new Error('D3.js is required');
+    }
+    this.config = _objectSpread({
+      animationDuration: 200,
+      barColors: {
+        "default": 'var(--bar-color, #4285f4)',
+        swapping: 'var(--swapping-color, #db4437)',
+        highlight: 'var(--highlight-color, #f4b400)',
+        special: 'var(--special-color, #0f9d58)'
+      }
+    }, options);
     this.container = d3__WEBPACK_IMPORTED_MODULE_0__.select(containerId);
-    this.margin = {
-      top: 30,
-      right: 30,
-      bottom: 50,
-      left: 50
-    };
-    this.width = 1150 - this.margin.left - this.margin.right;
-    this.height = 500 - this.margin.top - this.margin.bottom;
-
-    // Configuração do SVG principal
-    this.svg = this.container.append('svg').attr('width', this.width + this.margin.left + this.margin.right).attr('height', this.height + this.margin.top + this.margin.bottom).append('g').attr('transform', "translate(".concat(this.margin.left, ",").concat(this.margin.top, ")"));
-
-    // Escalas
-    this.xScale = d3__WEBPACK_IMPORTED_MODULE_0__.scaleBand().range([0, this.width]).padding(0.1);
-    this.yScale = d3__WEBPACK_IMPORTED_MODULE_0__.scaleLinear().range([this.height, 0]);
-
-    // Eixos
-    this.xAxis = this.svg.append('g').attr('class', 'x-axis').attr('transform', "translate(0,".concat(this.height, ")"));
-    this.yAxis = this.svg.append('g').attr('class', 'y-axis');
-
-    // Rótulos dos eixos
-    this.svg.append('text').attr('class', 'x-label').attr('text-anchor', 'middle').attr('x', this.width / 2).attr('y', this.height + 40).text('Índice do Array');
-    this.svg.append('text').attr('class', 'y-label').attr('text-anchor', 'middle').attr('transform', 'rotate(-90)').attr('x', -this.height / 2).attr('y', -40).text('Valor');
-
-    // Tooltip
-    this.tooltip = this.container.append('div').attr('class', 'sorting-tooltip').style('opacity', 0);
+    this.setupResponsiveLayout();
+    this.setupVisualization();
+    this.setupResizeHandler();
+    this.setupAccessibility();
   }
-
-  /**
-   * Atualiza a visualização das barras.
-   * @param {Array} data - Array de números a serem visualizados.
-   * @param {Array} highlightIndices - Índices a serem destacados em amarelo.
-   * @param {Array} swappingIndices - Índices a serem destacados em vermelho.
-   * @param {Array} specialIndices - Índices a serem destacados em verde.
-   */
   return _createClass(SortingVisualizer, [{
+    key: "setupVisualization",
+    value: function setupVisualization() {
+      try {
+        this.svg = this.container.append('svg').attr('viewBox', "0 0 ".concat(this.width + this.margin.left + this.margin.right, " ").concat(this.height + this.margin.top + this.margin.bottom)).attr('preserveAspectRatio', 'xMidYMid meet').append('g').attr('transform', "translate(".concat(this.margin.left, ",").concat(this.margin.top, ")"));
+        this.setupScalesAndAxes();
+        this.setupLabels();
+        this.setupTooltip();
+      } catch (error) {
+        console.error('Error setting up visualization:', error);
+        throw error;
+      }
+    }
+  }, {
+    key: "setupAccessibility",
+    value: function setupAccessibility() {
+      this.svg.attr('role', 'img').attr('aria-label', 'Sorting visualization chart').attr('tabindex', '0');
+    }
+  }, {
+    key: "setupTooltip",
+    value: function setupTooltip() {
+      this.tooltip = d3__WEBPACK_IMPORTED_MODULE_0__.select('body').append('div').attr('class', 'tooltip').style('opacity', 0).style('position', 'absolute').style('pointer-events', 'none');
+    }
+  }, {
+    key: "setupLabels",
+    value: function setupLabels() {
+      this.svg.append('text').attr('class', 'x-label').attr('text-anchor', 'middle').attr('x', this.width / 2).attr('y', this.height + 40).text('Index');
+      this.svg.append('text').attr('class', 'y-label').attr('text-anchor', 'middle').attr('transform', 'rotate(-90)').attr('x', -this.height / 2).attr('y', -40).text('Value');
+    }
+  }, {
+    key: "setupResponsiveLayout",
+    value: function setupResponsiveLayout() {
+      var containerWidth = this.container.node().getBoundingClientRect().width;
+      this.margin = {
+        top: 30,
+        right: 30,
+        bottom: 50,
+        left: 50
+      };
+      this.width = containerWidth - this.margin.left - this.margin.right;
+      this.height = Math.min(500, window.innerHeight * 0.6) - this.margin.top - this.margin.bottom;
+    }
+  }, {
+    key: "setupScalesAndAxes",
+    value: function setupScalesAndAxes() {
+      this.xScale = d3__WEBPACK_IMPORTED_MODULE_0__.scaleBand().range([0, this.width]).padding(0.1);
+      this.yScale = d3__WEBPACK_IMPORTED_MODULE_0__.scaleLinear().range([this.height, 0]);
+      this.xAxis = this.svg.append('g').attr('class', 'x-axis').attr('transform', "translate(0,".concat(this.height, ")"));
+      this.yAxis = this.svg.append('g').attr('class', 'y-axis');
+    }
+  }, {
+    key: "setupResizeHandler",
+    value: function setupResizeHandler() {
+      var _this = this;
+      var resizeTimeout;
+      var resizeObserver = new ResizeObserver(function () {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(function () {
+          _this.setupResponsiveLayout();
+          if (_this.currentData) {
+            _this.update(_this.currentData);
+          }
+        }, 250); // Debounce resize events
+      });
+      resizeObserver.observe(this.container.node());
+    }
+  }, {
     key: "update",
     value: function update(data) {
-      var _this = this;
       var highlightIndices = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
       var swappingIndices = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
       var specialIndices = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
-      // Atualizar escalas
+      this.currentData = data;
       this.xScale.domain(data.map(function (d, i) {
         return i;
       }));
       this.yScale.domain([0, d3__WEBPACK_IMPORTED_MODULE_0__.max(data) * 1.1]);
-
-      // Atualizar eixos
-      if (data.length <= 30) {
-        this.xAxis.call(d3__WEBPACK_IMPORTED_MODULE_0__.axisBottom(this.xScale));
-      } else {
-        this.xAxis.call(d3__WEBPACK_IMPORTED_MODULE_0__.axisBottom(this.xScale).tickValues([]));
-      }
-      this.yAxis.call(d3__WEBPACK_IMPORTED_MODULE_0__.axisLeft(this.yScale));
-
-      // Definir a cor dos textos dos eixos após a chamada do eixo
-      this.xAxis.selectAll('text').attr('fill', 'var(--axis-color)');
-      this.yAxis.selectAll('text').attr('fill', 'var(--axis-color)');
-
-      // Selecionar as barras existentes
+      this.updateAxes();
       var bars = this.svg.selectAll('.bar').data(data);
-
-      // Remover barras antigas
       bars.exit().remove();
-
-      // Adicionar novas barras (se necessário)
-      var barsEnter = bars.enter().append('rect').attr('class', 'bar').attr('x', function (d, i) {
-        return _this.xScale(i);
+      var barsEnter = bars.enter().append('rect').attr('class', 'bar');
+      this.updateBars(bars.merge(barsEnter), highlightIndices, swappingIndices, specialIndices);
+      this.setupEnhancedTooltip(bars.merge(barsEnter));
+    }
+  }, {
+    key: "updateAxes",
+    value: function updateAxes() {
+      this.xAxis.transition().duration(this.config.animationDuration).call(this.currentData.length <= 30 ? d3__WEBPACK_IMPORTED_MODULE_0__.axisBottom(this.xScale) : d3__WEBPACK_IMPORTED_MODULE_0__.axisBottom(this.xScale).tickValues([])).selectAll('text').attr('fill', 'var(--axis-color)');
+      this.yAxis.transition().duration(this.config.animationDuration).call(d3__WEBPACK_IMPORTED_MODULE_0__.axisLeft(this.yScale)).selectAll('text').attr('fill', 'var(--axis-color)');
+    }
+  }, {
+    key: "updateBars",
+    value: function updateBars(bars, highlightIndices, swappingIndices, specialIndices) {
+      var _this2 = this;
+      bars.transition().duration(this.config.animationDuration).attr('x', function (d, i) {
+        return _this2.xScale(i);
       }).attr('width', this.xScale.bandwidth()).attr('y', function (d) {
-        return _this.yScale(d);
+        return _this2.yScale(d);
       }).attr('height', function (d) {
-        return _this.height - _this.yScale(d);
-      });
-
-      // Atualizar todas as barras (novas e existentes)
-      bars.merge(barsEnter).attr('x', function (d, i) {
-        return _this.xScale(i);
-      }).attr('width', this.xScale.bandwidth()).attr('y', function (d) {
-        return _this.yScale(d);
-      }).attr('height', function (d) {
-        return _this.height - _this.yScale(d);
+        return _this2.height - _this2.yScale(d);
       }).attr('class', function (d, i) {
         var classes = 'bar';
         if (swappingIndices.includes(i)) classes += ' swapping';else if (highlightIndices.includes(i)) classes += ' highlight';else if (specialIndices.includes(i)) classes += ' special';
         return classes;
       });
-
-      // Adicionar eventos de mouse
-      bars.merge(barsEnter).on('mouseover', function (event, d) {
-        _this.tooltip.style('opacity', 1).html("Valor: ".concat(d)).style('left', "".concat(event.pageX + 15, "px")).style('top', "".concat(event.pageY - 40, "px"));
+    }
+  }, {
+    key: "setupEnhancedTooltip",
+    value: function setupEnhancedTooltip(bars) {
+      var _this3 = this;
+      bars.on('mouseover', function (event, d) {
+        var i = _this3.currentData.indexOf(d);
+        _this3.tooltip.style('opacity', 1).html("\n            <div class=\"tooltip-content\">\n              <strong>Valor:</strong> ".concat(d, "<br>\n              <strong>\xCDndice:</strong> ").concat(i, "<br>\n              <strong>Posi\xE7\xE3o:</strong> ").concat(i + 1, "/").concat(_this3.currentData.length, "\n            </div>\n          ")).style('left', "".concat(event.pageX + 15, "px")).style('top', "".concat(event.pageY - 40, "px"));
       }).on('mouseout', function () {
-        _this.tooltip.style('opacity', 0);
+        _this3.tooltip.style('opacity', 0);
       });
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      if (this.resizeObserver) {
+        this.resizeObserver.disconnect();
+      }
+      if (this.tooltip) {
+        this.tooltip.remove();
+      }
+      if (this.svg) {
+        this.svg.remove();
+      }
     }
   }]);
 }();
@@ -1631,8 +1687,6 @@ var AlgorithmAnalytics = /*#__PURE__*/function () {
     value: function createCharts() {
       this.timeChart = new PerformanceChart(this.timeContainer.node(), 'Tempo de Execução', 'Tamanho do Array', 'Tempo (ms)');
       this.comparisonChart = new PerformanceChart(this.comparisonContainer.node(), 'Comparações Realizadas', 'Tamanho do Array', 'Número de Comparações');
-
-      // Inicializa os gráficos com dados vazios para desenhar as linhas de grade
       this.timeChart.update([]);
       this.comparisonChart.update([]);
     }
@@ -1649,7 +1703,6 @@ var AlgorithmAnalytics = /*#__PURE__*/function () {
         console.error('Each data object must contain algorithm, size, time, and comparisons properties.');
         return;
       }
-      // Criar cópias dos dados para cada gráfico
       var timeData = data.map(function (d) {
         return {
           algorithm: d.algorithm,
@@ -1677,7 +1730,7 @@ var AlgorithmAnalytics = /*#__PURE__*/function () {
 }();
 var PerformanceChart = /*#__PURE__*/function () {
   function PerformanceChart(container, title, xLabel, yLabel) {
-    var _this2 = this;
+    var _this4 = this;
     _classCallCheck(this, PerformanceChart);
     this.margin = {
       top: 40,
@@ -1687,37 +1740,21 @@ var PerformanceChart = /*#__PURE__*/function () {
     };
     this.width = 600 - this.margin.left - this.margin.right;
     this.height = 400 - this.margin.top - this.margin.bottom;
-
-    // Enhanced SVG setup with better styling
     this.svg = d3__WEBPACK_IMPORTED_MODULE_0__.select(container).append('svg').attr('width', this.width + this.margin.left + this.margin.right).attr('height', this.height + this.margin.top + this.margin.bottom).append('g').attr('transform', "translate(".concat(this.margin.left, ",").concat(this.margin.top, ")"));
-
-    // Improved scales with better color palette for algorithm visualization
     this.xScale = d3__WEBPACK_IMPORTED_MODULE_0__.scaleLinear().range([0, this.width]);
     this.yScale = d3__WEBPACK_IMPORTED_MODULE_0__.scaleLinear().range([this.height, 0]);
-    this.colorScale = d3__WEBPACK_IMPORTED_MODULE_0__.scaleOrdinal().range(['#2196F3', '#FF5722', '#4CAF50', '#9C27B0', '#FFC107']); // Material design colors
-
-    // Add grid lines for better readability
+    this.colorScale = d3__WEBPACK_IMPORTED_MODULE_0__.scaleOrdinal().range(['#2196F3', '#FF5722', '#4CAF50', '#9C27B0', '#FFC107']);
     this.addGridLines();
-
-    // Enhanced axes with better styling
     this.xAxis = this.svg.append('g').attr('class', 'x-axis').attr('transform', "translate(0,".concat(this.height, ")"));
     this.yAxis = this.svg.append('g').attr('class', 'y-axis');
-
-    // Enhanced labels with better positioning and styling
     this.addChartLabels(title, xLabel, yLabel);
-
-    // Improved line generator with smoother curves
     this.line = d3__WEBPACK_IMPORTED_MODULE_0__.line().x(function (d) {
-      return _this2.xScale(d.size);
+      return _this4.xScale(d.size);
     }).y(function (d) {
-      return _this2.yScale(d.value);
+      return _this4.yScale(d.value);
     }).curve(d3__WEBPACK_IMPORTED_MODULE_0__.curveCardinal.tension(0.7));
-
-    // Enhanced tooltip with better styling
     this.tooltip = d3__WEBPACK_IMPORTED_MODULE_0__.select('body').append('div').attr('class', 'performance-tooltip').style('opacity', 0).style('position', 'absolute').style('background', 'rgba(255, 255, 255, 0.9)').style('padding', '10px').style('border', '1px solid #ddd').style('border-radius', '4px').style('box-shadow', '0 2px 4px rgba(0,0,0,0.1)').style('pointer-events', 'none').style('font-size', '12px');
   }
-
-  // Adicionar os métodos ausentes aqui
   return _createClass(PerformanceChart, [{
     key: "processData",
     value: function processData(data) {
@@ -1739,44 +1776,15 @@ var PerformanceChart = /*#__PURE__*/function () {
   }, {
     key: "addGridLines",
     value: function addGridLines() {
-      // Add X grid lines
       this.svg.append('g').attr('class', 'grid-lines x-grid').style('stroke', '#e0e0e0').style('stroke-dasharray', '3,3');
-
-      // Add Y grid lines
       this.svg.append('g').attr('class', 'grid-lines y-grid').style('stroke', '#e0e0e0').style('stroke-dasharray', '3,3');
     }
   }, {
     key: "addChartLabels",
     value: function addChartLabels(title, xLabel, yLabel) {
       this.svg.append('text').attr('class', 'chart-title').attr('x', this.width / 2).attr('y', -20).attr('text-anchor', 'middle').text(title);
-
-      // X Label
       this.svg.append('text').attr('class', 'x-label').attr('text-anchor', 'middle').attr('x', this.width / 2).attr('y', this.height + 40).text(xLabel);
-
-      // Y Label
       this.svg.append('text').attr('class', 'y-label').attr('text-anchor', 'middle').attr('transform', 'rotate(-90)').attr('x', -this.height / 2).attr('y', -50).text(yLabel);
-    }
-  }, {
-    key: "updateGridLines",
-    value: function updateGridLines() {
-      var _this3 = this;
-      // Update X grid lines
-      var xGridLines = this.svg.select('.x-grid').selectAll('line').data(this.xScale.ticks(10));
-      xGridLines.enter().append('line').merge(xGridLines).attr('x1', function (d) {
-        return _this3.xScale(d);
-      }).attr('x2', function (d) {
-        return _this3.xScale(d);
-      }).attr('y1', 0).attr('y2', this.height);
-      xGridLines.exit().remove();
-
-      // Update Y grid lines
-      var yGridLines = this.svg.select('.y-grid').selectAll('line').data(this.yScale.ticks(10));
-      yGridLines.enter().append('line').merge(yGridLines).attr('x1', 0).attr('x2', this.width).attr('y1', function (d) {
-        return _this3.yScale(d);
-      }).attr('y2', function (d) {
-        return _this3.yScale(d);
-      });
-      yGridLines.exit().remove();
     }
   }, {
     key: "update",
@@ -1788,14 +1796,11 @@ var PerformanceChart = /*#__PURE__*/function () {
       try {
         var processedData = this.processData(data);
         var algorithmGroups = this.groupByAlgorithm(processedData);
-
-        // Atualizar escalas com base nos dados ou definir domínios padrão
         if (data.length > 0) {
           this.updateScales(processedData);
         } else {
-          // Definir domínios padrão quando não há dados
-          this.xScale.domain([0, 100]); // Ajuste conforme necessário
-          this.yScale.domain([0, 100]); // Ajuste conforme necessário
+          this.xScale.domain([0, 100]);
+          this.yScale.domain([0, 100]);
         }
         this.updateGridLines();
         this.updateAxes();
@@ -1826,101 +1831,94 @@ var PerformanceChart = /*#__PURE__*/function () {
     key: "updateAxes",
     value: function updateAxes() {
       try {
-        // Enhanced X axis
         this.xAxis.transition().duration(500).call(d3__WEBPACK_IMPORTED_MODULE_0__.axisBottom(this.xScale).ticks(10).tickFormat(function (d) {
           return "".concat(d);
         })).selectAll('text').style('font-size', '12px').style('fill', 'var(--axis-color)');
-
-        // Enhanced Y axis
         this.yAxis.transition().duration(500).call(d3__WEBPACK_IMPORTED_MODULE_0__.axisLeft(this.yScale).ticks(10).tickFormat(function (d) {
-          return "".concat(d, "ms");
+          return "".concat(d);
         })).selectAll('text').style('font-size', '12px').style('fill', 'var(--axis-color)');
       } catch (error) {
         console.error('Error updating axes:', error);
       }
     }
   }, {
-    key: "updateLegend",
-    value: function updateLegend(algorithms) {
-      var _this4 = this;
-      try {
-        this.svg.selectAll('.legend').remove();
-        var legend = this.svg.append('g').attr('class', 'legend').attr('transform', "translate(".concat(this.width + 20, ", 0)"));
-        var legendItems = legend.selectAll('.legend-item').data(algorithms).enter().append('g').attr('class', 'legend-item').attr('transform', function (d, i) {
-          return "translate(0, ".concat(i * 25, ")");
-        });
-
-        // Add colored rectangles
-        legendItems.append('rect').attr('width', 12).attr('height', 12).attr('rx', 2).attr('ry', 2).style('fill', function (d) {
-          return _this4.colorScale(d);
-        });
-
-        // Add algorithm names
-        legendItems.append('text').attr('x', 20).attr('y', 9).style('font-size', '12px').style('fill', 'var(--axis-color)').text(function (d) {
-          return d;
-        });
-
-        // Add interactivity to legend
-        legendItems.style('cursor', 'pointer').on('mouseover', function (event, algorithm) {
-          // Highlight the corresponding line
-          _this4.svg.selectAll('.line-path').filter(function (d) {
-            return d[0].algorithm !== algorithm;
-          }).style('opacity', 0.2);
-        }).on('mouseout', function () {
-          // Restore all lines
-          _this4.svg.selectAll('.line-path').style('opacity', 1);
-        });
-      } catch (error) {
-        console.error('Error updating legend:', error);
-      }
+    key: "updateGridLines",
+    value: function updateGridLines() {
+      var _this5 = this;
+      var xGridLines = this.svg.select('.x-grid').selectAll('line').data(this.xScale.ticks(10));
+      xGridLines.enter().append('line').merge(xGridLines).attr('x1', function (d) {
+        return _this5.xScale(d);
+      }).attr('x2', function (d) {
+        return _this5.xScale(d);
+      }).attr('y1', 0).attr('y2', this.height);
+      xGridLines.exit().remove();
+      var yGridLines = this.svg.select('.y-grid').selectAll('line').data(this.yScale.ticks(10));
+      yGridLines.enter().append('line').merge(yGridLines).attr('x1', 0).attr('x2', this.width).attr('y1', function (d) {
+        return _this5.yScale(d);
+      }).attr('y2', function (d) {
+        return _this5.yScale(d);
+      });
+      yGridLines.exit().remove();
     }
   }, {
     key: "updateLines",
     value: function updateLines(algorithmGroups) {
-      var _this5 = this;
+      var _this6 = this;
       try {
-        // Remove existing lines
         this.svg.selectAll('.line-group').remove();
-
-        // Draw new lines for each algorithm with animations
         algorithmGroups.forEach(function (data, algorithm) {
-          var lineGroup = _this5.svg.append('g').attr('class', 'line-group');
-
-          // Draw line path with animation
-          var path = lineGroup.append('path').datum(data).attr('class', 'line-path').attr('fill', 'none').attr('stroke', _this5.colorScale(algorithm)).attr('stroke-width', 2.5).attr('d', _this5.line);
-
-          // Add line animation
+          var lineGroup = _this6.svg.append('g').attr('class', 'line-group');
+          var path = lineGroup.append('path').datum(data).attr('class', 'line-path').attr('fill', 'none').attr('stroke', _this6.colorScale(algorithm)).attr('stroke-width', 2.5).attr('d', _this6.line);
           var pathLength = path.node().getTotalLength();
           path.attr('stroke-dasharray', pathLength).attr('stroke-dashoffset', pathLength).transition().duration(1000).attr('stroke-dashoffset', 0);
-
-          // Draw data points with animations
           lineGroup.selectAll('.dot').data(data).enter().append('circle').attr('class', 'dot').attr('cx', function (d) {
-            return _this5.xScale(d.size);
+            return _this6.xScale(d.size);
           }).attr('cy', function (d) {
-            return _this5.yScale(d.value);
-          }).attr('r', 0).attr('fill', _this5.colorScale(algorithm)).transition().duration(1000).attr('r', 5);
+            return _this6.yScale(d.value);
+          }).attr('r', 0).attr('fill', _this6.colorScale(algorithm)).transition().duration(1000).attr('r', 5);
         });
       } catch (error) {
         console.error('Error updating lines:', error);
       }
     }
   }, {
+    key: "updateLegend",
+    value: function updateLegend(algorithms) {
+      var _this7 = this;
+      try {
+        this.svg.selectAll('.legend').remove();
+        var legend = this.svg.append('g').attr('class', 'legend').attr('transform', "translate(".concat(this.width + 20, ", 0)"));
+        var legendItems = legend.selectAll('.legend-item').data(algorithms).enter().append('g').attr('class', 'legend-item').attr('transform', function (d, i) {
+          return "translate(0, ".concat(i * 25, ")");
+        });
+        legendItems.append('rect').attr('width', 12).attr('height', 12).attr('rx', 2).attr('ry', 2).style('fill', function (d) {
+          return _this7.colorScale(d);
+        });
+        legendItems.append('text').attr('x', 20).attr('y', 9).style('font-size', '12px').style('fill', 'var(--axis-color)').text(function (d) {
+          return d;
+        });
+        legendItems.style('cursor', 'pointer').on('mouseover', function (event, algorithm) {
+          _this7.svg.selectAll('.line-path').filter(function (d) {
+            return d[0].algorithm !== algorithm;
+          }).style('opacity', 0.2);
+        }).on('mouseout', function () {
+          _this7.svg.selectAll('.line-path').style('opacity', 1);
+        });
+      } catch (error) {
+        console.error('Error updating legend:', error);
+      }
+    }
+  }, {
     key: "addInteractivity",
     value: function addInteractivity() {
-      var _this6 = this;
+      var _this8 = this;
       try {
         this.svg.selectAll('.dot').on('mouseover', function (event, d) {
-          // Enlarge dot
           d3__WEBPACK_IMPORTED_MODULE_0__.select(event.currentTarget).transition().duration(200).attr('r', 8).style('stroke', '#fff').style('stroke-width', 2);
-
-          // Show tooltip with enhanced styling
-          _this6.tooltip.style('opacity', 1).html("\n              <div style=\"font-weight: bold; margin-bottom: 5px; color: ".concat(_this6.colorScale(d.algorithm), "\">\n                ").concat(d.algorithm, "\n              </div>\n              <div style=\"margin-bottom: 3px\">Array Size: ").concat(d.size, "</div>\n              <div>Time: ").concat(d.value.toFixed(2), "ms</div>\n            ")).style('left', "".concat(event.pageX + 15, "px")).style('top', "".concat(event.pageY - 60, "px"));
+          _this8.tooltip.style('opacity', 1).html("\n              <div style=\"font-weight: bold; margin-bottom: 5px; color: ".concat(_this8.colorScale(d.algorithm), "\">\n                ").concat(d.algorithm, "\n              </div>\n              <div style=\"margin-bottom: 3px\">Array Size: ").concat(d.size, "</div>\n              <div>Value: ").concat(d.value.toFixed(2), "</div>\n            ")).style('left', "".concat(event.pageX + 15, "px")).style('top', "".concat(event.pageY - 60, "px"));
         }).on('mouseout', function (event) {
-          // Restore dot size
           d3__WEBPACK_IMPORTED_MODULE_0__.select(event.currentTarget).transition().duration(200).attr('r', 5).style('stroke', 'none');
-
-          // Hide tooltip
-          _this6.tooltip.transition().duration(200).style('opacity', 0);
+          _this8.tooltip.transition().duration(200).style('opacity', 0);
         });
       } catch (error) {
         console.error('Error adding interactivity:', error);
@@ -1930,15 +1928,10 @@ var PerformanceChart = /*#__PURE__*/function () {
     key: "clear",
     value: function clear() {
       try {
-        // Remove all elements with transitions
         this.svg.selectAll('.line-group').transition().duration(500).style('opacity', 0).remove();
         this.svg.selectAll('.legend').transition().duration(500).style('opacity', 0).remove();
-
-        // Clear axes with transitions
         this.xAxis.transition().duration(500).call(d3__WEBPACK_IMPORTED_MODULE_0__.axisBottom(this.xScale.domain([0, 0])));
         this.yAxis.transition().duration(500).call(d3__WEBPACK_IMPORTED_MODULE_0__.axisLeft(this.yScale.domain([0, 0])));
-
-        // Clear grid lines
         this.svg.selectAll('.grid-lines line').transition().duration(500).style('opacity', 0).remove();
       } catch (error) {
         console.error('Error clearing chart:', error);
@@ -1946,7 +1939,6 @@ var PerformanceChart = /*#__PURE__*/function () {
     }
   }]);
 }();
-
 
 /***/ }),
 
@@ -35778,19 +35770,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _scripts_algorithms_countingSort__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./scripts/algorithms/countingSort */ "./src/scripts/algorithms/countingSort.js");
 /* harmony import */ var _scripts_algorithms_bucketSort__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./scripts/algorithms/bucketSort */ "./src/scripts/algorithms/bucketSort.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
-function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, "catch": function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
 function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -35833,23 +35825,15 @@ function formatExecutionTime(milliseconds) {
 var SortingApp = /*#__PURE__*/function () {
   function SortingApp() {
     _classCallCheck(this, SortingApp);
+    if (!(this instanceof SortingApp)) {
+      throw new Error('SortingApp must be instantiated with new');
+    }
     try {
-      // Initialize visualizers
       this.initializeVisualizers();
-
-      // Initialize state
       this.initializeState();
-
-      // Cache DOM elements
       this.initializeDOMElements();
-
-      // Create control buttons
       this.createControlButtons();
-
-      // Bind events
       this.bindEvents();
-
-      // Initialize array
       this.generateNewArray();
     } catch (error) {
       console.error('Failed to initialize SortingApp:', error);
@@ -35870,6 +35854,10 @@ var SortingApp = /*#__PURE__*/function () {
       this.isSorting = false;
       this.performanceData = [];
       this.comparisons = 0;
+      this.lastExportUrl = null;
+      this.swapCount = 0;
+      this.delay = 50; // Valor padrão
+      this.algorithmName = null;
     }
   }, {
     key: "initializeDOMElements",
@@ -35887,8 +35875,15 @@ var SortingApp = /*#__PURE__*/function () {
         resetArrayButton: document.getElementById('reset-array-button'),
         // Adicionado
         comparisonsSpan: document.getElementById('comparisons'),
+        swapCountValue: document.getElementById('swap-count-value'),
         performanceContainer: document.querySelector('#performance-container')
       };
+      Object.entries(this.elements).forEach(function (_ref) {
+        var _ref2 = _slicedToArray(_ref, 2),
+          key = _ref2[0],
+          value = _ref2[1];
+        if (!value) console.error("Element not found: ".concat(key));
+      });
       if (!Object.values(this.elements).every(function (element) {
         return element;
       })) {
@@ -35918,41 +35913,36 @@ var SortingApp = /*#__PURE__*/function () {
     key: "bindEvents",
     value: function bindEvents() {
       var _this2 = this;
-      this.elements.newArrayButton.addEventListener('click', function () {
-        return _this2.generateNewArray();
+      var handlers = this.getEventHandlers();
+      var elementBindings = [[this.elements.newArrayButton, 'click', handlers.generateNewArray], [this.elements.startButton, 'click', handlers.startSorting], [this.elements.sizeRange, 'input', handlers.handleSizeChange], [this.elements.sizeInput, 'input', handlers.handleSizeChange], [this.elements.speedRange, 'input', handlers.handleSpeedChange], [this.elements.speedInput, 'input', handlers.handleSpeedChange], [this.elements.resetArrayButton, 'click', handlers.resetToInitialArray]];
+      elementBindings.forEach(function (_ref3) {
+        var _ref4 = _slicedToArray(_ref3, 3),
+          element = _ref4[0],
+          event = _ref4[1],
+          handler = _ref4[2];
+        _this2.bindSafely(element, event, handler);
       });
-      this.elements.startButton.addEventListener('click', function () {
-        return _this2.startSorting();
-      });
-
-      // Sincroniza tamanho do array
-      this.elements.sizeRange.addEventListener('input', function () {
-        _this2.elements.sizeInput.value = _this2.elements.sizeRange.value;
-        _this2.generateNewArray();
-      });
-      this.elements.sizeInput.addEventListener('input', function () {
-        _this2.elements.sizeRange.value = _this2.elements.sizeInput.value;
-        _this2.generateNewArray();
-      });
-
-      // Sincroniza velocidade
-      this.elements.speedRange.addEventListener('input', function () {
-        _this2.elements.speedInput.value = _this2.elements.speedRange.value;
-      });
-      this.elements.speedInput.addEventListener('input', function () {
-        _this2.elements.speedRange.value = _this2.elements.speedInput.value;
-      });
-
-      // Event listener para o botão de reset
-      this.elements.resetArrayButton.addEventListener('click', function () {
-        return _this2.resetToInitialArray();
-      });
+    }
+  }, {
+    key: "bindSafely",
+    value: function bindSafely(element, event, handler) {
+      try {
+        if (!element) {
+          throw new Error("Element not found for ".concat(event, " event"));
+        }
+        element.addEventListener(event, handler);
+      } catch (error) {
+        console.error("Failed to bind ".concat(event, " event:"), error);
+      }
     }
   }, {
     key: "generateNewArray",
     value: function generateNewArray() {
+      var _this$elements;
+      if (this.isSorting || !((_this$elements = this.elements) !== null && _this$elements !== void 0 && _this$elements.sizeInput)) return;
       var size = Math.max(1, Math.min(1000, parseInt(this.elements.sizeInput.value) || 10));
       this.elements.sizeInput.value = size; // Normaliza o input
+      this.elements.sizeRange.value = size; // Sincroniza o range
       this.currentArray = Array.from({
         length: size
       }, function () {
@@ -35969,7 +35959,7 @@ var SortingApp = /*#__PURE__*/function () {
       if (this.algorithmAnalytics) {
         this.algorithmAnalytics.clear();
       }
-      // Release blob URLs
+      // Limpar todas as URLs de blob anteriores
       if (this.lastExportUrl) {
         URL.revokeObjectURL(this.lastExportUrl);
         this.lastExportUrl = null;
@@ -35981,10 +35971,19 @@ var SortingApp = /*#__PURE__*/function () {
       this.comparisons = 0;
       this.elements.comparisonsSpan.textContent = '0';
       this.elements.executionTime.textContent = '0s 0ms';
+      this.updateSwapCountDisplay(0);
     }
   }, {
     key: "exportPerformanceData",
     value: function exportPerformanceData() {
+      var _this$performanceData;
+      if (!((_this$performanceData = this.performanceData) !== null && _this$performanceData !== void 0 && _this$performanceData.length)) {
+        console.warn('No performance data to export');
+        return;
+      }
+      if (this.lastExportUrl) {
+        URL.revokeObjectURL(this.lastExportUrl);
+      }
       var header = 'algorithm,size,time,comparisons\n';
       var csv = header + this.performanceData.map(function (d) {
         return "".concat(d.algorithm, ",").concat(d.size, ",").concat(d.time, ",").concat(d.comparisons);
@@ -35992,9 +35991,9 @@ var SortingApp = /*#__PURE__*/function () {
       var blob = new Blob([csv], {
         type: 'text/csv'
       });
-      var url = window.URL.createObjectURL(blob);
+      this.lastExportUrl = window.URL.createObjectURL(blob);
       var a = document.createElement('a');
-      a.href = url;
+      a.href = this.lastExportUrl;
       a.download = 'sorting-performance.csv';
       a.click();
     }
@@ -36002,7 +36001,8 @@ var SortingApp = /*#__PURE__*/function () {
     key: "startSorting",
     value: function () {
       var _startSorting = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-        var initialComparisons, startTime, algorithm, delay, endTime;
+        var _this3 = this;
+        var initialComparisons, startTime, algorithm, delay, result, endTime;
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
@@ -36012,25 +36012,40 @@ var SortingApp = /*#__PURE__*/function () {
               }
               return _context.abrupt("return");
             case 2:
+              if (!(!this.currentArray || this.currentArray.length === 0)) {
+                _context.next = 5;
+                break;
+              }
+              console.error('No array to sort');
+              return _context.abrupt("return");
+            case 5:
               initialComparisons = this.comparisons;
               startTime = performance.now();
               if (!this.initialArray.length || this.initialArray.toString() !== this.currentArray.toString()) {
                 this.initialArray = _toConsumableArray(this.currentArray);
               }
-              _context.prev = 5;
+              _context.prev = 8;
               this.isSorting = true;
               this.toggleControls(false);
               algorithm = this.getSelectedAlgorithm();
               if (algorithm) {
-                _context.next = 11;
+                _context.next = 14;
                 break;
               }
               throw new Error('Invalid algorithm selected');
-            case 11:
-              delay = parseInt(this.elements.speedInput.value) || 50;
-              _context.next = 14;
-              return this.runSort(algorithm, _toConsumableArray(this.currentArray), delay);
             case 14:
+              // Adicionar validação para o delay
+              delay = function () {
+                var inputValue = parseInt(_this3.elements.speedInput.value);
+                if (isNaN(inputValue) || inputValue < 0) {
+                  return 50; // valor padrão
+                }
+                return inputValue;
+              }(); // Capturar o resultado com o swapCount
+              _context.next = 17;
+              return this.runSort(algorithm, _toConsumableArray(this.currentArray), delay);
+            case 17:
+              result = _context.sent;
               endTime = performance.now();
               this.updatePerformanceData({
                 time: endTime - startTime,
@@ -36039,22 +36054,27 @@ var SortingApp = /*#__PURE__*/function () {
 
               // Atualizar a exibição do tempo formatado
               this.elements.executionTime.textContent = formatExecutionTime(endTime - startTime);
-              _context.next = 22;
+
+              // Atualizar a exibição do número de trocas
+              if (result && result.swapCount !== undefined) {
+                this.updateSwapCountDisplay(result.swapCount);
+              }
+              _context.next = 27;
               break;
-            case 19:
-              _context.prev = 19;
-              _context.t0 = _context["catch"](5);
+            case 24:
+              _context.prev = 24;
+              _context.t0 = _context["catch"](8);
               console.error('Sorting error:', _context.t0);
-            case 22:
-              _context.prev = 22;
+            case 27:
+              _context.prev = 27;
               this.isSorting = false;
               this.toggleControls(true);
-              return _context.finish(22);
-            case 26:
+              return _context.finish(27);
+            case 31:
             case "end":
               return _context.stop();
           }
-        }, _callee, this, [[5, 19, 22, 26]]);
+        }, _callee, this, [[8, 24, 27, 31]]);
       }));
       function startSorting() {
         return _startSorting.apply(this, arguments);
@@ -36064,7 +36084,8 @@ var SortingApp = /*#__PURE__*/function () {
   }, {
     key: "resetToInitialArray",
     value: function resetToInitialArray() {
-      if (this.isSorting) return;
+      var _this$initialArray;
+      if (this.isSorting || !((_this$initialArray = this.initialArray) !== null && _this$initialArray !== void 0 && _this$initialArray.length)) return;
       if (this.initialArray.length) {
         this.currentArray = _toConsumableArray(this.initialArray);
         this.sortingVisualizer.update(this.currentArray);
@@ -36088,28 +36109,32 @@ var SortingApp = /*#__PURE__*/function () {
         bucket: _scripts_algorithms_bucketSort__WEBPACK_IMPORTED_MODULE_10__.bucketSort,
         radix: _scripts_algorithms_radixSort__WEBPACK_IMPORTED_MODULE_8__.radixSort
       };
-      return algorithms[this.elements.algorithmSelect.value];
+      var selected = this.elements.algorithmSelect.value;
+      if (!algorithms[selected]) {
+        throw new Error("Invalid algorithm selected: ".concat(selected));
+      }
+      return algorithms[selected];
     }
-
-    /**
-     * Executa o algoritmo de ordenação selecionado.
-     * @param {Function} algorithm - Função do algoritmo de ordenação.
-     * @param {Array} array - Array a ser ordenado.
-     * @param {number} delay - Atraso entre as operações para visualização.
-     */
   }, {
     key: "runSort",
-    value: (function () {
+    value: function () {
       var _runSort = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4(algorithm, array, delay) {
-        var _this3 = this;
-        var arr, onUpdate, onCompare;
+        var _this4 = this;
+        var arr, swapCount, onUpdate, onCompare, result;
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
-              _context4.prev = 0;
+              if (!(!algorithm || !Array.isArray(array) || typeof delay !== 'number')) {
+                _context4.next = 2;
+                break;
+              }
+              throw new Error('Invalid parameters provided to runSort');
+            case 2:
+              _context4.prev = 2;
               arr = _toConsumableArray(array);
+              swapCount = 0;
               onUpdate = /*#__PURE__*/function () {
-                var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(newArray) {
+                var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(newArray) {
                   var swappingIndices,
                     specialIndices,
                     _args2 = arguments;
@@ -36119,10 +36144,9 @@ var SortingApp = /*#__PURE__*/function () {
                         swappingIndices = _args2.length > 1 && _args2[1] !== undefined ? _args2[1] : [];
                         specialIndices = _args2.length > 2 && _args2[2] !== undefined ? _args2[2] : [];
                         arr = _toConsumableArray(newArray);
-                        _this3.sortingVisualizer.update(arr, [], swappingIndices, specialIndices);
-                        if (!(swappingIndices.length > 0)) {
-                          _context2.next = 7;
-                          break;
+                        _this4.sortingVisualizer.update(arr, [], swappingIndices, specialIndices);
+                        if (swappingIndices.length > 0) {
+                          swapCount++; // Incrementar contador de trocas
                         }
                         _context2.next = 7;
                         return new Promise(function (resolve) {
@@ -36135,20 +36159,20 @@ var SortingApp = /*#__PURE__*/function () {
                   }, _callee2);
                 }));
                 return function onUpdate(_x4) {
-                  return _ref.apply(this, arguments);
+                  return _ref5.apply(this, arguments);
                 };
               }();
               onCompare = /*#__PURE__*/function () {
-                var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(indices) {
+                var _ref6 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(indices) {
                   var specialIndices,
                     _args3 = arguments;
                   return _regeneratorRuntime().wrap(function _callee3$(_context3) {
                     while (1) switch (_context3.prev = _context3.next) {
                       case 0:
                         specialIndices = _args3.length > 1 && _args3[1] !== undefined ? _args3[1] : [];
-                        _this3.comparisons++;
-                        _this3.elements.comparisonsSpan.textContent = _this3.comparisons;
-                        _this3.sortingVisualizer.update(arr, indices, [], specialIndices);
+                        _this4.comparisons++;
+                        _this4.elements.comparisonsSpan.textContent = _this4.comparisons;
+                        _this4.sortingVisualizer.update(arr, indices, [], specialIndices);
                         _context3.next = 6;
                         return new Promise(function (resolve) {
                           return setTimeout(resolve, delay);
@@ -36160,58 +36184,141 @@ var SortingApp = /*#__PURE__*/function () {
                   }, _callee3);
                 }));
                 return function onCompare(_x5) {
-                  return _ref2.apply(this, arguments);
+                  return _ref6.apply(this, arguments);
                 };
               }();
-              if (algorithm) {
-                _context4.next = 6;
-                break;
-              }
-              throw new Error('Algorithm not provided');
-            case 6:
-              _context4.next = 8;
+              _context4.next = 9;
               return algorithm(arr, onUpdate, onCompare, delay);
-            case 8:
-              return _context4.abrupt("return", arr);
-            case 11:
-              _context4.prev = 11;
-              _context4.t0 = _context4["catch"](0);
+            case 9:
+              result = _context4.sent;
+              return _context4.abrupt("return", {
+                sortedArray: arr,
+                swapCount: swapCount
+              });
+            case 13:
+              _context4.prev = 13;
+              _context4.t0 = _context4["catch"](2);
               console.error('Error during sorting:', _context4.t0);
               throw _context4.t0;
-            case 15:
+            case 17:
             case "end":
               return _context4.stop();
           }
-        }, _callee4, null, [[0, 11]]);
+        }, _callee4, null, [[2, 13]]);
       }));
       function runSort(_x, _x2, _x3) {
         return _runSort.apply(this, arguments);
       }
       return runSort;
-    }())
+    }()
+  }, {
+    key: "updateSwapCountDisplay",
+    value: function updateSwapCountDisplay(count) {
+      if (this.elements.swapCountValue) {
+        this.elements.swapCountValue.textContent = count;
+      }
+    }
   }, {
     key: "updatePerformanceData",
     value: function updatePerformanceData(metrics) {
-      if (!(metrics !== null && metrics !== void 0 && metrics.time) || metrics.comparisons === undefined) {
-        throw new Error('Invalid metrics data');
-      }
-      var newDataPoint = {
-        algorithm: this.elements.algorithmSelect.value,
-        size: this.currentArray.length,
-        time: metrics.time,
-        comparisons: metrics.comparisons
-      };
-      this.performanceData.push(newDataPoint);
       try {
-        this.algorithmAnalytics.update(this.performanceData);
+        var _this$algorithmAnalyt;
+        if (!metrics || _typeof(metrics) !== 'object') {
+          throw new Error('Metrics must be an object');
+        }
+        if (typeof metrics.time !== 'number' || typeof metrics.comparisons !== 'number') {
+          throw new Error('Invalid metrics data types');
+        }
+        var newDataPoint = {
+          algorithm: this.elements.algorithmSelect.value,
+          size: this.currentArray.length,
+          time: metrics.time,
+          comparisons: metrics.comparisons
+        };
+        this.performanceData.push(newDataPoint);
+        (_this$algorithmAnalyt = this.algorithmAnalytics) === null || _this$algorithmAnalyt === void 0 || _this$algorithmAnalyt.update(this.performanceData);
       } catch (error) {
         console.error('Error updating performance data:', error);
+        throw error; // Re-throw para permitir tratamento externo
       }
+    }
+  }, {
+    key: "handleSizeChange",
+    value: function handleSizeChange() {
+      this.elements.sizeInput.value = this.elements.sizeRange.value;
+      this.elements.sizeRange.value = this.elements.sizeInput.value;
+      this.generateNewArray();
+    }
+  }, {
+    key: "handleSpeedChange",
+    value: function handleSpeedChange() {
+      this.elements.speedInput.value = this.elements.speedRange.value;
+      this.elements.speedRange.value = this.elements.speedInput.value;
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      try {
+        this.clearPerformanceData();
+
+        // Cleanup visualizers
+        [this.sortingVisualizer, this.algorithmAnalytics].forEach(function (visualizer) {
+          if (visualizer !== null && visualizer !== void 0 && visualizer.destroy) {
+            visualizer.destroy();
+          }
+        });
+
+        // Cleanup event listeners
+        var handlers = this.getEventHandlers();
+        this.removeEventListeners(handlers);
+
+        // Cleanup state
+        this.state = null;
+        this.elements = null;
+      } catch (error) {
+        console.error('Error during cleanup:', error);
+      }
+    }
+  }, {
+    key: "getEventHandlers",
+    value: function getEventHandlers() {
+      var _this5 = this;
+      return {
+        generateNewArray: function generateNewArray() {
+          return _this5.generateNewArray();
+        },
+        startSorting: function startSorting() {
+          return _this5.startSorting();
+        },
+        handleSizeChange: function handleSizeChange() {
+          return _this5.handleSizeChange();
+        },
+        handleSpeedChange: function handleSpeedChange() {
+          return _this5.handleSpeedChange();
+        },
+        resetToInitialArray: function resetToInitialArray() {
+          return _this5.resetToInitialArray();
+        }
+      };
+    }
+  }, {
+    key: "removeEventListeners",
+    value: function removeEventListeners(handlers) {
+      var bindings = [[this.elements.newArrayButton, 'click', handlers.generateNewArray], [this.elements.startButton, 'click', handlers.startSorting], [this.elements.sizeRange, 'input', handlers.handleSizeChange], [this.elements.sizeInput, 'input', handlers.handleSizeChange], [this.elements.speedRange, 'input', handlers.handleSpeedChange], [this.elements.speedInput, 'input', handlers.handleSpeedChange], [this.elements.resetArrayButton, 'click', handlers.resetToInitialArray]];
+      bindings.forEach(function (_ref7) {
+        var _ref8 = _slicedToArray(_ref7, 3),
+          element = _ref8[0],
+          event = _ref8[1],
+          handler = _ref8[2];
+        if (element) {
+          element.removeEventListener(event, handler);
+        }
+      });
     }
   }, {
     key: "toggleControls",
     value: function toggleControls(enabled) {
-      var _this4 = this;
+      var _this6 = this;
       Object.entries({
         algorithmSelect: enabled,
         sizeInput: enabled,
@@ -36220,11 +36327,11 @@ var SortingApp = /*#__PURE__*/function () {
         newArrayButton: enabled,
         speedRange: enabled,
         startButton: enabled
-      }).forEach(function (_ref3) {
-        var _ref4 = _slicedToArray(_ref3, 2),
-          key = _ref4[0],
-          value = _ref4[1];
-        _this4.elements[key].disabled = !value;
+      }).forEach(function (_ref9) {
+        var _ref10 = _slicedToArray(_ref9, 2),
+          key = _ref10[0],
+          value = _ref10[1];
+        _this6.elements[key].disabled = !value;
       });
       this.elements.resetArrayButton.disabled = !enabled;
       this.elements.startButton.textContent = enabled ? 'Iniciar Ordenação' : 'Ordenando...';
@@ -36232,7 +36339,11 @@ var SortingApp = /*#__PURE__*/function () {
   }]);
 }(); // Inicializar aplicação quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', function () {
-  new SortingApp();
+  try {
+    new SortingApp();
+  } catch (error) {
+    console.error('Failed to initialize SortingApp:', error);
+  }
 });
 })();
 

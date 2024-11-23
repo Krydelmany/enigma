@@ -40,23 +40,15 @@ function formatExecutionTime(milliseconds) {
 
 class SortingApp {
     constructor() {
+        if (!(this instanceof SortingApp)) {
+            throw new Error('SortingApp must be instantiated with new');
+        }
         try {
-            // Initialize visualizers
             this.initializeVisualizers();
-
-            // Initialize state
             this.initializeState();
-
-            // Cache DOM elements
             this.initializeDOMElements();
-
-            // Create control buttons
             this.createControlButtons();
-
-            // Bind events
             this.bindEvents();
-
-            // Initialize array
             this.generateNewArray();
         } catch (error) {
             console.error('Failed to initialize SortingApp:', error);
@@ -75,6 +67,10 @@ class SortingApp {
         this.isSorting = false;
         this.performanceData = [];
         this.comparisons = 0;
+        this.lastExportUrl = null;
+        this.swapCount = 0;
+        this.delay = 50; // Valor padrão
+        this.algorithmName = null;
     }
 
     initializeDOMElements() {
@@ -89,9 +85,14 @@ class SortingApp {
             startButton: document.getElementById('start-button'),
             resetArrayButton: document.getElementById('reset-array-button'), // Adicionado
             comparisonsSpan: document.getElementById('comparisons'),
+            swapCountValue: document.getElementById('swap-count-value'),
             performanceContainer: document.querySelector('#performance-container'),
         };
-    
+
+        Object.entries(this.elements).forEach(([key, value]) => {
+            if (!value) console.error(`Element not found: ${key}`);
+        });
+
         if (!Object.values(this.elements).every(element => element)) {
             throw new Error('Failed to initialize required DOM elements');
         }
@@ -111,35 +112,41 @@ class SortingApp {
         this.elements.performanceContainer.appendChild(clearButton);
         this.elements.performanceContainer.appendChild(exportButton);
     }
+
     bindEvents() {
-        this.elements.newArrayButton.addEventListener('click', () => this.generateNewArray());
-        this.elements.startButton.addEventListener('click', () => this.startSorting());
-    
-        // Sincroniza tamanho do array
-        this.elements.sizeRange.addEventListener('input', () => {
-            this.elements.sizeInput.value = this.elements.sizeRange.value;
-            this.generateNewArray();
+        const handlers = this.getEventHandlers();
+
+        const elementBindings = [
+            [this.elements.newArrayButton, 'click', handlers.generateNewArray],
+            [this.elements.startButton, 'click', handlers.startSorting],
+            [this.elements.sizeRange, 'input', handlers.handleSizeChange],
+            [this.elements.sizeInput, 'input', handlers.handleSizeChange],
+            [this.elements.speedRange, 'input', handlers.handleSpeedChange],
+            [this.elements.speedInput, 'input', handlers.handleSpeedChange],
+            [this.elements.resetArrayButton, 'click', handlers.resetToInitialArray]
+        ];
+
+        elementBindings.forEach(([element, event, handler]) => {
+            this.bindSafely(element, event, handler);
         });
-        this.elements.sizeInput.addEventListener('input', () => {
-            this.elements.sizeRange.value = this.elements.sizeInput.value;
-            this.generateNewArray();
-        });
-    
-        // Sincroniza velocidade
-        this.elements.speedRange.addEventListener('input', () => {
-            this.elements.speedInput.value = this.elements.speedRange.value;
-        });
-        this.elements.speedInput.addEventListener('input', () => {
-            this.elements.speedRange.value = this.elements.speedInput.value;
-        });
-    
-        // Event listener para o botão de reset
-        this.elements.resetArrayButton.addEventListener('click', () => this.resetToInitialArray());
+    }
+
+    bindSafely(element, event, handler) {
+        try {
+            if (!element) {
+                throw new Error(`Element not found for ${event} event`);
+            }
+            element.addEventListener(event, handler);
+        } catch (error) {
+            console.error(`Failed to bind ${event} event:`, error);
+        }
     }
 
     generateNewArray() {
+        if (this.isSorting || !this.elements?.sizeInput) return;
         const size = Math.max(1, Math.min(1000, parseInt(this.elements.sizeInput.value) || 10));
         this.elements.sizeInput.value = size; // Normaliza o input
+        this.elements.sizeRange.value = size; // Sincroniza o range
         this.currentArray = Array.from({ length: size },
             () => Math.floor(Math.random() * 100) + 1);
         this.initialArray = [...this.currentArray];
@@ -152,7 +159,7 @@ class SortingApp {
         if (this.algorithmAnalytics) {
             this.algorithmAnalytics.clear();
         }
-        // Release blob URLs
+        // Limpar todas as URLs de blob anteriores
         if (this.lastExportUrl) {
             URL.revokeObjectURL(this.lastExportUrl);
             this.lastExportUrl = null;
@@ -163,23 +170,36 @@ class SortingApp {
         this.comparisons = 0;
         this.elements.comparisonsSpan.textContent = '0';
         this.elements.executionTime.textContent = '0s 0ms';
+        this.updateSwapCountDisplay(0);
     }
 
     exportPerformanceData() {
+        if (!this.performanceData?.length) {
+            console.warn('No performance data to export');
+            return;
+        }
+        if (this.lastExportUrl) {
+            URL.revokeObjectURL(this.lastExportUrl);
+        }
         const header = 'algorithm,size,time,comparisons\n';
         const csv = header + this.performanceData
             .map(d => `${d.algorithm},${d.size},${d.time},${d.comparisons}`)
             .join('\n');
         const blob = new Blob([csv], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
+        this.lastExportUrl = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = url;
+        a.href = this.lastExportUrl;
         a.download = 'sorting-performance.csv';
         a.click();
     }
 
     async startSorting() {
         if (this.isSorting) return;
+
+        if (!this.currentArray || this.currentArray.length === 0) {
+            console.error('No array to sort');
+            return;
+        }
 
         const initialComparisons = this.comparisons;
         const startTime = performance.now();
@@ -197,8 +217,17 @@ class SortingApp {
                 throw new Error('Invalid algorithm selected');
             }
 
-            const delay = parseInt(this.elements.speedInput.value) || 50;
-            await this.runSort(algorithm, [...this.currentArray], delay);
+            // Adicionar validação para o delay
+            const delay = (() => {
+                const inputValue = parseInt(this.elements.speedInput.value);
+                if (isNaN(inputValue) || inputValue < 0) {
+                    return 50; // valor padrão
+                }
+                return inputValue;
+            })();
+
+            // Capturar o resultado com o swapCount
+            const result = await this.runSort(algorithm, [...this.currentArray], delay);
 
             const endTime = performance.now();
             this.updatePerformanceData({
@@ -208,6 +237,12 @@ class SortingApp {
 
             // Atualizar a exibição do tempo formatado
             this.elements.executionTime.textContent = formatExecutionTime(endTime - startTime);
+
+            // Atualizar a exibição do número de trocas
+            if (result && result.swapCount !== undefined) {
+                this.updateSwapCountDisplay(result.swapCount);
+            }
+
         } catch (error) {
             console.error('Sorting error:', error);
         } finally {
@@ -217,7 +252,7 @@ class SortingApp {
     }
 
     resetToInitialArray() {
-        if (this.isSorting) return;
+        if (this.isSorting || !this.initialArray?.length) return;
 
         if (this.initialArray.length) {
             this.currentArray = [...this.initialArray];
@@ -241,25 +276,29 @@ class SortingApp {
             bucket: bucketSort,
             radix: radixSort
         };
-        return algorithms[this.elements.algorithmSelect.value];
+
+        const selected = this.elements.algorithmSelect.value;
+        if (!algorithms[selected]) {
+            throw new Error(`Invalid algorithm selected: ${selected}`);
+        }
+        return algorithms[selected];
     }
 
-    /**
-     * Executa o algoritmo de ordenação selecionado.
-     * @param {Function} algorithm - Função do algoritmo de ordenação.
-     * @param {Array} array - Array a ser ordenado.
-     * @param {number} delay - Atraso entre as operações para visualização.
-     */
     async runSort(algorithm, array, delay) {
+        if (!algorithm || !Array.isArray(array) || typeof delay !== 'number') {
+            throw new Error('Invalid parameters provided to runSort');
+        }
         try {
             let arr = [...array];
+            let swapCount = 0;
 
             const onUpdate = async (newArray, swappingIndices = [], specialIndices = []) => {
                 arr = [...newArray];
                 this.sortingVisualizer.update(arr, [], swappingIndices, specialIndices);
                 if (swappingIndices.length > 0) {
-                    await new Promise(resolve => setTimeout(resolve, delay));
+                    swapCount++; // Incrementar contador de trocas
                 }
+                await new Promise(resolve => setTimeout(resolve, delay));
             };
 
             const onCompare = async (indices, specialIndices = []) => {
@@ -269,40 +308,105 @@ class SortingApp {
                 await new Promise(resolve => setTimeout(resolve, delay));
             };
 
-            if (!algorithm) {
-                throw new Error('Algorithm not provided');
-            }
-
-            await algorithm(arr, onUpdate, onCompare, delay);
-            return arr;
-
+            const result = await algorithm(arr, onUpdate, onCompare, delay);
+            return { sortedArray: arr, swapCount };
         } catch (error) {
             console.error('Error during sorting:', error);
             throw error;
         }
     }
 
-    updatePerformanceData(metrics) {
-        if (!metrics?.time || metrics.comparisons === undefined) {
-            throw new Error('Invalid metrics data');
-        }
-
-        const newDataPoint = {
-            algorithm: this.elements.algorithmSelect.value,
-            size: this.currentArray.length,
-            time: metrics.time,
-            comparisons: metrics.comparisons
-        };
-
-        this.performanceData.push(newDataPoint);
-
-        try {
-            this.algorithmAnalytics.update(this.performanceData);
-        } catch (error) {
-            console.error('Error updating performance data:', error);
+    updateSwapCountDisplay(count) {
+        if (this.elements.swapCountValue) {
+            this.elements.swapCountValue.textContent = count;
         }
     }
 
+    updatePerformanceData(metrics) {
+        try {
+            if (!metrics || typeof metrics !== 'object') {
+                throw new Error('Metrics must be an object');
+            }
+            if (typeof metrics.time !== 'number' || typeof metrics.comparisons !== 'number') {
+                throw new Error('Invalid metrics data types');
+            }
+
+            const newDataPoint = {
+                algorithm: this.elements.algorithmSelect.value,
+                size: this.currentArray.length,
+                time: metrics.time,
+                comparisons: metrics.comparisons
+            };
+
+            this.performanceData.push(newDataPoint);
+            this.algorithmAnalytics?.update(this.performanceData);
+        } catch (error) {
+            console.error('Error updating performance data:', error);
+            throw error; // Re-throw para permitir tratamento externo
+        }
+    }
+
+    handleSizeChange() {
+        this.elements.sizeInput.value = this.elements.sizeRange.value;
+        this.elements.sizeRange.value = this.elements.sizeInput.value;
+        this.generateNewArray();
+    }
+
+    handleSpeedChange() {
+        this.elements.speedInput.value = this.elements.speedRange.value;
+        this.elements.speedRange.value = this.elements.speedInput.value;
+    }
+
+    destroy() {
+        try {
+            this.clearPerformanceData();
+
+            // Cleanup visualizers
+            [this.sortingVisualizer, this.algorithmAnalytics].forEach(visualizer => {
+                if (visualizer?.destroy) {
+                    visualizer.destroy();
+                }
+            });
+
+            // Cleanup event listeners
+            const handlers = this.getEventHandlers();
+            this.removeEventListeners(handlers);
+
+            // Cleanup state
+            this.state = null;
+            this.elements = null;
+        } catch (error) {
+            console.error('Error during cleanup:', error);
+        }
+    }
+
+    getEventHandlers() {
+        return {
+            generateNewArray: () => this.generateNewArray(),
+            startSorting: () => this.startSorting(),
+            handleSizeChange: () => this.handleSizeChange(),
+            handleSpeedChange: () => this.handleSpeedChange(),
+            resetToInitialArray: () => this.resetToInitialArray()
+        };
+    }
+
+    removeEventListeners(handlers) {
+        const bindings = [
+            [this.elements.newArrayButton, 'click', handlers.generateNewArray],
+            [this.elements.startButton, 'click', handlers.startSorting],
+            [this.elements.sizeRange, 'input', handlers.handleSizeChange],
+            [this.elements.sizeInput, 'input', handlers.handleSizeChange],
+            [this.elements.speedRange, 'input', handlers.handleSpeedChange],
+            [this.elements.speedInput, 'input', handlers.handleSpeedChange],
+            [this.elements.resetArrayButton, 'click', handlers.resetToInitialArray]
+        ];
+
+        bindings.forEach(([element, event, handler]) => {
+            if (element) {
+                element.removeEventListener(event, handler);
+            }
+        });
+    }
 
     toggleControls(enabled) {
         Object.entries({
@@ -323,5 +427,9 @@ class SortingApp {
 
 // Inicializar aplicação quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', () => {
-    new SortingApp();
+    try {
+        new SortingApp();
+    } catch (error) {
+        console.error('Failed to initialize SortingApp:', error);
+    }
 });

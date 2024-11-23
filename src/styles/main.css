@@ -98,6 +98,18 @@ body {
   box-shadow: 0px 2px 4px rgba(0,0,0,0.3);
 }
 
+.tooltip, .performance-tooltip {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
 body.dark-mode .sorting-tooltip,
 body.dark-mode .performance-tooltip {
   /* Mantém os estilos definidos anteriormente */
@@ -460,15 +472,15 @@ body.dark-mode .y-label {
 }
 
 .bar.highlight {
-  fill: var(--bar-highlight); /* Amarelo para comparação */
+  fill: var(--highlight-color, #f4b400);
 }
 
 .bar.swapping {
-  fill: var(--bar-swapping); /* Vermelho para troca */
+  fill: var(--swapping-color, #db4437);
 }
 
 .bar.special {
-  fill: var(--bar-special); /* Verde para elemento especial */
+  fill: var(--special-color, #0f9d58);
 }
 
 .bar:hover {
@@ -547,4 +559,20 @@ body.dark-mode .y-label {
     background: var(--button-bg);
     border-radius: 50%;
     cursor: pointer;
+}
+
+.chart-container {
+  /* Estilos para ajustar o tamanho e o posicionamento dos gráficos */
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+
+.axis text {
+  fill: var(--axis-color, #333);
+}
+
+.axis path,
+.axis line {
+  stroke: var(--axis-color, #333);
 }
