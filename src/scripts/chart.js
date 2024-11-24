@@ -28,12 +28,9 @@ export class SortingVisualizer {
     try {
       this.svg = this.container
         .append('svg')
-        .attr(
-          'viewBox',
-          `0 0 ${this.width + this.margin.left + this.margin.right} ${
-            this.height + this.margin.top + this.margin.bottom
-          }`
-        )
+        .attr('width', this.width + this.margin.left + this.margin.right)
+        .attr('height', this.height + this.margin.top + this.margin.bottom)
+        .attr('viewBox', `0 0 ${this.width + this.margin.left + this.margin.right} ${this.height + this.margin.top + this.margin.bottom}`)
         .attr('preserveAspectRatio', 'xMidYMid meet')
         .append('g')
         .attr('transform', `translate(${this.margin.left},${this.margin.top})`);
@@ -117,13 +114,21 @@ export class SortingVisualizer {
     resizeObserver.observe(this.container.node());
   }
 
-  update(data, highlightIndices = [], swappingIndices = [], specialIndices = []) {
+  update(data, highlightIndices = [], swappingIndices = [], specialIndices = [], animate = true) {
     this.currentData = data;
+
+    this.setupResponsiveLayout();
+
 
     this.xScale.domain(data.map((d, i) => i));
     this.yScale.domain([0, d3.max(data) * 1.1]);
 
-    this.updateAxes();
+    this.svg
+      .attr('width', this.width + this.margin.left + this.margin.right)
+      .attr('height', this.height + this.margin.top + this.margin.bottom)
+      .attr('transform', `translate(${this.margin.left},${this.margin.top})`);
+
+    this.updateAxes(animate);
 
     const bars = this.svg.selectAll('.bar').data(data);
 
@@ -131,15 +136,21 @@ export class SortingVisualizer {
 
     const barsEnter = bars.enter().append('rect').attr('class', 'bar');
 
-    this.updateBars(bars.merge(barsEnter), highlightIndices, swappingIndices, specialIndices);
+    this.updateBars(bars.merge(barsEnter), highlightIndices, swappingIndices, specialIndices, animate);
 
     this.setupEnhancedTooltip(bars.merge(barsEnter));
   }
 
-  updateAxes() {
-    this.xAxis
-      .transition()
-      .duration(this.config.animationDuration)
+  updateAxes(animate) {
+    let xAxisUpdate = this.xAxis;
+    let yAxisUpdate = this.yAxis;
+
+    if (animate) {
+      xAxisUpdate = xAxisUpdate.transition().duration(this.config.animationDuration);
+      yAxisUpdate = yAxisUpdate.transition().duration(this.config.animationDuration);
+    }
+
+    xAxisUpdate
       .call(
         this.currentData.length <= 30
           ? d3.axisBottom(this.xScale)
@@ -148,18 +159,23 @@ export class SortingVisualizer {
       .selectAll('text')
       .attr('fill', 'var(--axis-color)');
 
-    this.yAxis
-      .transition()
-      .duration(this.config.animationDuration)
+    yAxisUpdate
       .call(d3.axisLeft(this.yScale))
       .selectAll('text')
       .attr('fill', 'var(--axis-color)');
   }
 
-  updateBars(bars, highlightIndices, swappingIndices, specialIndices) {
-    bars
-      .transition()
-      .duration(this.config.animationDuration)
+
+  updateBars(bars, highlightIndices, swappingIndices, specialIndices, animate) {
+    let updatedBars = bars;
+
+    if (animate) {
+      updatedBars = updatedBars
+        .transition()
+        .duration(this.config.animationDuration);
+    }
+
+    updatedBars
       .attr('x', (d, i) => this.xScale(i))
       .attr('width', this.xScale.bandwidth())
       .attr('y', d => this.yScale(d))
@@ -172,7 +188,6 @@ export class SortingVisualizer {
         return classes;
       });
   }
-  
 
   setupEnhancedTooltip(bars) {
     bars
@@ -212,38 +227,98 @@ export class SortingVisualizer {
 export class AlgorithmAnalytics {
   constructor(containerId) {
     this.container = d3.select(containerId);
+    this.performanceData = []; // Adicionar esta linha para armazenar os dados
     this.setupLayout();
     this.createCharts();
+    this.setupEventListeners();
+    this.clear();
   }
 
   setupLayout() {
-    this.container
-      .style('display', 'grid')
-      .style('grid-template-columns', 'repeat(2, 1fr)')
-      .style('gap', '20px')
-      .style('padding', '20px');
+    // Criar container para os gráficos
+    this.chartsContainer = this.container
+      .append('div')
+      .attr('class', 'performance-charts');
 
-    this.timeContainer = this.container.append('div').attr('class', 'chart-container');
-    this.comparisonContainer = this.container.append('div').attr('class', 'chart-container');
+    // Criar containers individuais para cada gráfico
+    this.timeContainer = this.chartsContainer
+      .append('div')
+      .attr('class', 'chart-container');
+
+    this.comparisonContainer = this.chartsContainer
+      .append('div')
+      .attr('class', 'chart-container');
+
+    this.swapContainer = this.chartsContainer
+      .append('div')
+      .attr('class', 'chart-container');
+
+    // Container para os botões já existe no HTML
   }
 
   createCharts() {
+    const commonConfig = {
+      margin: { top: 30, right: 50, bottom: 40, left: 50 },
+      height: 400, // Altura reduzida para melhor ajuste
+    };
+
     this.timeChart = new PerformanceChart(
       this.timeContainer.node(),
       'Tempo de Execução',
       'Tamanho do Array',
-      'Tempo (ms)'
+      'Tempo (ms)',
+      commonConfig
     );
 
     this.comparisonChart = new PerformanceChart(
       this.comparisonContainer.node(),
-      'Comparações Realizadas',
+      'Comparações',
       'Tamanho do Array',
-      'Número de Comparações'
+      'Quantidade',
+      commonConfig
     );
 
-    this.timeChart.update([]);
-    this.comparisonChart.update([]);
+    this.swapChart = new PerformanceChart(
+      this.swapContainer.node(),
+      'Trocas',
+      'Tamanho do Array',
+      'Quantidade',
+      commonConfig
+    );
+  }
+
+  setupEventListeners() {
+    // Conectar os botões às suas funções
+    const clearButton = document.getElementById('clear-data');
+    const exportButton = document.getElementById('export-data');
+
+    if (clearButton) {
+      clearButton.addEventListener('click', () => this.clear());
+    }
+
+    if (exportButton) {
+      exportButton.addEventListener('click', () => this.exportData());
+    }
+  }
+
+  exportData() {
+    if (!this.performanceData?.length) {
+      console.warn('No performance data to export');
+      return;
+    }
+
+    const header = 'algorithm,size,time,comparisons,swaps\n';
+    const csv = header + this.performanceData
+      .map(d => `${d.algorithm},${d.size},${d.time},${d.comparisons},${d.swapCount}`)
+      .join('\n');
+
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'sorting-performance.csv';
+    a.click();
+    window.URL.revokeObjectURL(url);
   }
 
   update(data) {
@@ -257,6 +332,8 @@ export class AlgorithmAnalytics {
       return;
     }
 
+    this.performanceData.push(...data);
+
     const timeData = data.map(d => ({
       algorithm: d.algorithm,
       size: d.size,
@@ -269,26 +346,51 @@ export class AlgorithmAnalytics {
       value: d.comparisons
     }));
 
+    const swapData = this.performanceData.map(d => ({
+      algorithm: d.algorithm,
+      size: d.size,
+      value: d.swapCount
+    }));
+
     this.timeChart.update(timeData);
     this.comparisonChart.update(comparisonData);
+    this.swapChart.update(swapData);
   }
 
   clear() {
+    this.performanceData = []; // Limpar os dados acumulados
     this.timeChart.clear();
     this.comparisonChart.clear();
+    this.swapChart.clear();
+  }
+
+  destroy() {
+    if (this.swapChart) {
+      this.swapChart.destroy();
+    }
   }
 }
 
 export class PerformanceChart {
-  constructor(container, title, xLabel, yLabel) {
-    this.margin = { top: 40, right: 120, bottom: 50, left: 70 };
-    this.width = 600 - this.margin.left - this.margin.right;
-    this.height = 400 - this.margin.top - this.margin.bottom;
+  constructor(container, title, xLabel, yLabel, config = {}) {
+    this.margin = {
+      top: 40,    // Para o título
+      right: 40,  // Reduzido para economizar espaço
+      bottom: 40,
+      left: 50    // Para os números do eixo Y
+    };
+
+    // Calcular dimensões baseadas no container
+    const containerRect = container.getBoundingClientRect();
+    this.width = containerRect.width - this.margin.left - this.margin.right;
+    this.height = (config.height || containerRect.height) - this.margin.top - this.margin.bottom;
 
     this.svg = d3.select(container)
       .append('svg')
-      .attr('width', this.width + this.margin.left + this.margin.right)
-      .attr('height', this.height + this.margin.top + this.margin.bottom)
+      .attr('width', '100%')
+      .attr('height', '100%')
+      .attr('viewBox', `0 0 ${containerRect.width} ${containerRect.height}`)
+      .attr('preserveAspectRatio', 'xMidYMid meet')
       .append('g')
       .attr('transform', `translate(${this.margin.left},${this.margin.top})`);
 

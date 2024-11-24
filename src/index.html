@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="Visualizador e análise de algoritmos com diferentes métodos como Bubble Sort, Insertion Sort, Quick Sort e outros">
+    <meta name="description" content="Visualizador e análise de algoritmos com diferentes métodos de ordenação e busca">
     <meta name="theme-color" content="#ffffff">
     <title>Enigma</title>
     <link rel="stylesheet" href="styles/main.css">
@@ -18,8 +17,7 @@
                 <h1 class="header__title">📊 Análise de Algoritmos</h1>
                 <div class="theme-switcher">
                     <div class="theme-switcher__toggle" role="switch" aria-checked="false">
-                        <input type="checkbox" id="dark-mode-toggle" class="theme-switcher__input"
-                            aria-label="Alternar modo escuro">
+                        <input type="checkbox" id="dark-mode-toggle" class="theme-switcher__input">
                         <label for="dark-mode-toggle" class="theme-switcher__label">
                             <span class="visually-hidden">Modo Escuro</span>
                         </label>
@@ -30,152 +28,402 @@
         </header>
 
         <main class="main-content">
-            <section class="control-panel" aria-labelledby="control-panel-title">
-                <h2 id="control-panel-title" class="visually-hidden">Painel de Controle</h2>
+            <!-- Aba de navegação para alternar entre ordenação e busca -->
+            <nav class="algorithm-tabs" role="tablist">
+                <button id="sort-tab" class="tab-button active" role="tab" aria-selected="true"
+                    aria-controls="sort-panel">
+                    Ordenação
+                </button>
+                <button id="search-tab" class="tab-button" role="tab" aria-selected="false"
+                    aria-controls="search-panel">
+                    Busca
+                </button>
+            </nav>
 
-                <div class="control-panel__algorithms">
-                    <label for="algorithm-select" class="control-panel__label">Algoritmo:</label>
-                    <select id="algorithm-select" class="control-panel__select"
-                        aria-label="Selecione o algoritmo de ordenação">
-                        <option value="bubble">Bubble Sort</option>
-                        <option value="insert">Insertion Sort</option>
-                        <option value="select">Selection Sort</option>
-                        <option value="quick">Quick Sort</option>
-                        <option value="merge">Merge Sort</option>
-                        <option value="heap">Heap Sort</option>
-                        <option value="shell">Shell Sort</option>
-                        <option value="counting">Counting Sort</option>
-                        <option value="bucket">Bucket Sort</option> 
-                        <option value="radix">Radix Sort</option>
-                    </select>
-                </div>
+            <!-- Painel de Ordenação -->
+            <div id="sort-panel" class="algorithm-panel active" role="tabpanel" aria-labelledby="sort-tab">
+                <!-- Painel de Controle -->
+                <section class="control-panel" aria-labelledby="sort-control-panel-title">
+                    <h2 id="sort-control-panel-title" class="visually-hidden">Painel de Controle - Ordenação</h2>
+                    <div class="control-panel__inputs">
+                        <div class="input-group">
+                            <label for="algorithm-select" class="input-group__label">Algoritmo:</label>
+                            <select id="algorithm-select" class="input-group__input">
+                                <option value="bubble">Bubble Sort</option>
+                                <option value="insert">Insertion Sort</option>
+                                <option value="select">Selection Sort</option>
+                                <option value="quick">Quick Sort</option>
+                                <option value="merge">Merge Sort</option>
+                                <option value="heap">Heap Sort</option>
+                                <option value="shell">Shell Sort</option>
+                                <option value="counting">Counting Sort</option>
+                                <option value="bucket">Bucket Sort</option>
+                                <option value="radix">Radix Sort</option>
+                            </select>
+                        </div>
 
-                <div class="control-panel__inputs">
-                    <div class="input-group">
-                        <label class="input-group__label">
-                            Tamanho do Array:
-                        </label>
-                        <input type="number" id="size-input" min="5" max="1000" value="30" step="1" aria-label="Digite o tamanho do array">
-                        <input type="range" id="size-range" min="5" max="1000" value="30" step="1" aria-label="Defina o tamanho do array">
+                        <div class="input-group">
+                            <label class="input-group__label">
+                                Tamanho do Array:
+                            </label>
+                            <input type="number" id="size-input" class="input-group__input" min="5" max="1000"
+                                value="30" step="1" aria-label="Digite o tamanho do array">
+                            <input type="range" id="size-range" class="input-group__input" min="5" max="1000" value="30"
+                                step="1" aria-label="Defina o tamanho do array">
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-group__label">
+                                Velocidade (ms):
+                            </label>
+                            <input type="number" id="speed-input" class="input-group__input" min="1" max="1000"
+                                value="50" step="1" aria-label="Digite a velocidade da animação">
+                            <input type="range" id="speed-range" class="input-group__input" min="1" max="1000"
+                                value="50" step="1" aria-label="Defina a velocidade da animação">
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <label class="input-group__label">
-                            Velocidade (ms):
-                        </label>
-                        <input type="number" id="speed-input" min="1" max="1000" value="50" step="1" aria-label="Digite a velocidade da animação">
-                        <input type="range" id="speed-range" min="1" max="1000" value="50" step="1" aria-label="Defina a velocidade da animação">
+
+                    <div class="control-panel__buttons">
+                        <button id="new-array-button" class="button button--secondary" aria-label="Gerar novo array">
+                            Novo Array
+                        </button>
+                        <button id="start-button" class="button button--primary" aria-label="Iniciar ordenação">
+                            Iniciar Ordenação
+                        </button>
+                        <button id="reset-array-button" class="button button--warning"
+                            aria-label="Retornar ao array inicial">
+                            Vetor Inicial
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Estatísticas -->
+                <section class="statistics" aria-labelledby="statistics-title">
+                    <h2 id="statistics-title" class="visually-hidden">Estatísticas</h2>
+                    <div class="statistics__content" role="status" aria-live="polite">
+                        <div class="statistics__item">
+                            <span class="statistics__label">Comparações:</span>
+                            <span id="comparisons" class="statistics__value">0</span>
+                        </div>
+                        <div class="statistics__item">
+                            <span class="statistics__label">Total Swaps:</span>
+                            <span id="swap-count-value" class="statistics__value">0</span>
+                        </div>
+                        <div class="statistics__item">
+                            <span class="statistics__label">Tempo de execução:</span>
+                            <span id="execution-time" class="statistics__value">0 ms</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Visualização -->
+
+                <section class="visualization" aria-labelledby="visualization-title">
+                    <h2 id="visualization-title" class="visually-hidden">Visualização da Ordenação</h2>
+                    <div id="sorting-container" class="visualization__sorting" role="region"
+                        aria-label="Visualização da ordenação em tempo real">
+                    </div>
+                    <!-- Legenda da Ordenação -->
+                    <div class="sorting-legend">
+                        <div class="sorting-legend__item">
+                            <span class="sorting-legend__color" style="background-color: var(--bar-special);"></span>
+                            <span class="sorting-legend__label">Ordenado</span>
+                        </div>
+                        <div class="sorting-legend__item">
+                            <span class="sorting-legend__color" style="background-color: var(--bar-highlight);"></span>
+                            <span class="sorting-legend__label">Comparando</span>
+                        </div>
+                        <div class="sorting-legend__item">
+                            <span class="sorting-legend__color" style="background-color: var(--bar-swapping);"></span>
+                            <span class="sorting-legend__label">Trocando</span>
+                        </div>
+                    </div>
+                    <div id="performance-container" class="visualization__performance" role="region"
+                        aria-label="Gráfico de performance dos algoritmos">
+                        <div class="performance-charts">
+                            <!-- Os gráficos serão inseridos aqui -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Controles de Dados -->
+                <section class="data-controls" aria-labelledby="data-controls-title">
+                    <h2 id="data-controls-title" class="visually-hidden">Controles de Dados</h2>
+                    <div class="data-controls__buttons">
+                        <button class="button button--danger" id="clear-data" aria-label="Limpar todos os dados">
+                            Limpar Dados
+                        </button>
+                        <button class="button button--info" id="export-data" aria-label="Exportar dados para CSV">
+                            Exportar CSV
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <div id="search-panel" class="algorithm-panel" role="tabpanel" aria-labelledby="search-tab">
+                <!-- Painel de Controle -->
+                <section class="control-panel" aria-labelledby="search-control-panel-title">
+                    <h2 id="search-control-panel-title" class="visually-hidden">Painel de Controle - Busca</h2>
+
+                    <div class="control-panel__inputs">
+                        <div class="input-group">
+                            <label for="search-algorithm-select" class="input-group__label">Algoritmo de Busca:</label>
+                            <select id="search-algorithm-select" class="input-group__input">
+                                <option value="linear">Busca Linear</option>
+                                <option value="binary">Busca Binária</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-group__label">
+                                Tamanho do Array:
+                            </label>
+                            <input type="number" id="search-size-input" class="input-group__input" min="5" max="1000"
+                                value="30" step="1" aria-label="Digite o tamanho do array">
+                            <input type="range" id="search-size-range" class="input-group__input" min="5" max="1000"
+                                value="30" step="1" aria-label="Defina o tamanho do array">
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-group__label">
+                                Valor a Buscar:
+                            </label>
+                            <input type="number" id="search-value-input" class="input-group__input" min="1" max="100"
+                                value="50" step="1" aria-label="Digite o valor a ser buscado">
+                        </div>
+                    </div>
+
+                    <div class="control-panel__buttons">
+                        <button id="search-new-array-button" class="button button--secondary"
+                            aria-label="Gerar novo array">
+                            Novo Array
+                        </button>
+                        <button id="search-start-button" class="button button--primary" aria-label="Iniciar busca">
+                            Iniciar Busca
+                        </button>
+                        <button id="search-reset-array-button" class="button button--warning"
+                            aria-label="Retornar ao array inicial">
+                            Vetor Inicial
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Estatísticas -->
+                <section class="statistics" aria-labelledby="search-statistics-title">
+                    <h2 id="search-statistics-title" class="visually-hidden">Estatísticas</h2>
+                    <div class="statistics__content">
+                        <div class="statistics__item">
+                            <span class="statistics__label">Comparações:</span>
+                            <span id="search-comparisons" class="statistics__value">0</span>
+                        </div>
+                        <div class="statistics__item">
+                            <span class="statistics__label">Tempo de execução:</span>
+                            <span id="search-execution-time" class="statistics__value">0 ms</span>
+                        </div>
+                        <div class="statistics__item">
+                            <span class="statistics__label">Resultado:</span>
+                            <span id="search-result" class="statistics__value">N/A</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Visualização -->
+                <section class="visualization" aria-labelledby="search-visualization-title">
+                    <h2 id="search-visualization-title" class="visually-hidden">Visualização da Busca</h2>
+                    <div id="searching-container" class="visualization__search" role="region"
+                        aria-label="Visualização da busca em tempo real">
+                        <div class="search-chart-container">
+                            <!-- O SVG será inserido aqui dinamicamente -->
+                        </div>
+                    </div>
+                    <div class="sorting-legend" role="list" aria-label="Legenda da visualização">
+                        <div class="search-legend__item" role="listitem">
+                            <span class="search-legend__color search-legend__color--found" style="background-color: var(--bar-special)"></span>
+                            <span class="search-legend__label">Encontrado</span>
+                        </div>
+                        <div class="search-legend__item" role="listitem">
+                            <span class="search-legend__color search-legend__color--checking" style="background-color: var(--bar-highlight)"></span>
+                            <span class="search-legend__label">Verificando</span>
+                        </div>
+                        <div class="search-legend__item" role="listitem">
+                            <span class="search-legend__color search-legend__color--search" style="background-color: var(--info-color)"></span>
+                            <span class="search-legend__label">Área de Busca</span>
+                        </div>
+                        <div class="search-legend__item" role="listitem">
+                            <span class="search-legend__color search-legend__color--discarded" style="background-color: var(--control-border)"></span>
+                            <span class="search-legend__label">Descartado</span>
+                        </div>
                     </div>
                 </div>
-
-                <div class="control-panel__buttons">
-                    <button id="new-array-button" class="button button--secondary" aria-label="Gerar novo array">
-                        Novo Array
-                    </button>
-                    <button id="start-button" class="button button--primary" aria-label="Iniciar ordenação">
-                        Iniciar Ordenação
-                    </button>
-                    <button id="reset-array-button" class="button button--warning"
-                        aria-label="Retornar ao array inicial">
-                        Vetor Inicial
-                    </button>
-                </div>
-            </section>
-
-            <section class="statistics" aria-labelledby="statistics-title">
-                <h2 id="statistics-title" class="visually-hidden">Estatísticas</h2>
-                <div class="statistics__content" role="status" aria-live="polite">
-                    <div class="statistics__item">
-                        <span class="statistics__label">Comparações:</span>
-                        <span id="comparisons" class="statistics__value">0</span>
                     </div>
-                    <div class="statistics__item" id="swap-count">
-                        <span class="statistics__label">Total Swaps:</span>
-                        <span id="swap-count-value" class="statistics__value">0</span>
-                    </div>                    
-                    <div class="statistics__item">
-                        <span class="statistics__label">Tempo de execução:</span>
-                        <span id="execution-time" class="statistics__value">0 ms</span>
-                    </div>
-                </div>
-            </section>
+                </section>
+            </div>
 
-            <section class="visualization" aria-labelledby="visualization-title">
-                <h2 id="visualization-title" class="visually-hidden">Visualização da Ordenação</h2>
-                <div id="sorting-container" class="visualization__sorting" role="region"
-                    aria-label="Visualização da ordenação em tempo real">
-                </div>
-                <div id="performance-container" class="visualization__performance" role="region"
-                    aria-label="Gráfico de performance dos algoritmos">
-                </div>
-            </section>
-        </main>
-    </div>
+            <script src="../dist/bundle.js"></script>
 
-    <script>
-        class ThemeSwitcher {
-            constructor() {
-                this.toggle = document.getElementById('dark-mode-toggle');
-                this.body = document.body;
-                this.init();
-            }
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    let sortingVisualizerInitialized = false;
+                    const sortTab = document.getElementById('sort-tab');
+                    const searchTab = document.getElementById('search-tab');
+                    const sortPanel = document.getElementById('sort-panel');
+                    const searchPanel = document.getElementById('search-panel');
 
-            init() {
-                // Verifica preferência do sistema
-                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                const savedTheme = localStorage.getItem('dark-mode');
+                    function switchTab(activeTab, inactiveTab, activePanel, inactivePanel) {
+                        // Remove classes ativas de todas as abas
+                        [sortTab, searchTab].forEach(tab => {
+                            tab.classList.remove('active');
+                            tab.setAttribute('aria-selected', 'false');
+                        });
 
-                // Aplica tema baseado na preferência salva ou do sistema
-                if (savedTheme === 'enabled' || (!savedTheme && prefersDark)) {
-                    this.enableDarkMode();
-                }
+                        // Remove classes ativas de todos os painéis
+                        [sortPanel, searchPanel].forEach(panel => {
+                            panel.classList.remove('active');
+                        });
 
-                this.attachEventListeners();
-            }
+                        // Ativa a aba e painel selecionados
+                        activeTab.classList.add('active');
+                        activeTab.setAttribute('aria-selected', 'true');
+                        activePanel.classList.add('active');
 
-            attachEventListeners() {
-                this.toggle.addEventListener('change', () => {
-                    if (this.toggle.checked) {
-                        this.enableDarkMode();
-                    } else {
-                        this.disableDarkMode();
+                        // Inicializa o visualizador de ordenação quando a aba é ativada
+                        if (activeTab === sortTab && !sortingVisualizerInitialized) {
+                            window.sortingApp.sortingVisualizer.setupResponsiveLayout();
+                            if (window.sortingApp.currentArray) {
+                                window.sortingApp.sortingVisualizer.update(window.sortingApp.currentArray);
+                            }
+                            sortingVisualizerInitialized = true;
+                        }
                     }
-                });
 
-                // Atualiza quando a preferência do sistema mudar
-                window.matchMedia('(prefers-color-scheme: dark)')
-                    .addEventListener('change', e => {
-                        if (!localStorage.getItem('dark-mode')) {
-                            if (e.matches) {
+                    sortTab.addEventListener('click', () => {
+                        switchTab(sortTab, searchTab, sortPanel, searchPanel);
+                    });
+
+                    searchTab.addEventListener('click', () => {
+                        switchTab(searchTab, sortTab, searchPanel, sortPanel);
+                    });
+                });
+            </script>
+
+            <button id="info-button" class="info-button" aria-label="Informações sobre as cores">
+                ?
+            </button>
+
+            <!-- Pop-up de Legenda -->
+            <div id="legend-popup" class="legend-popup" role="dialog" aria-modal="false" aria-labelledby="legend-title"
+                hidden>
+                <h3 id="legend-title">Legenda das Cores</h3>
+                <ul class="legend-list">
+                    <li><span class="legend-color" style="background-color: var(--special-color, #0f9d58);"></span>
+                        Elemento
+                        Especial (Verde) / Concluido</li>
+                    <li><span class="legend-color" style="background-color: var(--highlight-color, #f4b400);"></span>
+                        Comparação
+                        (Amarelo)</li>
+                    <li><span class="legend-color" style="background-color: var(--swapping-color, #db4437);"></span>
+                        Troca
+                        (Vermelho)</li>
+                </ul>
+                <button id="close-legend-button" class="close-button" aria-label="Fechar">Fechar</button>
+            </div>
+
+            <script>
+                class ThemeSwitcher {
+                    constructor() {
+                        this.toggle = document.getElementById('dark-mode-toggle');
+                        this.body = document.body;
+                        this.init();
+                    }
+
+                    init() {
+                        // Verifica preferência do sistema
+                        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                        const savedTheme = localStorage.getItem('dark-mode');
+
+                        // Aplica tema baseado na preferência salva ou do sistema
+                        if (savedTheme === 'enabled' || (!savedTheme && prefersDark)) {
+                            this.enableDarkMode();
+                        }
+
+                        this.attachEventListeners();
+                    }
+
+                    attachEventListeners() {
+                        this.toggle.addEventListener('change', () => {
+                            if (this.toggle.checked) {
                                 this.enableDarkMode();
                             } else {
                                 this.disableDarkMode();
                             }
+                        });
+
+                        // Atualiza quando a preferência do sistema mudar
+                        window.matchMedia('(prefers-color-scheme: dark)')
+                            .addEventListener('change', e => {
+                                if (!localStorage.getItem('dark-mode')) {
+                                    if (e.matches) {
+                                        this.enableDarkMode();
+                                    } else {
+                                        this.disableDarkMode();
+                                    }
+                                }
+                            });
+                    }
+
+                    enableDarkMode() {
+                        this.toggle.checked = true;
+                        this.body.classList.add('dark-mode');
+                        this.toggle.setAttribute('aria-checked', 'true');
+                        localStorage.setItem('dark-mode', 'enabled');
+                    }
+
+                    disableDarkMode() {
+                        this.toggle.checked = false;
+                        this.body.classList.remove('dark-mode');
+                        this.toggle.setAttribute('aria-checked', 'false');
+                        localStorage.setItem('dark-mode', 'disabled');
+                    }
+                }
+
+                // Inicializa o theme switcher quando o DOM estiver pronto
+                document.addEventListener('DOMContentLoaded', () => {
+                    new ThemeSwitcher();
+
+                    // Referências aos elementos do pop-up
+                    const infoButton = document.getElementById('info-button');
+                    const legendPopup = document.getElementById('legend-popup');
+                    const closeLegendButton = document.getElementById('close-legend-button');
+
+                    // Mostra o pop-up ao clicar no botão de informação
+                    infoButton.addEventListener('click', () => {
+                        legendPopup.hidden = false;
+                        legendPopup.setAttribute('aria-modal', 'true');
+                    });
+
+                    // Esconde o pop-up ao clicar no botão de fechar
+                    closeLegendButton.addEventListener('click', () => {
+                        legendPopup.hidden = true;
+                        legendPopup.setAttribute('aria-modal', 'false');
+                    });
+
+                    // Esconde o pop-up ao clicar fora dele
+                    window.addEventListener('click', (event) => {
+                        if (event.target === legendPopup) {
+                            legendPopup.hidden = true;
+                            legendPopup.setAttribute('aria-modal', 'false');
                         }
                     });
-            }
 
-            enableDarkMode() {
-                this.toggle.checked = true;
-                this.body.classList.add('dark-mode');
-                this.toggle.setAttribute('aria-checked', 'true');
-                localStorage.setItem('dark-mode', 'enabled');
-            }
-
-            disableDarkMode() {
-                this.toggle.checked = false;
-                this.body.classList.remove('dark-mode');
-                this.toggle.setAttribute('aria-checked', 'false');
-                localStorage.setItem('dark-mode', 'disabled');
-            }
-        }
-
-        // Inicializa o theme switcher quando o DOM estiver pronto
-        document.addEventListener('DOMContentLoaded', () => {
-            new ThemeSwitcher();
-        });
-    </script>
-
-    <script src="../dist/bundle.js"></script>
+                    // Esconde o pop-up ao pressionar a tecla "Escape"
+                    window.addEventListener('keydown', (event) => {
+                        if (event.key === 'Escape' && !legendPopup.hidden) {
+                            legendPopup.hidden = true;
+                            legendPopup.setAttribute('aria-modal', 'false');
+                        }
+                    });
+                });
+            </script>
 </body>
 
 </html>

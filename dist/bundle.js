@@ -2,6 +2,1222 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./src/renderer.js":
+/*!*************************!*\
+  !*** ./src/renderer.js ***!
+  \*************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SearchingApp: () => (/* binding */ SearchingApp),
+/* harmony export */   SortingApp: () => (/* binding */ SortingApp),
+/* harmony export */   highlightIndices: () => (/* binding */ highlightIndices),
+/* harmony export */   updateVisualization: () => (/* binding */ updateVisualization)
+/* harmony export */ });
+/* harmony import */ var _scripts_chart__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./scripts/chart */ "./src/scripts/chart.js");
+/* harmony import */ var _scripts_algorithms_bubbleSort__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./scripts/algorithms/bubbleSort */ "./src/scripts/algorithms/bubbleSort.js");
+/* harmony import */ var _scripts_algorithms_insertSort__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./scripts/algorithms/insertSort */ "./src/scripts/algorithms/insertSort.js");
+/* harmony import */ var _scripts_algorithms_quickSort__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./scripts/algorithms/quickSort */ "./src/scripts/algorithms/quickSort.js");
+/* harmony import */ var _scripts_algorithms_mergeSort__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./scripts/algorithms/mergeSort */ "./src/scripts/algorithms/mergeSort.js");
+/* harmony import */ var _scripts_algorithms_heapSort__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./scripts/algorithms/heapSort */ "./src/scripts/algorithms/heapSort.js");
+/* harmony import */ var _scripts_algorithms_selectSort__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./scripts/algorithms/selectSort */ "./src/scripts/algorithms/selectSort.js");
+/* harmony import */ var _scripts_algorithms_shellSort__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./scripts/algorithms/shellSort */ "./src/scripts/algorithms/shellSort.js");
+/* harmony import */ var _scripts_algorithms_radixSort__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./scripts/algorithms/radixSort */ "./src/scripts/algorithms/radixSort.js");
+/* harmony import */ var _scripts_algorithms_countingSort__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./scripts/algorithms/countingSort */ "./src/scripts/algorithms/countingSort.js");
+/* harmony import */ var _scripts_algorithms_bucketSort__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./scripts/algorithms/bucketSort */ "./src/scripts/algorithms/bucketSort.js");
+/* harmony import */ var _scripts_algorithms_linearSearch__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./scripts/algorithms/linearSearch */ "./src/scripts/algorithms/linearSearch.js");
+/* harmony import */ var _scripts_algorithms_binarySearch__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./scripts/algorithms/binarySearch */ "./src/scripts/algorithms/binarySearch.js");
+/* harmony import */ var _scripts_SearchVisualizer__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./scripts/SearchVisualizer */ "./src/scripts/SearchVisualizer.js");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, "catch": function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+// src/renderer.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Formata o tempo de execução em uma unidade legível.
+ * @param {number} milliseconds - O tempo em milissegundos.
+ * @returns {string} - Tempo formatado.
+ */
+function formatExecutionTime(milliseconds) {
+  var totalMilliseconds = Math.round(milliseconds); // Arredonda para o inteiro mais próximo
+  var seconds = Math.floor(totalMilliseconds / 1000);
+  var ms = totalMilliseconds % 1000;
+  if (seconds < 60) {
+    return "".concat(seconds, "s ").concat(ms, "ms"); // Exibe em segundos e milissegundos
+  }
+  var minutes = Math.floor(seconds / 60);
+  var remainingSeconds = seconds % 60;
+  if (minutes < 60) {
+    return "".concat(minutes, "m ").concat(remainingSeconds, "s"); // Exibe em minutos e segundos
+  }
+  var hours = Math.floor(minutes / 60);
+  var remainingMinutes = minutes % 60;
+  return "".concat(hours, "h ").concat(remainingMinutes, "m ").concat(remainingSeconds, "s"); // Exibe em horas, minutos e segundos
+}
+function updateVisualization(_x, _x2) {
+  return _updateVisualization.apply(this, arguments);
+}
+function _updateVisualization() {
+  _updateVisualization = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee9(indices, status) {
+    return _regeneratorRuntime().wrap(function _callee9$(_context9) {
+      while (1) switch (_context9.prev = _context9.next) {
+        case 0:
+          // Atualiza o status dos elementos no gráfico
+          indices.forEach(function (index) {
+            var bar = document.querySelector(".bar[data-index=\"".concat(index, "\"]"));
+            if (bar) {
+              bar.classList.add(status);
+            }
+          });
+
+          // Atualiza a visualização após as mudanças
+          _context9.next = 3;
+          return sleep(50);
+        case 3:
+        case "end":
+          return _context9.stop();
+      }
+    }, _callee9);
+  }));
+  return _updateVisualization.apply(this, arguments);
+}
+function highlightIndices(_x3, _x4) {
+  return _highlightIndices.apply(this, arguments);
+}
+function _highlightIndices() {
+  _highlightIndices = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee10(indices, status) {
+    return _regeneratorRuntime().wrap(function _callee10$(_context10) {
+      while (1) switch (_context10.prev = _context10.next) {
+        case 0:
+          // Destaca os índices específicos no gráfico
+          indices.forEach(function (index) {
+            var bar = document.querySelector(".bar[data-index=\"".concat(index, "\"]"));
+            if (bar) {
+              bar.classList.add(status);
+            }
+          });
+
+          // Atualiza a visualização após as mudanças
+          _context10.next = 3;
+          return sleep(50);
+        case 3:
+        case "end":
+          return _context10.stop();
+      }
+    }, _callee10);
+  }));
+  return _highlightIndices.apply(this, arguments);
+}
+function sleep(ms) {
+  return new Promise(function (resolve) {
+    return setTimeout(resolve, ms);
+  });
+}
+var SortingApp = /*#__PURE__*/function () {
+  function SortingApp() {
+    _classCallCheck(this, SortingApp);
+    if (!(this instanceof SortingApp)) {
+      throw new Error('SortingApp must be instantiated with new');
+    }
+    try {
+      this.initializeVisualizers();
+      this.initializeState();
+      this.initializeDOMElements();
+      this.bindEvents();
+      this.generateNewArray();
+    } catch (error) {
+      console.error('Failed to initialize SortingApp:', error);
+      throw error;
+    }
+  }
+  return _createClass(SortingApp, [{
+    key: "initializeVisualizers",
+    value: function initializeVisualizers() {
+      this.sortingVisualizer = new _scripts_chart__WEBPACK_IMPORTED_MODULE_0__.SortingVisualizer('#sorting-container');
+      this.algorithmAnalytics = new _scripts_chart__WEBPACK_IMPORTED_MODULE_0__.AlgorithmAnalytics('#performance-container');
+    }
+  }, {
+    key: "initializeState",
+    value: function initializeState() {
+      this.currentArray = [];
+      this.initialArray = [];
+      this.isSorting = false;
+      this.performanceData = [];
+      this.comparisons = 0;
+      this.lastExportUrl = null;
+      this.swapCount = 0;
+      this.delay = 50; // Valor padrão
+      this.algorithmName = null;
+    }
+  }, {
+    key: "initializeDOMElements",
+    value: function initializeDOMElements() {
+      this.elements = {
+        executionTime: document.getElementById('execution-time'),
+        algorithmSelect: document.getElementById('algorithm-select'),
+        sizeInput: document.getElementById('size-input'),
+        sizeRange: document.getElementById('size-range'),
+        speedInput: document.getElementById('speed-input'),
+        speedRange: document.getElementById('speed-range'),
+        // Adicionado
+        newArrayButton: document.getElementById('new-array-button'),
+        startButton: document.getElementById('start-button'),
+        resetArrayButton: document.getElementById('reset-array-button'),
+        // Adicionado
+        comparisonsSpan: document.getElementById('comparisons'),
+        swapCountValue: document.getElementById('swap-count-value'),
+        performanceContainer: document.querySelector('#performance-container')
+      };
+      Object.entries(this.elements).forEach(function (_ref) {
+        var _ref2 = _slicedToArray(_ref, 2),
+          key = _ref2[0],
+          value = _ref2[1];
+        if (!value) console.error("Element not found: ".concat(key));
+      });
+      if (!Object.values(this.elements).every(function (element) {
+        return element;
+      })) {
+        throw new Error('Failed to initialize required DOM elements');
+      }
+    }
+  }, {
+    key: "bindEvents",
+    value: function bindEvents() {
+      var _this = this;
+      var handlers = this.getEventHandlers();
+      var elementBindings = [[this.elements.newArrayButton, 'click', handlers.generateNewArray], [this.elements.startButton, 'click', handlers.startSorting], [this.elements.sizeRange, 'input', handlers.handleSizeChange], [this.elements.sizeInput, 'input', handlers.handleSizeChange], [this.elements.speedRange, 'input', handlers.handleSpeedChange], [this.elements.speedInput, 'input', handlers.handleSpeedChange], [this.elements.resetArrayButton, 'click', handlers.resetToInitialArray]];
+      elementBindings.forEach(function (_ref3) {
+        var _ref4 = _slicedToArray(_ref3, 3),
+          element = _ref4[0],
+          event = _ref4[1],
+          handler = _ref4[2];
+        _this.bindSafely(element, event, handler);
+      });
+    }
+  }, {
+    key: "bindSafely",
+    value: function bindSafely(element, event, handler) {
+      try {
+        if (!element) {
+          throw new Error("Element not found for ".concat(event, " event"));
+        }
+        element.addEventListener(event, handler);
+      } catch (error) {
+        console.error("Failed to bind ".concat(event, " event:"), error);
+      }
+    }
+  }, {
+    key: "generateNewArray",
+    value: function generateNewArray() {
+      var _this$elements;
+      if (this.isSorting || !((_this$elements = this.elements) !== null && _this$elements !== void 0 && _this$elements.sizeInput)) return;
+      var size = Math.max(1, Math.min(1000, parseInt(this.elements.sizeInput.value) || 10));
+      this.elements.sizeInput.value = size; // Normaliza o input
+      this.elements.sizeRange.value = size; // Sincroniza o range
+      this.currentArray = Array.from({
+        length: size
+      }, function () {
+        return Math.floor(Math.random() * 100) + 1;
+      });
+      this.initialArray = _toConsumableArray(this.currentArray);
+      this.sortingVisualizer.update(this.currentArray);
+      this.resetStats();
+    }
+  }, {
+    key: "clearPerformanceData",
+    value: function clearPerformanceData() {
+      this.performanceData = [];
+      if (this.algorithmAnalytics) {
+        this.algorithmAnalytics.clear();
+      }
+      // Limpar todas as URLs de blob anteriores
+      if (this.lastExportUrl) {
+        URL.revokeObjectURL(this.lastExportUrl);
+        this.lastExportUrl = null;
+      }
+    }
+  }, {
+    key: "resetStats",
+    value: function resetStats() {
+      this.comparisons = 0;
+      this.elements.comparisonsSpan.textContent = '0';
+      this.elements.executionTime.textContent = '0s 0ms';
+      this.swapCount = 0;
+      this.updateSwapCountDisplay(0);
+    }
+  }, {
+    key: "exportPerformanceData",
+    value: function exportPerformanceData() {
+      var _this$performanceData;
+      if (!((_this$performanceData = this.performanceData) !== null && _this$performanceData !== void 0 && _this$performanceData.length)) {
+        console.warn('No performance data to export');
+        return;
+      }
+      if (this.lastExportUrl) {
+        URL.revokeObjectURL(this.lastExportUrl);
+      }
+      var header = 'algorithm,size,time,comparisons\n';
+      var csv = header + this.performanceData.map(function (d) {
+        return "".concat(d.algorithm, ",").concat(d.size, ",").concat(d.time, ",").concat(d.comparisons);
+      }).join('\n');
+      var blob = new Blob([csv], {
+        type: 'text/csv'
+      });
+      this.lastExportUrl = window.URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = this.lastExportUrl;
+      a.download = 'sorting-performance.csv';
+      a.click();
+    }
+  }, {
+    key: "startSorting",
+    value: function () {
+      var _startSorting = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+        var _this2 = this;
+        var initialComparisons, startTime, algorithm, delay, result, endTime;
+        return _regeneratorRuntime().wrap(function _callee$(_context) {
+          while (1) switch (_context.prev = _context.next) {
+            case 0:
+              if (!this.isSorting) {
+                _context.next = 2;
+                break;
+              }
+              return _context.abrupt("return");
+            case 2:
+              if (!(!this.currentArray || this.currentArray.length === 0)) {
+                _context.next = 5;
+                break;
+              }
+              console.error('No array to sort');
+              return _context.abrupt("return");
+            case 5:
+              initialComparisons = this.comparisons;
+              startTime = performance.now();
+              if (!this.initialArray.length || this.initialArray.toString() !== this.currentArray.toString()) {
+                this.initialArray = _toConsumableArray(this.currentArray);
+              }
+              _context.prev = 8;
+              this.isSorting = true;
+              this.toggleControls(false);
+              algorithm = this.getSelectedAlgorithm();
+              if (algorithm) {
+                _context.next = 14;
+                break;
+              }
+              throw new Error('Invalid algorithm selected');
+            case 14:
+              // Adicionar validação para o delay
+              delay = function () {
+                var inputValue = parseInt(_this2.elements.speedInput.value);
+                if (isNaN(inputValue) || inputValue < 0) {
+                  return 50; // valor padrão
+                }
+                return inputValue;
+              }(); // // Capturar o resultado com o swapCount
+              _context.next = 17;
+              return this.runSort(algorithm, _toConsumableArray(this.currentArray), delay);
+            case 17:
+              result = _context.sent;
+              endTime = performance.now();
+              this.updatePerformanceData({
+                time: endTime - startTime,
+                comparisons: this.comparisons - initialComparisons,
+                swapCount: result.swapCount
+              });
+
+              // Atualizar a exibição do tempo formatado
+              this.elements.executionTime.textContent = formatExecutionTime(endTime - startTime);
+
+              // Atualizar a exibição do número de trocas
+              if (result && result.swapCount !== undefined) {
+                this.updateSwapCountDisplay(result.swapCount);
+              }
+              _context.next = 27;
+              break;
+            case 24:
+              _context.prev = 24;
+              _context.t0 = _context["catch"](8);
+              console.error('Sorting error:', _context.t0);
+            case 27:
+              _context.prev = 27;
+              this.isSorting = false;
+              this.toggleControls(true);
+              return _context.finish(27);
+            case 31:
+            case "end":
+              return _context.stop();
+          }
+        }, _callee, this, [[8, 24, 27, 31]]);
+      }));
+      function startSorting() {
+        return _startSorting.apply(this, arguments);
+      }
+      return startSorting;
+    }()
+  }, {
+    key: "resetToInitialArray",
+    value: function resetToInitialArray() {
+      var _this$initialArray;
+      if (this.isSorting || !((_this$initialArray = this.initialArray) !== null && _this$initialArray !== void 0 && _this$initialArray.length)) return;
+      if (this.initialArray.length) {
+        this.currentArray = _toConsumableArray(this.initialArray);
+        this.sortingVisualizer.update(this.currentArray);
+        this.resetStats();
+      } else {
+        console.warn('Nenhum array inicial armazenado.');
+      }
+    }
+  }, {
+    key: "getSelectedAlgorithm",
+    value: function getSelectedAlgorithm() {
+      var algorithms = {
+        bubble: _scripts_algorithms_bubbleSort__WEBPACK_IMPORTED_MODULE_1__.bubbleSort,
+        insert: _scripts_algorithms_insertSort__WEBPACK_IMPORTED_MODULE_2__.insertSort,
+        quick: _scripts_algorithms_quickSort__WEBPACK_IMPORTED_MODULE_3__.quickSort,
+        merge: _scripts_algorithms_mergeSort__WEBPACK_IMPORTED_MODULE_4__.mergeSort,
+        heap: _scripts_algorithms_heapSort__WEBPACK_IMPORTED_MODULE_5__.heapSort,
+        select: _scripts_algorithms_selectSort__WEBPACK_IMPORTED_MODULE_6__.selectSort,
+        shell: _scripts_algorithms_shellSort__WEBPACK_IMPORTED_MODULE_7__.shellSort,
+        counting: _scripts_algorithms_countingSort__WEBPACK_IMPORTED_MODULE_9__.countingSort,
+        bucket: _scripts_algorithms_bucketSort__WEBPACK_IMPORTED_MODULE_10__.bucketSort,
+        radix: _scripts_algorithms_radixSort__WEBPACK_IMPORTED_MODULE_8__.radixSort
+      };
+      var selected = this.elements.algorithmSelect.value;
+      if (!algorithms[selected]) {
+        throw new Error("Invalid algorithm selected: ".concat(selected));
+      }
+      return algorithms[selected];
+    }
+  }, {
+    key: "runSort",
+    value: function () {
+      var _runSort = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4(algorithm, array, delay) {
+        var _this3 = this;
+        var arr, swapCount, startTime, onUpdate, onCompare, result;
+        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+          while (1) switch (_context4.prev = _context4.next) {
+            case 0:
+              if (!(!algorithm || !Array.isArray(array) || typeof delay !== 'number')) {
+                _context4.next = 2;
+                break;
+              }
+              throw new Error('Invalid parameters provided to runSort');
+            case 2:
+              _context4.prev = 2;
+              arr = _toConsumableArray(array);
+              swapCount = 0;
+              startTime = performance.now();
+              onUpdate = /*#__PURE__*/function () {
+                var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(newArray) {
+                  var swappingIndices,
+                    specialIndices,
+                    currentTime,
+                    elapsedTime,
+                    _args2 = arguments;
+                  return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+                    while (1) switch (_context2.prev = _context2.next) {
+                      case 0:
+                        swappingIndices = _args2.length > 1 && _args2[1] !== undefined ? _args2[1] : [];
+                        specialIndices = _args2.length > 2 && _args2[2] !== undefined ? _args2[2] : [];
+                        arr = _toConsumableArray(newArray);
+                        _this3.sortingVisualizer.update(arr, [], swappingIndices, specialIndices, false); // animate: false
+                        if (swappingIndices.length > 0) {
+                          swapCount++;
+                          _this3.updateSwapCountDisplay(swapCount);
+                        }
+
+                        // Atualiza o tempo de execução
+                        currentTime = performance.now();
+                        elapsedTime = currentTime - startTime;
+                        _this3.elements.executionTime.textContent = formatExecutionTime(elapsedTime);
+                        _context2.next = 10;
+                        return new Promise(function (resolve) {
+                          return setTimeout(resolve, delay);
+                        });
+                      case 10:
+                      case "end":
+                        return _context2.stop();
+                    }
+                  }, _callee2);
+                }));
+                return function onUpdate(_x8) {
+                  return _ref5.apply(this, arguments);
+                };
+              }();
+              onCompare = /*#__PURE__*/function () {
+                var _ref6 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(indices) {
+                  var specialIndices,
+                    currentTime,
+                    elapsedTime,
+                    _args3 = arguments;
+                  return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+                    while (1) switch (_context3.prev = _context3.next) {
+                      case 0:
+                        specialIndices = _args3.length > 1 && _args3[1] !== undefined ? _args3[1] : [];
+                        _this3.comparisons++;
+                        _this3.elements.comparisonsSpan.textContent = _this3.comparisons;
+
+                        // Atualiza o tempo de execução
+                        currentTime = performance.now();
+                        elapsedTime = currentTime - startTime;
+                        _this3.elements.executionTime.textContent = formatExecutionTime(elapsedTime);
+                        _this3.sortingVisualizer.update(arr, indices, [], specialIndices, false); // animate: false
+                        _context3.next = 9;
+                        return new Promise(function (resolve) {
+                          return setTimeout(resolve, delay);
+                        });
+                      case 9:
+                      case "end":
+                        return _context3.stop();
+                    }
+                  }, _callee3);
+                }));
+                return function onCompare(_x9) {
+                  return _ref6.apply(this, arguments);
+                };
+              }();
+              _context4.next = 10;
+              return algorithm(arr, onUpdate, onCompare, delay);
+            case 10:
+              result = _context4.sent;
+              return _context4.abrupt("return", {
+                sortedArray: arr,
+                swapCount: swapCount
+              });
+            case 14:
+              _context4.prev = 14;
+              _context4.t0 = _context4["catch"](2);
+              console.error('Error during sorting:', _context4.t0);
+              throw _context4.t0;
+            case 18:
+            case "end":
+              return _context4.stop();
+          }
+        }, _callee4, null, [[2, 14]]);
+      }));
+      function runSort(_x5, _x6, _x7) {
+        return _runSort.apply(this, arguments);
+      }
+      return runSort;
+    }()
+  }, {
+    key: "updateSwapCountDisplay",
+    value: function updateSwapCountDisplay(count) {
+      if (this.elements.swapCountValue) {
+        this.elements.swapCountValue.textContent = count;
+      }
+    }
+  }, {
+    key: "updatePerformanceData",
+    value: function updatePerformanceData(metrics) {
+      try {
+        var _this$algorithmAnalyt;
+        if (!metrics || _typeof(metrics) !== 'object') {
+          throw new Error('Metrics must be an object');
+        }
+        if (typeof metrics.time !== 'number' || typeof metrics.comparisons !== 'number') {
+          throw new Error('Invalid metrics data types');
+        }
+        var newDataPoint = {
+          algorithm: this.elements.algorithmSelect.value,
+          size: this.currentArray.length,
+          time: metrics.time,
+          comparisons: metrics.comparisons,
+          swapCount: metrics.swapCount
+        };
+        this.performanceData.push(newDataPoint);
+        (_this$algorithmAnalyt = this.algorithmAnalytics) === null || _this$algorithmAnalyt === void 0 || _this$algorithmAnalyt.update(this.performanceData);
+      } catch (error) {
+        console.error('Error updating performance data:', error);
+        throw error; // Re-throw para permitir tratamento externo
+      }
+    }
+  }, {
+    key: "handleSizeChange",
+    value: function handleSizeChange() {
+      this.elements.sizeInput.value = this.elements.sizeRange.value;
+      this.elements.sizeRange.value = this.elements.sizeInput.value;
+      this.generateNewArray();
+    }
+  }, {
+    key: "handleSpeedChange",
+    value: function handleSpeedChange() {
+      this.elements.speedInput.value = this.elements.speedRange.value;
+      this.elements.speedRange.value = this.elements.speedInput.value;
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      try {
+        this.clearPerformanceData();
+
+        // Cleanup visualizers
+        [this.sortingVisualizer, this.algorithmAnalytics].forEach(function (visualizer) {
+          if (visualizer !== null && visualizer !== void 0 && visualizer.destroy) {
+            visualizer.destroy();
+          }
+        });
+
+        // Cleanup event listeners
+        var handlers = this.getEventHandlers();
+        this.removeEventListeners(handlers);
+
+        // Cleanup state
+        this.state = null;
+        this.elements = null;
+      } catch (error) {
+        console.error('Error during cleanup:', error);
+      }
+    }
+  }, {
+    key: "getEventHandlers",
+    value: function getEventHandlers() {
+      var _this4 = this;
+      return {
+        generateNewArray: function generateNewArray() {
+          return _this4.generateNewArray();
+        },
+        startSorting: function startSorting() {
+          return _this4.startSorting();
+        },
+        handleSizeChange: function handleSizeChange() {
+          return _this4.handleSizeChange();
+        },
+        handleSpeedChange: function handleSpeedChange() {
+          return _this4.handleSpeedChange();
+        },
+        resetToInitialArray: function resetToInitialArray() {
+          return _this4.resetToInitialArray();
+        }
+      };
+    }
+  }, {
+    key: "removeEventListeners",
+    value: function removeEventListeners(handlers) {
+      var bindings = [[this.elements.newArrayButton, 'click', handlers.generateNewArray], [this.elements.startButton, 'click', handlers.startSorting], [this.elements.sizeRange, 'input', handlers.handleSizeChange], [this.elements.sizeInput, 'input', handlers.handleSizeChange], [this.elements.speedRange, 'input', handlers.handleSpeedChange], [this.elements.speedInput, 'input', handlers.handleSpeedChange], [this.elements.resetArrayButton, 'click', handlers.resetToInitialArray]];
+      bindings.forEach(function (_ref7) {
+        var _ref8 = _slicedToArray(_ref7, 3),
+          element = _ref8[0],
+          event = _ref8[1],
+          handler = _ref8[2];
+        if (element) {
+          element.removeEventListener(event, handler);
+        }
+      });
+    }
+  }, {
+    key: "toggleControls",
+    value: function toggleControls(enabled) {
+      var _this5 = this;
+      Object.entries({
+        algorithmSelect: enabled,
+        sizeInput: enabled,
+        speedInput: enabled,
+        sizeRange: enabled,
+        newArrayButton: enabled,
+        speedRange: enabled,
+        startButton: enabled
+      }).forEach(function (_ref9) {
+        var _ref10 = _slicedToArray(_ref9, 2),
+          key = _ref10[0],
+          value = _ref10[1];
+        _this5.elements[key].disabled = !value;
+      });
+      this.elements.resetArrayButton.disabled = !enabled;
+      this.elements.startButton.textContent = enabled ? 'Iniciar Ordenação' : 'Ordenando...';
+    }
+  }]);
+}();
+var SearchingApp = /*#__PURE__*/function () {
+  function SearchingApp() {
+    _classCallCheck(this, SearchingApp);
+    if (!(this instanceof SearchingApp)) {
+      throw new Error('SearchingApp must be instantiated with new');
+    }
+    try {
+      this.initializeVisualizer();
+      this.initializeState();
+      this.initializeDOMElements();
+      this.bindEvents();
+      this.generateNewArray();
+    } catch (error) {
+      console.error('Failed to initialize SearchingApp:', error);
+      throw error;
+    }
+  }
+  return _createClass(SearchingApp, [{
+    key: "initializeVisualizer",
+    value: function initializeVisualizer() {
+      this.searchingVisualizer = new _scripts_SearchVisualizer__WEBPACK_IMPORTED_MODULE_13__["default"]('#searching-container .search-chart-container');
+    }
+  }, {
+    key: "initializeState",
+    value: function initializeState() {
+      this.currentArray = [];
+      this.initialArray = [];
+      this.isSearching = false;
+      this.comparisons = 0;
+      this.searchValue = null;
+    }
+  }, {
+    key: "initializeDOMElements",
+    value: function initializeDOMElements() {
+      this.elements = {
+        executionTime: document.getElementById('search-execution-time'),
+        algorithmSelect: document.getElementById('search-algorithm-select'),
+        sizeInput: document.getElementById('search-size-input'),
+        sizeRange: document.getElementById('search-size-range'),
+        valueInput: document.getElementById('search-value-input'),
+        newArrayButton: document.getElementById('search-new-array-button'),
+        startButton: document.getElementById('search-start-button'),
+        resetArrayButton: document.getElementById('search-reset-array-button'),
+        comparisonsSpan: document.getElementById('search-comparisons'),
+        resultSpan: document.getElementById('search-result')
+      };
+      Object.entries(this.elements).forEach(function (_ref11) {
+        var _ref12 = _slicedToArray(_ref11, 2),
+          key = _ref12[0],
+          value = _ref12[1];
+        if (!value) console.error("Element not found: ".concat(key));
+      });
+      if (!Object.values(this.elements).every(function (element) {
+        return element;
+      })) {
+        throw new Error('Failed to initialize required DOM elements for SearchingApp');
+      }
+    }
+  }, {
+    key: "bindEvents",
+    value: function bindEvents() {
+      var _this6 = this;
+      var handlers = this.getEventHandlers();
+      var elementBindings = [[this.elements.newArrayButton, 'click', handlers.generateNewArray], [this.elements.startButton, 'click', handlers.startSearching], [this.elements.sizeRange, 'input', handlers.handleSizeChange], [this.elements.sizeInput, 'input', handlers.handleSizeChange], [this.elements.valueInput, 'input', handlers.handleValueChange], [this.elements.resetArrayButton, 'click', handlers.resetToInitialArray]];
+      elementBindings.forEach(function (_ref13) {
+        var _ref14 = _slicedToArray(_ref13, 3),
+          element = _ref14[0],
+          event = _ref14[1],
+          handler = _ref14[2];
+        _this6.bindSafely(element, event, handler);
+      });
+    }
+  }, {
+    key: "bindSafely",
+    value: function bindSafely(element, event, handler) {
+      try {
+        if (!element) {
+          throw new Error("Element not found for ".concat(event, " event"));
+        }
+        element.addEventListener(event, handler);
+      } catch (error) {
+        console.error("Failed to bind ".concat(event, " event:"), error);
+      }
+    }
+  }, {
+    key: "generateNewArray",
+    value: function generateNewArray() {
+      var _this$elements2;
+      if (this.isSearching || !((_this$elements2 = this.elements) !== null && _this$elements2 !== void 0 && _this$elements2.sizeInput)) return;
+      var size = Math.max(1, Math.min(1000, parseInt(this.elements.sizeInput.value) || 10));
+      this.elements.sizeInput.value = size; // Normaliza o input
+      this.elements.sizeRange.value = size; // Sincroniza o range
+      this.currentArray = Array.from({
+        length: size
+      }, function () {
+        return Math.floor(Math.random() * 100) + 1;
+      });
+      this.currentArray.sort(function (a, b) {
+        return a - b;
+      }); // Ordena o array para busca binária
+      this.initialArray = _toConsumableArray(this.currentArray);
+      this.searchingVisualizer.update(this.currentArray);
+      this.resetStats();
+    }
+  }, {
+    key: "resetStats",
+    value: function resetStats() {
+      this.comparisons = 0;
+      this.elements.comparisonsSpan.textContent = '0';
+      this.elements.executionTime.textContent = '0s 0ms';
+      this.elements.resultSpan.textContent = 'N/A';
+    }
+  }, {
+    key: "startSearching",
+    value: function () {
+      var _startSearching = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+        var startTime, algorithm, result, endTime;
+        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+          while (1) switch (_context5.prev = _context5.next) {
+            case 0:
+              if (!this.isSearching) {
+                _context5.next = 2;
+                break;
+              }
+              return _context5.abrupt("return");
+            case 2:
+              if (!(!this.currentArray || this.currentArray.length === 0)) {
+                _context5.next = 5;
+                break;
+              }
+              console.error('No array to search');
+              return _context5.abrupt("return");
+            case 5:
+              this.searchValue = parseInt(this.elements.valueInput.value);
+              if (!isNaN(this.searchValue)) {
+                _context5.next = 9;
+                break;
+              }
+              alert('Por favor, insira um valor válido para buscar.');
+              return _context5.abrupt("return");
+            case 9:
+              startTime = performance.now();
+              if (!this.initialArray.length || this.initialArray.toString() !== this.currentArray.toString()) {
+                this.initialArray = _toConsumableArray(this.currentArray);
+              }
+              _context5.prev = 11;
+              this.isSearching = true;
+              this.toggleControls(false);
+              algorithm = this.getSelectedAlgorithm();
+              if (algorithm) {
+                _context5.next = 17;
+                break;
+              }
+              throw new Error('Invalid search algorithm selected');
+            case 17:
+              _context5.next = 19;
+              return this.runSearch(algorithm, _toConsumableArray(this.currentArray), this.searchValue);
+            case 19:
+              result = _context5.sent;
+              endTime = performance.now(); // Atualizar a exibição do tempo formatado
+              this.elements.executionTime.textContent = formatExecutionTime(endTime - startTime);
+
+              // Atualizar o resultado da busca
+              if (result.found) {
+                this.elements.resultSpan.textContent = "Encontrado no \xEDndice ".concat(result.index);
+              } else {
+                this.elements.resultSpan.textContent = 'Valor não encontrado';
+              }
+              _context5.next = 28;
+              break;
+            case 25:
+              _context5.prev = 25;
+              _context5.t0 = _context5["catch"](11);
+              console.error('Searching error:', _context5.t0);
+            case 28:
+              _context5.prev = 28;
+              this.isSearching = false;
+              this.toggleControls(true);
+              return _context5.finish(28);
+            case 32:
+            case "end":
+              return _context5.stop();
+          }
+        }, _callee5, this, [[11, 25, 28, 32]]);
+      }));
+      function startSearching() {
+        return _startSearching.apply(this, arguments);
+      }
+      return startSearching;
+    }()
+  }, {
+    key: "resetToInitialArray",
+    value: function resetToInitialArray() {
+      var _this$initialArray2;
+      if (this.isSearching || !((_this$initialArray2 = this.initialArray) !== null && _this$initialArray2 !== void 0 && _this$initialArray2.length)) return;
+      if (this.initialArray.length) {
+        this.currentArray = _toConsumableArray(this.initialArray);
+        this.searchingVisualizer.update(this.currentArray);
+        this.resetStats();
+      } else {
+        console.warn('Nenhum array inicial armazenado.');
+      }
+    }
+  }, {
+    key: "getSelectedAlgorithm",
+    value: function getSelectedAlgorithm() {
+      var algorithms = {
+        linear: _scripts_algorithms_linearSearch__WEBPACK_IMPORTED_MODULE_11__.linearSearch,
+        binary: _scripts_algorithms_binarySearch__WEBPACK_IMPORTED_MODULE_12__.binarySearch
+      };
+      var selected = this.elements.algorithmSelect.value;
+      if (!algorithms[selected]) {
+        throw new Error("Invalid search algorithm selected: ".concat(selected));
+      }
+      return algorithms[selected];
+    }
+  }, {
+    key: "runSearch",
+    value: function () {
+      var _runSearch = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8(algorithm, array, value) {
+        var _this7 = this;
+        var arr, startTime, onUpdate, onCompare, result;
+        return _regeneratorRuntime().wrap(function _callee8$(_context8) {
+          while (1) switch (_context8.prev = _context8.next) {
+            case 0:
+              if (!(!algorithm || !Array.isArray(array))) {
+                _context8.next = 2;
+                break;
+              }
+              throw new Error('Invalid parameters provided to runSearch');
+            case 2:
+              _context8.prev = 2;
+              arr = _toConsumableArray(array);
+              startTime = performance.now();
+              onUpdate = /*#__PURE__*/function () {
+                var _ref15 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
+                  var currentIndices,
+                    foundIndex,
+                    _args6 = arguments;
+                  return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+                    while (1) switch (_context6.prev = _context6.next) {
+                      case 0:
+                        currentIndices = _args6.length > 0 && _args6[0] !== undefined ? _args6[0] : [];
+                        foundIndex = _args6.length > 1 && _args6[1] !== undefined ? _args6[1] : -1;
+                        _this7.searchingVisualizer.update(arr, currentIndices, foundIndex);
+                        _context6.next = 5;
+                        return new Promise(function (resolve) {
+                          return setTimeout(resolve, 300);
+                        });
+                      case 5:
+                      case "end":
+                        return _context6.stop();
+                    }
+                  }, _callee6);
+                }));
+                return function onUpdate() {
+                  return _ref15.apply(this, arguments);
+                };
+              }();
+              onCompare = /*#__PURE__*/function () {
+                var _ref16 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee7(indices) {
+                  return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+                    while (1) switch (_context7.prev = _context7.next) {
+                      case 0:
+                        _this7.comparisons++;
+                        _this7.elements.comparisonsSpan.textContent = _this7.comparisons;
+                        _this7.searchingVisualizer.update(arr, indices);
+                        _context7.next = 5;
+                        return new Promise(function (resolve) {
+                          return setTimeout(resolve, 300);
+                        });
+                      case 5:
+                      case "end":
+                        return _context7.stop();
+                    }
+                  }, _callee7);
+                }));
+                return function onCompare(_x13) {
+                  return _ref16.apply(this, arguments);
+                };
+              }();
+              _context8.next = 9;
+              return algorithm(arr, value, onCompare, onUpdate);
+            case 9:
+              result = _context8.sent;
+              return _context8.abrupt("return", result);
+            case 13:
+              _context8.prev = 13;
+              _context8.t0 = _context8["catch"](2);
+              console.error('Error during searching:', _context8.t0);
+              throw _context8.t0;
+            case 17:
+            case "end":
+              return _context8.stop();
+          }
+        }, _callee8, null, [[2, 13]]);
+      }));
+      function runSearch(_x10, _x11, _x12) {
+        return _runSearch.apply(this, arguments);
+      }
+      return runSearch;
+    }()
+  }, {
+    key: "handleSizeChange",
+    value: function handleSizeChange() {
+      this.elements.sizeInput.value = this.elements.sizeRange.value;
+      this.elements.sizeRange.value = this.elements.sizeInput.value;
+      this.generateNewArray();
+    }
+  }, {
+    key: "handleValueChange",
+    value: function handleValueChange() {
+      // Você pode adicionar validação aqui, se necessário
+    }
+  }, {
+    key: "getEventHandlers",
+    value: function getEventHandlers() {
+      var _this8 = this;
+      return {
+        generateNewArray: function generateNewArray() {
+          return _this8.generateNewArray();
+        },
+        startSearching: function startSearching() {
+          return _this8.startSearching();
+        },
+        handleSizeChange: function handleSizeChange() {
+          return _this8.handleSizeChange();
+        },
+        handleValueChange: function handleValueChange() {
+          return _this8.handleValueChange();
+        },
+        resetToInitialArray: function resetToInitialArray() {
+          return _this8.resetToInitialArray();
+        }
+      };
+    }
+  }, {
+    key: "toggleControls",
+    value: function toggleControls(enabled) {
+      var _this9 = this;
+      Object.entries({
+        algorithmSelect: enabled,
+        sizeInput: enabled,
+        sizeRange: enabled,
+        valueInput: enabled,
+        newArrayButton: enabled,
+        startButton: enabled
+      }).forEach(function (_ref17) {
+        var _ref18 = _slicedToArray(_ref17, 2),
+          key = _ref18[0],
+          value = _ref18[1];
+        _this9.elements[key].disabled = !value;
+      });
+      this.elements.resetArrayButton.disabled = !enabled;
+      this.elements.startButton.textContent = enabled ? 'Iniciar Busca' : 'Buscando...';
+    }
+  }]);
+}();
+document.addEventListener('DOMContentLoaded', function () {
+  try {
+    var sortingAppInstance = new SortingApp();
+    var searchingAppInstance = new SearchingApp();
+
+    // Exponha ao escopo global
+    window.sortingApp = sortingAppInstance;
+    window.searchingApp = searchingAppInstance;
+  } catch (error) {
+    console.error('Failed to initialize apps:', error);
+  }
+});
+
+/***/ }),
+
+/***/ "./src/scripts/SearchVisualizer.js":
+/*!*****************************************!*\
+  !*** ./src/scripts/SearchVisualizer.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _chart__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./chart */ "./src/scripts/chart.js");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
+function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
+function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _superPropGet(t, o, e, r) { var p = _get(_getPrototypeOf(1 & r ? t.prototype : t), o, e); return 2 & r && "function" == typeof p ? function (t) { return p.apply(e, t); } : p; }
+function _get() { return _get = "undefined" != typeof Reflect && Reflect.get ? Reflect.get.bind() : function (e, t, r) { var p = _superPropBase(e, t); if (p) { var n = Object.getOwnPropertyDescriptor(p, t); return n.get ? n.get.call(arguments.length < 3 ? e : r) : n.value; } }, _get.apply(null, arguments); }
+function _superPropBase(t, o) { for (; !{}.hasOwnProperty.call(t, o) && null !== (t = _getPrototypeOf(t));); return t; }
+function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
+function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
+function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
+ // Ajuste o caminho conforme necessário
+var SearchVisualizer = /*#__PURE__*/function (_SortingVisualizer) {
+  function SearchVisualizer(containerId) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    _classCallCheck(this, SearchVisualizer);
+    return _callSuper(this, SearchVisualizer, [containerId, _objectSpread(_objectSpread({}, options), {}, {
+      barColors: {
+        "default": 'var(--bar-color, #4285f4)',
+        highlight: 'var(--highlight-color, #f4b400)',
+        found: 'var(--special-color, #0f9d58)',
+        discarded: 'var(--control-border, #ccc)'
+      }
+    })]);
+  }
+  _inherits(SearchVisualizer, _SortingVisualizer);
+  return _createClass(SearchVisualizer, [{
+    key: "update",
+    value: function update(data) {
+      var highlightIndices = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+      var foundIndex = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : -1;
+      var discardedIndices = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
+      // Chama o método update da classe pai com os parâmetros adaptados
+      _superPropGet(SearchVisualizer, "update", this, 3)([data, highlightIndices, [], [], true]);
+
+      // Adiciona classes específicas para busca
+      var bars = this.svg.selectAll('.bar');
+      bars.classed('found', function (d, i) {
+        return i === foundIndex;
+      }).classed('highlight', function (d, i) {
+        return highlightIndices.includes(i);
+      }).classed('discarded', function (d, i) {
+        return discardedIndices.includes(i);
+      });
+
+      // Atualiza os estilos CSS inline
+      bars.style('fill', function () {
+        if (this.classList.contains('found')) return 'var(--special-color, #0f9d58)';
+        if (this.classList.contains('highlight')) return 'var(--highlight-color, #f4b400)';
+        if (this.classList.contains('discarded')) return 'var(--control-border, #ccc)';
+        return 'var(--bar-color, #4285f4)';
+      });
+    }
+  }]);
+}(_chart__WEBPACK_IMPORTED_MODULE_0__.SortingVisualizer);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (SearchVisualizer);
+
+/***/ }),
+
+/***/ "./src/scripts/algorithms/binarySearch.js":
+/*!************************************************!*\
+  !*** ./src/scripts/algorithms/binarySearch.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   binarySearch: () => (/* binding */ binarySearch)
+/* harmony export */ });
+/* harmony import */ var _renderer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../renderer.js */ "./src/renderer.js");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, "catch": function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+// binarySearch.js
+
+
+function binarySearch(_x, _x2, _x3, _x4) {
+  return _binarySearch.apply(this, arguments);
+}
+function _binarySearch() {
+  _binarySearch = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(array, target, onCompare, onUpdate) {
+    var result, left, right, mid;
+    return _regeneratorRuntime().wrap(function _callee$(_context) {
+      while (1) switch (_context.prev = _context.next) {
+        case 0:
+          result = {
+            found: false,
+            index: -1,
+            totalComparisons: 0
+          };
+          left = 0;
+          right = array.length - 1;
+          if (isSorted(array)) {
+            _context.next = 5;
+            break;
+          }
+          throw new Error('Array must be sorted for binary search');
+        case 5:
+          if (!(left <= right)) {
+            _context.next = 29;
+            break;
+          }
+          mid = Math.floor((left + right) / 2);
+          result.totalComparisons++;
+
+          // Highlight the current search area
+          _context.next = 10;
+          return (0,_renderer_js__WEBPACK_IMPORTED_MODULE_0__.highlightIndices)([left, mid, right], 'highlight');
+        case 10:
+          _context.next = 12;
+          return onCompare([mid]);
+        case 12:
+          if (!(array[mid] === target)) {
+            _context.next = 18;
+            break;
+          }
+          result.found = true;
+          result.index = mid;
+          _context.next = 17;
+          return onUpdate([mid], 'found');
+        case 17:
+          return _context.abrupt("return", result);
+        case 18:
+          if (!(array[mid] < target)) {
+            _context.next = 24;
+            break;
+          }
+          left = mid + 1;
+          _context.next = 22;
+          return onUpdate(_toConsumableArray(Array(mid + 1).keys()), 'discarded');
+        case 22:
+          _context.next = 27;
+          break;
+        case 24:
+          right = mid - 1;
+          _context.next = 27;
+          return onUpdate(_toConsumableArray(Array(array.length).keys()).slice(mid), 'discarded');
+        case 27:
+          _context.next = 5;
+          break;
+        case 29:
+          return _context.abrupt("return", result);
+        case 30:
+        case "end":
+          return _context.stop();
+      }
+    }, _callee);
+  }));
+  return _binarySearch.apply(this, arguments);
+}
+function isSorted(array) {
+  for (var i = 1; i < array.length; i++) {
+    if (array[i] < array[i - 1]) return false;
+  }
+  return true;
+}
+
+/***/ }),
+
 /***/ "./src/scripts/algorithms/bubbleSort.js":
 /*!**********************************************!*\
   !*** ./src/scripts/algorithms/bubbleSort.js ***!
@@ -661,6 +1877,90 @@ function _insertSort() {
     }, _callee);
   }));
   return _insertSort.apply(this, arguments);
+}
+
+/***/ }),
+
+/***/ "./src/scripts/algorithms/linearSearch.js":
+/*!************************************************!*\
+  !*** ./src/scripts/algorithms/linearSearch.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   linearSearch: () => (/* binding */ linearSearch)
+/* harmony export */ });
+/* harmony import */ var _renderer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../renderer.js */ "./src/renderer.js");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, "catch": function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+// linearSearch.js
+
+
+function linearSearch(_x, _x2, _x3, _x4) {
+  return _linearSearch.apply(this, arguments);
+}
+function _linearSearch() {
+  _linearSearch = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(array, target, onCompare, onUpdate) {
+    var result, i;
+    return _regeneratorRuntime().wrap(function _callee$(_context) {
+      while (1) switch (_context.prev = _context.next) {
+        case 0:
+          result = {
+            found: false,
+            index: -1,
+            totalComparisons: 0
+          };
+          i = 0;
+        case 2:
+          if (!(i < array.length)) {
+            _context.next = 23;
+            break;
+          }
+          result.totalComparisons++;
+          _context.next = 6;
+          return (0,_renderer_js__WEBPACK_IMPORTED_MODULE_0__.highlightIndices)([i], 'highlight');
+        case 6:
+          _context.next = 8;
+          return onCompare([i]);
+        case 8:
+          if (!(array[i] === target)) {
+            _context.next = 16;
+            break;
+          }
+          result.found = true;
+          result.index = i;
+          _context.next = 13;
+          return onUpdate([i], 'found');
+        case 13:
+          _context.next = 15;
+          return (0,_renderer_js__WEBPACK_IMPORTED_MODULE_0__.updateVisualization)(array, result);
+        case 15:
+          return _context.abrupt("return", result);
+        case 16:
+          _context.next = 18;
+          return onUpdate([i], 'checked');
+        case 18:
+          _context.next = 20;
+          return (0,_renderer_js__WEBPACK_IMPORTED_MODULE_0__.updateVisualization)(array, result);
+        case 20:
+          i++;
+          _context.next = 2;
+          break;
+        case 23:
+          _context.next = 25;
+          return (0,_renderer_js__WEBPACK_IMPORTED_MODULE_0__.updateVisualization)(array, result);
+        case 25:
+          return _context.abrupt("return", result);
+        case 26:
+        case "end":
+          return _context.stop();
+      }
+    }, _callee);
+  }));
+  return _linearSearch.apply(this, arguments);
 }
 
 /***/ }),
@@ -1505,6 +2805,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "./node_modules/d3/src/index.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
@@ -1540,7 +2846,7 @@ var SortingVisualizer = /*#__PURE__*/function () {
     key: "setupVisualization",
     value: function setupVisualization() {
       try {
-        this.svg = this.container.append('svg').attr('viewBox', "0 0 ".concat(this.width + this.margin.left + this.margin.right, " ").concat(this.height + this.margin.top + this.margin.bottom)).attr('preserveAspectRatio', 'xMidYMid meet').append('g').attr('transform', "translate(".concat(this.margin.left, ",").concat(this.margin.top, ")"));
+        this.svg = this.container.append('svg').attr('width', this.width + this.margin.left + this.margin.right).attr('height', this.height + this.margin.top + this.margin.bottom).attr('viewBox', "0 0 ".concat(this.width + this.margin.left + this.margin.right, " ").concat(this.height + this.margin.top + this.margin.bottom)).attr('preserveAspectRatio', 'xMidYMid meet').append('g').attr('transform', "translate(".concat(this.margin.left, ",").concat(this.margin.top, ")"));
         this.setupScalesAndAxes();
         this.setupLabels();
         this.setupTooltip();
@@ -1608,29 +2914,42 @@ var SortingVisualizer = /*#__PURE__*/function () {
       var highlightIndices = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
       var swappingIndices = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
       var specialIndices = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
+      var animate = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : true;
       this.currentData = data;
+      this.setupResponsiveLayout();
       this.xScale.domain(data.map(function (d, i) {
         return i;
       }));
       this.yScale.domain([0, d3__WEBPACK_IMPORTED_MODULE_0__.max(data) * 1.1]);
-      this.updateAxes();
+      this.svg.attr('width', this.width + this.margin.left + this.margin.right).attr('height', this.height + this.margin.top + this.margin.bottom).attr('transform', "translate(".concat(this.margin.left, ",").concat(this.margin.top, ")"));
+      this.updateAxes(animate);
       var bars = this.svg.selectAll('.bar').data(data);
       bars.exit().remove();
       var barsEnter = bars.enter().append('rect').attr('class', 'bar');
-      this.updateBars(bars.merge(barsEnter), highlightIndices, swappingIndices, specialIndices);
+      this.updateBars(bars.merge(barsEnter), highlightIndices, swappingIndices, specialIndices, animate);
       this.setupEnhancedTooltip(bars.merge(barsEnter));
     }
   }, {
     key: "updateAxes",
-    value: function updateAxes() {
-      this.xAxis.transition().duration(this.config.animationDuration).call(this.currentData.length <= 30 ? d3__WEBPACK_IMPORTED_MODULE_0__.axisBottom(this.xScale) : d3__WEBPACK_IMPORTED_MODULE_0__.axisBottom(this.xScale).tickValues([])).selectAll('text').attr('fill', 'var(--axis-color)');
-      this.yAxis.transition().duration(this.config.animationDuration).call(d3__WEBPACK_IMPORTED_MODULE_0__.axisLeft(this.yScale)).selectAll('text').attr('fill', 'var(--axis-color)');
+    value: function updateAxes(animate) {
+      var xAxisUpdate = this.xAxis;
+      var yAxisUpdate = this.yAxis;
+      if (animate) {
+        xAxisUpdate = xAxisUpdate.transition().duration(this.config.animationDuration);
+        yAxisUpdate = yAxisUpdate.transition().duration(this.config.animationDuration);
+      }
+      xAxisUpdate.call(this.currentData.length <= 30 ? d3__WEBPACK_IMPORTED_MODULE_0__.axisBottom(this.xScale) : d3__WEBPACK_IMPORTED_MODULE_0__.axisBottom(this.xScale).tickValues([])).selectAll('text').attr('fill', 'var(--axis-color)');
+      yAxisUpdate.call(d3__WEBPACK_IMPORTED_MODULE_0__.axisLeft(this.yScale)).selectAll('text').attr('fill', 'var(--axis-color)');
     }
   }, {
     key: "updateBars",
-    value: function updateBars(bars, highlightIndices, swappingIndices, specialIndices) {
+    value: function updateBars(bars, highlightIndices, swappingIndices, specialIndices, animate) {
       var _this2 = this;
-      bars.transition().duration(this.config.animationDuration).attr('x', function (d, i) {
+      var updatedBars = bars;
+      if (animate) {
+        updatedBars = updatedBars.transition().duration(this.config.animationDuration);
+      }
+      updatedBars.attr('x', function (d, i) {
         return _this2.xScale(i);
       }).attr('width', this.xScale.bandwidth()).attr('y', function (d) {
         return _this2.yScale(d);
@@ -1672,27 +2991,85 @@ var AlgorithmAnalytics = /*#__PURE__*/function () {
   function AlgorithmAnalytics(containerId) {
     _classCallCheck(this, AlgorithmAnalytics);
     this.container = d3__WEBPACK_IMPORTED_MODULE_0__.select(containerId);
+    this.performanceData = []; // Adicionar esta linha para armazenar os dados
     this.setupLayout();
     this.createCharts();
+    this.setupEventListeners();
+    this.clear();
   }
   return _createClass(AlgorithmAnalytics, [{
     key: "setupLayout",
     value: function setupLayout() {
-      this.container.style('display', 'grid').style('grid-template-columns', 'repeat(2, 1fr)').style('gap', '20px').style('padding', '20px');
-      this.timeContainer = this.container.append('div').attr('class', 'chart-container');
-      this.comparisonContainer = this.container.append('div').attr('class', 'chart-container');
+      // Criar container para os gráficos
+      this.chartsContainer = this.container.append('div').attr('class', 'performance-charts');
+
+      // Criar containers individuais para cada gráfico
+      this.timeContainer = this.chartsContainer.append('div').attr('class', 'chart-container');
+      this.comparisonContainer = this.chartsContainer.append('div').attr('class', 'chart-container');
+      this.swapContainer = this.chartsContainer.append('div').attr('class', 'chart-container');
+
+      // Container para os botões já existe no HTML
     }
   }, {
     key: "createCharts",
     value: function createCharts() {
-      this.timeChart = new PerformanceChart(this.timeContainer.node(), 'Tempo de Execução', 'Tamanho do Array', 'Tempo (ms)');
-      this.comparisonChart = new PerformanceChart(this.comparisonContainer.node(), 'Comparações Realizadas', 'Tamanho do Array', 'Número de Comparações');
-      this.timeChart.update([]);
-      this.comparisonChart.update([]);
+      var commonConfig = {
+        margin: {
+          top: 30,
+          right: 50,
+          bottom: 40,
+          left: 50
+        },
+        height: 400 // Altura reduzida para melhor ajuste
+      };
+      this.timeChart = new PerformanceChart(this.timeContainer.node(), 'Tempo de Execução', 'Tamanho do Array', 'Tempo (ms)', commonConfig);
+      this.comparisonChart = new PerformanceChart(this.comparisonContainer.node(), 'Comparações', 'Tamanho do Array', 'Quantidade', commonConfig);
+      this.swapChart = new PerformanceChart(this.swapContainer.node(), 'Trocas', 'Tamanho do Array', 'Quantidade', commonConfig);
+    }
+  }, {
+    key: "setupEventListeners",
+    value: function setupEventListeners() {
+      var _this4 = this;
+      // Conectar os botões às suas funções
+      var clearButton = document.getElementById('clear-data');
+      var exportButton = document.getElementById('export-data');
+      if (clearButton) {
+        clearButton.addEventListener('click', function () {
+          return _this4.clear();
+        });
+      }
+      if (exportButton) {
+        exportButton.addEventListener('click', function () {
+          return _this4.exportData();
+        });
+      }
+    }
+  }, {
+    key: "exportData",
+    value: function exportData() {
+      var _this$performanceData;
+      if (!((_this$performanceData = this.performanceData) !== null && _this$performanceData !== void 0 && _this$performanceData.length)) {
+        console.warn('No performance data to export');
+        return;
+      }
+      var header = 'algorithm,size,time,comparisons,swaps\n';
+      var csv = header + this.performanceData.map(function (d) {
+        return "".concat(d.algorithm, ",").concat(d.size, ",").concat(d.time, ",").concat(d.comparisons, ",").concat(d.swapCount);
+      }).join('\n');
+      var blob = new Blob([csv], {
+        type: 'text/csv'
+      });
+      var url = window.URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'sorting-performance.csv';
+      a.click();
+      window.URL.revokeObjectURL(url);
     }
   }, {
     key: "update",
     value: function update(data) {
+      var _this$performanceData2;
       if (!Array.isArray(data) || data.length === 0) {
         console.error('Data must be a non-empty array.');
         return;
@@ -1703,6 +3080,7 @@ var AlgorithmAnalytics = /*#__PURE__*/function () {
         console.error('Each data object must contain algorithm, size, time, and comparisons properties.');
         return;
       }
+      (_this$performanceData2 = this.performanceData).push.apply(_this$performanceData2, _toConsumableArray(data));
       var timeData = data.map(function (d) {
         return {
           algorithm: d.algorithm,
@@ -1717,30 +3095,53 @@ var AlgorithmAnalytics = /*#__PURE__*/function () {
           value: d.comparisons
         };
       });
+      var swapData = this.performanceData.map(function (d) {
+        return {
+          algorithm: d.algorithm,
+          size: d.size,
+          value: d.swapCount
+        };
+      });
       this.timeChart.update(timeData);
       this.comparisonChart.update(comparisonData);
+      this.swapChart.update(swapData);
     }
   }, {
     key: "clear",
     value: function clear() {
+      this.performanceData = []; // Limpar os dados acumulados
       this.timeChart.clear();
       this.comparisonChart.clear();
+      this.swapChart.clear();
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      if (this.swapChart) {
+        this.swapChart.destroy();
+      }
     }
   }]);
 }();
 var PerformanceChart = /*#__PURE__*/function () {
   function PerformanceChart(container, title, xLabel, yLabel) {
-    var _this4 = this;
+    var _this5 = this;
+    var config = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
     _classCallCheck(this, PerformanceChart);
     this.margin = {
       top: 40,
-      right: 120,
-      bottom: 50,
-      left: 70
+      // Para o título
+      right: 40,
+      // Reduzido para economizar espaço
+      bottom: 40,
+      left: 50 // Para os números do eixo Y
     };
-    this.width = 600 - this.margin.left - this.margin.right;
-    this.height = 400 - this.margin.top - this.margin.bottom;
-    this.svg = d3__WEBPACK_IMPORTED_MODULE_0__.select(container).append('svg').attr('width', this.width + this.margin.left + this.margin.right).attr('height', this.height + this.margin.top + this.margin.bottom).append('g').attr('transform', "translate(".concat(this.margin.left, ",").concat(this.margin.top, ")"));
+
+    // Calcular dimensões baseadas no container
+    var containerRect = container.getBoundingClientRect();
+    this.width = containerRect.width - this.margin.left - this.margin.right;
+    this.height = (config.height || containerRect.height) - this.margin.top - this.margin.bottom;
+    this.svg = d3__WEBPACK_IMPORTED_MODULE_0__.select(container).append('svg').attr('width', '100%').attr('height', '100%').attr('viewBox', "0 0 ".concat(containerRect.width, " ").concat(containerRect.height)).attr('preserveAspectRatio', 'xMidYMid meet').append('g').attr('transform', "translate(".concat(this.margin.left, ",").concat(this.margin.top, ")"));
     this.xScale = d3__WEBPACK_IMPORTED_MODULE_0__.scaleLinear().range([0, this.width]);
     this.yScale = d3__WEBPACK_IMPORTED_MODULE_0__.scaleLinear().range([this.height, 0]);
     this.colorScale = d3__WEBPACK_IMPORTED_MODULE_0__.scaleOrdinal().range(['#2196F3', '#FF5722', '#4CAF50', '#9C27B0', '#FFC107']);
@@ -1749,9 +3150,9 @@ var PerformanceChart = /*#__PURE__*/function () {
     this.yAxis = this.svg.append('g').attr('class', 'y-axis');
     this.addChartLabels(title, xLabel, yLabel);
     this.line = d3__WEBPACK_IMPORTED_MODULE_0__.line().x(function (d) {
-      return _this4.xScale(d.size);
+      return _this5.xScale(d.size);
     }).y(function (d) {
-      return _this4.yScale(d.value);
+      return _this5.yScale(d.value);
     }).curve(d3__WEBPACK_IMPORTED_MODULE_0__.curveCardinal.tension(0.7));
     this.tooltip = d3__WEBPACK_IMPORTED_MODULE_0__.select('body').append('div').attr('class', 'performance-tooltip').style('opacity', 0).style('position', 'absolute').style('background', 'rgba(255, 255, 255, 0.9)').style('padding', '10px').style('border', '1px solid #ddd').style('border-radius', '4px').style('box-shadow', '0 2px 4px rgba(0,0,0,0.1)').style('pointer-events', 'none').style('font-size', '12px');
   }
@@ -1844,38 +3245,38 @@ var PerformanceChart = /*#__PURE__*/function () {
   }, {
     key: "updateGridLines",
     value: function updateGridLines() {
-      var _this5 = this;
+      var _this6 = this;
       var xGridLines = this.svg.select('.x-grid').selectAll('line').data(this.xScale.ticks(10));
       xGridLines.enter().append('line').merge(xGridLines).attr('x1', function (d) {
-        return _this5.xScale(d);
+        return _this6.xScale(d);
       }).attr('x2', function (d) {
-        return _this5.xScale(d);
+        return _this6.xScale(d);
       }).attr('y1', 0).attr('y2', this.height);
       xGridLines.exit().remove();
       var yGridLines = this.svg.select('.y-grid').selectAll('line').data(this.yScale.ticks(10));
       yGridLines.enter().append('line').merge(yGridLines).attr('x1', 0).attr('x2', this.width).attr('y1', function (d) {
-        return _this5.yScale(d);
+        return _this6.yScale(d);
       }).attr('y2', function (d) {
-        return _this5.yScale(d);
+        return _this6.yScale(d);
       });
       yGridLines.exit().remove();
     }
   }, {
     key: "updateLines",
     value: function updateLines(algorithmGroups) {
-      var _this6 = this;
+      var _this7 = this;
       try {
         this.svg.selectAll('.line-group').remove();
         algorithmGroups.forEach(function (data, algorithm) {
-          var lineGroup = _this6.svg.append('g').attr('class', 'line-group');
-          var path = lineGroup.append('path').datum(data).attr('class', 'line-path').attr('fill', 'none').attr('stroke', _this6.colorScale(algorithm)).attr('stroke-width', 2.5).attr('d', _this6.line);
+          var lineGroup = _this7.svg.append('g').attr('class', 'line-group');
+          var path = lineGroup.append('path').datum(data).attr('class', 'line-path').attr('fill', 'none').attr('stroke', _this7.colorScale(algorithm)).attr('stroke-width', 2.5).attr('d', _this7.line);
           var pathLength = path.node().getTotalLength();
           path.attr('stroke-dasharray', pathLength).attr('stroke-dashoffset', pathLength).transition().duration(1000).attr('stroke-dashoffset', 0);
           lineGroup.selectAll('.dot').data(data).enter().append('circle').attr('class', 'dot').attr('cx', function (d) {
-            return _this6.xScale(d.size);
+            return _this7.xScale(d.size);
           }).attr('cy', function (d) {
-            return _this6.yScale(d.value);
-          }).attr('r', 0).attr('fill', _this6.colorScale(algorithm)).transition().duration(1000).attr('r', 5);
+            return _this7.yScale(d.value);
+          }).attr('r', 0).attr('fill', _this7.colorScale(algorithm)).transition().duration(1000).attr('r', 5);
         });
       } catch (error) {
         console.error('Error updating lines:', error);
@@ -1884,7 +3285,7 @@ var PerformanceChart = /*#__PURE__*/function () {
   }, {
     key: "updateLegend",
     value: function updateLegend(algorithms) {
-      var _this7 = this;
+      var _this8 = this;
       try {
         this.svg.selectAll('.legend').remove();
         var legend = this.svg.append('g').attr('class', 'legend').attr('transform', "translate(".concat(this.width + 20, ", 0)"));
@@ -1892,17 +3293,17 @@ var PerformanceChart = /*#__PURE__*/function () {
           return "translate(0, ".concat(i * 25, ")");
         });
         legendItems.append('rect').attr('width', 12).attr('height', 12).attr('rx', 2).attr('ry', 2).style('fill', function (d) {
-          return _this7.colorScale(d);
+          return _this8.colorScale(d);
         });
         legendItems.append('text').attr('x', 20).attr('y', 9).style('font-size', '12px').style('fill', 'var(--axis-color)').text(function (d) {
           return d;
         });
         legendItems.style('cursor', 'pointer').on('mouseover', function (event, algorithm) {
-          _this7.svg.selectAll('.line-path').filter(function (d) {
+          _this8.svg.selectAll('.line-path').filter(function (d) {
             return d[0].algorithm !== algorithm;
           }).style('opacity', 0.2);
         }).on('mouseout', function () {
-          _this7.svg.selectAll('.line-path').style('opacity', 1);
+          _this8.svg.selectAll('.line-path').style('opacity', 1);
         });
       } catch (error) {
         console.error('Error updating legend:', error);
@@ -1911,14 +3312,14 @@ var PerformanceChart = /*#__PURE__*/function () {
   }, {
     key: "addInteractivity",
     value: function addInteractivity() {
-      var _this8 = this;
+      var _this9 = this;
       try {
         this.svg.selectAll('.dot').on('mouseover', function (event, d) {
           d3__WEBPACK_IMPORTED_MODULE_0__.select(event.currentTarget).transition().duration(200).attr('r', 8).style('stroke', '#fff').style('stroke-width', 2);
-          _this8.tooltip.style('opacity', 1).html("\n              <div style=\"font-weight: bold; margin-bottom: 5px; color: ".concat(_this8.colorScale(d.algorithm), "\">\n                ").concat(d.algorithm, "\n              </div>\n              <div style=\"margin-bottom: 3px\">Array Size: ").concat(d.size, "</div>\n              <div>Value: ").concat(d.value.toFixed(2), "</div>\n            ")).style('left', "".concat(event.pageX + 15, "px")).style('top', "".concat(event.pageY - 60, "px"));
+          _this9.tooltip.style('opacity', 1).html("\n              <div style=\"font-weight: bold; margin-bottom: 5px; color: ".concat(_this9.colorScale(d.algorithm), "\">\n                ").concat(d.algorithm, "\n              </div>\n              <div style=\"margin-bottom: 3px\">Array Size: ").concat(d.size, "</div>\n              <div>Value: ").concat(d.value.toFixed(2), "</div>\n            ")).style('left', "".concat(event.pageX + 15, "px")).style('top', "".concat(event.pageY - 60, "px"));
         }).on('mouseout', function (event) {
           d3__WEBPACK_IMPORTED_MODULE_0__.select(event.currentTarget).transition().duration(200).attr('r', 5).style('stroke', 'none');
-          _this8.tooltip.transition().duration(200).style('opacity', 0);
+          _this9.tooltip.transition().duration(200).style('opacity', 0);
         });
       } catch (error) {
         console.error('Error adding interactivity:', error);
@@ -35751,602 +37152,12 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	})();
 /******/ 	
 /************************************************************************/
-var __webpack_exports__ = {};
-// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
-(() => {
-/*!*************************!*\
-  !*** ./src/renderer.js ***!
-  \*************************/
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scripts_chart__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./scripts/chart */ "./src/scripts/chart.js");
-/* harmony import */ var _scripts_algorithms_bubbleSort__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./scripts/algorithms/bubbleSort */ "./src/scripts/algorithms/bubbleSort.js");
-/* harmony import */ var _scripts_algorithms_insertSort__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./scripts/algorithms/insertSort */ "./src/scripts/algorithms/insertSort.js");
-/* harmony import */ var _scripts_algorithms_quickSort__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./scripts/algorithms/quickSort */ "./src/scripts/algorithms/quickSort.js");
-/* harmony import */ var _scripts_algorithms_mergeSort__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./scripts/algorithms/mergeSort */ "./src/scripts/algorithms/mergeSort.js");
-/* harmony import */ var _scripts_algorithms_heapSort__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./scripts/algorithms/heapSort */ "./src/scripts/algorithms/heapSort.js");
-/* harmony import */ var _scripts_algorithms_selectSort__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./scripts/algorithms/selectSort */ "./src/scripts/algorithms/selectSort.js");
-/* harmony import */ var _scripts_algorithms_shellSort__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./scripts/algorithms/shellSort */ "./src/scripts/algorithms/shellSort.js");
-/* harmony import */ var _scripts_algorithms_radixSort__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./scripts/algorithms/radixSort */ "./src/scripts/algorithms/radixSort.js");
-/* harmony import */ var _scripts_algorithms_countingSort__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./scripts/algorithms/countingSort */ "./src/scripts/algorithms/countingSort.js");
-/* harmony import */ var _scripts_algorithms_bucketSort__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./scripts/algorithms/bucketSort */ "./src/scripts/algorithms/bucketSort.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, "catch": function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
-function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
-function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
-function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
-function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
-function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
-function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
-function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
-function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-// src/renderer.js
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- * Formata o tempo de execução em uma unidade legível.
- * @param {number} milliseconds - O tempo em milissegundos.
- * @returns {string} - Tempo formatado.
- */
-function formatExecutionTime(milliseconds) {
-  var seconds = Math.floor(milliseconds / 1000);
-  var ms = milliseconds % 1000;
-  if (seconds < 60) {
-    return "".concat(seconds, "s ").concat(ms, "ms"); // Exibe em segundos e milissegundos
-  }
-  var minutes = Math.floor(seconds / 60);
-  var remainingSeconds = seconds % 60;
-  if (minutes < 60) {
-    return "".concat(minutes, "m ").concat(remainingSeconds, "s"); // Exibe em minutos e segundos
-  }
-  var hours = Math.floor(minutes / 60);
-  var remainingMinutes = minutes % 60;
-  return "".concat(hours, "h ").concat(remainingMinutes, "m ").concat(remainingSeconds, "s"); // Exibe em horas, minutos e segundos
-}
-var SortingApp = /*#__PURE__*/function () {
-  function SortingApp() {
-    _classCallCheck(this, SortingApp);
-    if (!(this instanceof SortingApp)) {
-      throw new Error('SortingApp must be instantiated with new');
-    }
-    try {
-      this.initializeVisualizers();
-      this.initializeState();
-      this.initializeDOMElements();
-      this.createControlButtons();
-      this.bindEvents();
-      this.generateNewArray();
-    } catch (error) {
-      console.error('Failed to initialize SortingApp:', error);
-      throw error;
-    }
-  }
-  return _createClass(SortingApp, [{
-    key: "initializeVisualizers",
-    value: function initializeVisualizers() {
-      this.sortingVisualizer = new _scripts_chart__WEBPACK_IMPORTED_MODULE_0__.SortingVisualizer('#sorting-container');
-      this.algorithmAnalytics = new _scripts_chart__WEBPACK_IMPORTED_MODULE_0__.AlgorithmAnalytics('#performance-container');
-    }
-  }, {
-    key: "initializeState",
-    value: function initializeState() {
-      this.currentArray = [];
-      this.initialArray = [];
-      this.isSorting = false;
-      this.performanceData = [];
-      this.comparisons = 0;
-      this.lastExportUrl = null;
-      this.swapCount = 0;
-      this.delay = 50; // Valor padrão
-      this.algorithmName = null;
-    }
-  }, {
-    key: "initializeDOMElements",
-    value: function initializeDOMElements() {
-      this.elements = {
-        executionTime: document.getElementById('execution-time'),
-        algorithmSelect: document.getElementById('algorithm-select'),
-        sizeInput: document.getElementById('size-input'),
-        sizeRange: document.getElementById('size-range'),
-        speedInput: document.getElementById('speed-input'),
-        speedRange: document.getElementById('speed-range'),
-        // Adicionado
-        newArrayButton: document.getElementById('new-array-button'),
-        startButton: document.getElementById('start-button'),
-        resetArrayButton: document.getElementById('reset-array-button'),
-        // Adicionado
-        comparisonsSpan: document.getElementById('comparisons'),
-        swapCountValue: document.getElementById('swap-count-value'),
-        performanceContainer: document.querySelector('#performance-container')
-      };
-      Object.entries(this.elements).forEach(function (_ref) {
-        var _ref2 = _slicedToArray(_ref, 2),
-          key = _ref2[0],
-          value = _ref2[1];
-        if (!value) console.error("Element not found: ".concat(key));
-      });
-      if (!Object.values(this.elements).every(function (element) {
-        return element;
-      })) {
-        throw new Error('Failed to initialize required DOM elements');
-      }
-    }
-  }, {
-    key: "createControlButtons",
-    value: function createControlButtons() {
-      var _this = this;
-      var clearButton = document.createElement('button');
-      clearButton.textContent = 'Limpar Dados';
-      clearButton.onclick = function () {
-        return _this.clearPerformanceData();
-      };
-      clearButton.classList.add('button', 'button--danger', 'button--utility');
-      var exportButton = document.createElement('button');
-      exportButton.textContent = 'Exportar CSV';
-      exportButton.onclick = function () {
-        return _this.exportPerformanceData();
-      };
-      exportButton.classList.add('button', 'button--info', 'button--utility');
-      this.elements.performanceContainer.appendChild(clearButton);
-      this.elements.performanceContainer.appendChild(exportButton);
-    }
-  }, {
-    key: "bindEvents",
-    value: function bindEvents() {
-      var _this2 = this;
-      var handlers = this.getEventHandlers();
-      var elementBindings = [[this.elements.newArrayButton, 'click', handlers.generateNewArray], [this.elements.startButton, 'click', handlers.startSorting], [this.elements.sizeRange, 'input', handlers.handleSizeChange], [this.elements.sizeInput, 'input', handlers.handleSizeChange], [this.elements.speedRange, 'input', handlers.handleSpeedChange], [this.elements.speedInput, 'input', handlers.handleSpeedChange], [this.elements.resetArrayButton, 'click', handlers.resetToInitialArray]];
-      elementBindings.forEach(function (_ref3) {
-        var _ref4 = _slicedToArray(_ref3, 3),
-          element = _ref4[0],
-          event = _ref4[1],
-          handler = _ref4[2];
-        _this2.bindSafely(element, event, handler);
-      });
-    }
-  }, {
-    key: "bindSafely",
-    value: function bindSafely(element, event, handler) {
-      try {
-        if (!element) {
-          throw new Error("Element not found for ".concat(event, " event"));
-        }
-        element.addEventListener(event, handler);
-      } catch (error) {
-        console.error("Failed to bind ".concat(event, " event:"), error);
-      }
-    }
-  }, {
-    key: "generateNewArray",
-    value: function generateNewArray() {
-      var _this$elements;
-      if (this.isSorting || !((_this$elements = this.elements) !== null && _this$elements !== void 0 && _this$elements.sizeInput)) return;
-      var size = Math.max(1, Math.min(1000, parseInt(this.elements.sizeInput.value) || 10));
-      this.elements.sizeInput.value = size; // Normaliza o input
-      this.elements.sizeRange.value = size; // Sincroniza o range
-      this.currentArray = Array.from({
-        length: size
-      }, function () {
-        return Math.floor(Math.random() * 100) + 1;
-      });
-      this.initialArray = _toConsumableArray(this.currentArray);
-      this.sortingVisualizer.update(this.currentArray);
-      this.resetStats();
-    }
-  }, {
-    key: "clearPerformanceData",
-    value: function clearPerformanceData() {
-      this.performanceData = [];
-      if (this.algorithmAnalytics) {
-        this.algorithmAnalytics.clear();
-      }
-      // Limpar todas as URLs de blob anteriores
-      if (this.lastExportUrl) {
-        URL.revokeObjectURL(this.lastExportUrl);
-        this.lastExportUrl = null;
-      }
-    }
-  }, {
-    key: "resetStats",
-    value: function resetStats() {
-      this.comparisons = 0;
-      this.elements.comparisonsSpan.textContent = '0';
-      this.elements.executionTime.textContent = '0s 0ms';
-      this.updateSwapCountDisplay(0);
-    }
-  }, {
-    key: "exportPerformanceData",
-    value: function exportPerformanceData() {
-      var _this$performanceData;
-      if (!((_this$performanceData = this.performanceData) !== null && _this$performanceData !== void 0 && _this$performanceData.length)) {
-        console.warn('No performance data to export');
-        return;
-      }
-      if (this.lastExportUrl) {
-        URL.revokeObjectURL(this.lastExportUrl);
-      }
-      var header = 'algorithm,size,time,comparisons\n';
-      var csv = header + this.performanceData.map(function (d) {
-        return "".concat(d.algorithm, ",").concat(d.size, ",").concat(d.time, ",").concat(d.comparisons);
-      }).join('\n');
-      var blob = new Blob([csv], {
-        type: 'text/csv'
-      });
-      this.lastExportUrl = window.URL.createObjectURL(blob);
-      var a = document.createElement('a');
-      a.href = this.lastExportUrl;
-      a.download = 'sorting-performance.csv';
-      a.click();
-    }
-  }, {
-    key: "startSorting",
-    value: function () {
-      var _startSorting = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-        var _this3 = this;
-        var initialComparisons, startTime, algorithm, delay, result, endTime;
-        return _regeneratorRuntime().wrap(function _callee$(_context) {
-          while (1) switch (_context.prev = _context.next) {
-            case 0:
-              if (!this.isSorting) {
-                _context.next = 2;
-                break;
-              }
-              return _context.abrupt("return");
-            case 2:
-              if (!(!this.currentArray || this.currentArray.length === 0)) {
-                _context.next = 5;
-                break;
-              }
-              console.error('No array to sort');
-              return _context.abrupt("return");
-            case 5:
-              initialComparisons = this.comparisons;
-              startTime = performance.now();
-              if (!this.initialArray.length || this.initialArray.toString() !== this.currentArray.toString()) {
-                this.initialArray = _toConsumableArray(this.currentArray);
-              }
-              _context.prev = 8;
-              this.isSorting = true;
-              this.toggleControls(false);
-              algorithm = this.getSelectedAlgorithm();
-              if (algorithm) {
-                _context.next = 14;
-                break;
-              }
-              throw new Error('Invalid algorithm selected');
-            case 14:
-              // Adicionar validação para o delay
-              delay = function () {
-                var inputValue = parseInt(_this3.elements.speedInput.value);
-                if (isNaN(inputValue) || inputValue < 0) {
-                  return 50; // valor padrão
-                }
-                return inputValue;
-              }(); // Capturar o resultado com o swapCount
-              _context.next = 17;
-              return this.runSort(algorithm, _toConsumableArray(this.currentArray), delay);
-            case 17:
-              result = _context.sent;
-              endTime = performance.now();
-              this.updatePerformanceData({
-                time: endTime - startTime,
-                comparisons: this.comparisons - initialComparisons
-              });
-
-              // Atualizar a exibição do tempo formatado
-              this.elements.executionTime.textContent = formatExecutionTime(endTime - startTime);
-
-              // Atualizar a exibição do número de trocas
-              if (result && result.swapCount !== undefined) {
-                this.updateSwapCountDisplay(result.swapCount);
-              }
-              _context.next = 27;
-              break;
-            case 24:
-              _context.prev = 24;
-              _context.t0 = _context["catch"](8);
-              console.error('Sorting error:', _context.t0);
-            case 27:
-              _context.prev = 27;
-              this.isSorting = false;
-              this.toggleControls(true);
-              return _context.finish(27);
-            case 31:
-            case "end":
-              return _context.stop();
-          }
-        }, _callee, this, [[8, 24, 27, 31]]);
-      }));
-      function startSorting() {
-        return _startSorting.apply(this, arguments);
-      }
-      return startSorting;
-    }()
-  }, {
-    key: "resetToInitialArray",
-    value: function resetToInitialArray() {
-      var _this$initialArray;
-      if (this.isSorting || !((_this$initialArray = this.initialArray) !== null && _this$initialArray !== void 0 && _this$initialArray.length)) return;
-      if (this.initialArray.length) {
-        this.currentArray = _toConsumableArray(this.initialArray);
-        this.sortingVisualizer.update(this.currentArray);
-        this.resetStats();
-      } else {
-        console.warn('Nenhum array inicial armazenado.');
-      }
-    }
-  }, {
-    key: "getSelectedAlgorithm",
-    value: function getSelectedAlgorithm() {
-      var algorithms = {
-        bubble: _scripts_algorithms_bubbleSort__WEBPACK_IMPORTED_MODULE_1__.bubbleSort,
-        insert: _scripts_algorithms_insertSort__WEBPACK_IMPORTED_MODULE_2__.insertSort,
-        quick: _scripts_algorithms_quickSort__WEBPACK_IMPORTED_MODULE_3__.quickSort,
-        merge: _scripts_algorithms_mergeSort__WEBPACK_IMPORTED_MODULE_4__.mergeSort,
-        heap: _scripts_algorithms_heapSort__WEBPACK_IMPORTED_MODULE_5__.heapSort,
-        select: _scripts_algorithms_selectSort__WEBPACK_IMPORTED_MODULE_6__.selectSort,
-        shell: _scripts_algorithms_shellSort__WEBPACK_IMPORTED_MODULE_7__.shellSort,
-        counting: _scripts_algorithms_countingSort__WEBPACK_IMPORTED_MODULE_9__.countingSort,
-        bucket: _scripts_algorithms_bucketSort__WEBPACK_IMPORTED_MODULE_10__.bucketSort,
-        radix: _scripts_algorithms_radixSort__WEBPACK_IMPORTED_MODULE_8__.radixSort
-      };
-      var selected = this.elements.algorithmSelect.value;
-      if (!algorithms[selected]) {
-        throw new Error("Invalid algorithm selected: ".concat(selected));
-      }
-      return algorithms[selected];
-    }
-  }, {
-    key: "runSort",
-    value: function () {
-      var _runSort = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4(algorithm, array, delay) {
-        var _this4 = this;
-        var arr, swapCount, onUpdate, onCompare, result;
-        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-          while (1) switch (_context4.prev = _context4.next) {
-            case 0:
-              if (!(!algorithm || !Array.isArray(array) || typeof delay !== 'number')) {
-                _context4.next = 2;
-                break;
-              }
-              throw new Error('Invalid parameters provided to runSort');
-            case 2:
-              _context4.prev = 2;
-              arr = _toConsumableArray(array);
-              swapCount = 0;
-              onUpdate = /*#__PURE__*/function () {
-                var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(newArray) {
-                  var swappingIndices,
-                    specialIndices,
-                    _args2 = arguments;
-                  return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-                    while (1) switch (_context2.prev = _context2.next) {
-                      case 0:
-                        swappingIndices = _args2.length > 1 && _args2[1] !== undefined ? _args2[1] : [];
-                        specialIndices = _args2.length > 2 && _args2[2] !== undefined ? _args2[2] : [];
-                        arr = _toConsumableArray(newArray);
-                        _this4.sortingVisualizer.update(arr, [], swappingIndices, specialIndices);
-                        if (swappingIndices.length > 0) {
-                          swapCount++; // Incrementar contador de trocas
-                        }
-                        _context2.next = 7;
-                        return new Promise(function (resolve) {
-                          return setTimeout(resolve, delay);
-                        });
-                      case 7:
-                      case "end":
-                        return _context2.stop();
-                    }
-                  }, _callee2);
-                }));
-                return function onUpdate(_x4) {
-                  return _ref5.apply(this, arguments);
-                };
-              }();
-              onCompare = /*#__PURE__*/function () {
-                var _ref6 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(indices) {
-                  var specialIndices,
-                    _args3 = arguments;
-                  return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-                    while (1) switch (_context3.prev = _context3.next) {
-                      case 0:
-                        specialIndices = _args3.length > 1 && _args3[1] !== undefined ? _args3[1] : [];
-                        _this4.comparisons++;
-                        _this4.elements.comparisonsSpan.textContent = _this4.comparisons;
-                        _this4.sortingVisualizer.update(arr, indices, [], specialIndices);
-                        _context3.next = 6;
-                        return new Promise(function (resolve) {
-                          return setTimeout(resolve, delay);
-                        });
-                      case 6:
-                      case "end":
-                        return _context3.stop();
-                    }
-                  }, _callee3);
-                }));
-                return function onCompare(_x5) {
-                  return _ref6.apply(this, arguments);
-                };
-              }();
-              _context4.next = 9;
-              return algorithm(arr, onUpdate, onCompare, delay);
-            case 9:
-              result = _context4.sent;
-              return _context4.abrupt("return", {
-                sortedArray: arr,
-                swapCount: swapCount
-              });
-            case 13:
-              _context4.prev = 13;
-              _context4.t0 = _context4["catch"](2);
-              console.error('Error during sorting:', _context4.t0);
-              throw _context4.t0;
-            case 17:
-            case "end":
-              return _context4.stop();
-          }
-        }, _callee4, null, [[2, 13]]);
-      }));
-      function runSort(_x, _x2, _x3) {
-        return _runSort.apply(this, arguments);
-      }
-      return runSort;
-    }()
-  }, {
-    key: "updateSwapCountDisplay",
-    value: function updateSwapCountDisplay(count) {
-      if (this.elements.swapCountValue) {
-        this.elements.swapCountValue.textContent = count;
-      }
-    }
-  }, {
-    key: "updatePerformanceData",
-    value: function updatePerformanceData(metrics) {
-      try {
-        var _this$algorithmAnalyt;
-        if (!metrics || _typeof(metrics) !== 'object') {
-          throw new Error('Metrics must be an object');
-        }
-        if (typeof metrics.time !== 'number' || typeof metrics.comparisons !== 'number') {
-          throw new Error('Invalid metrics data types');
-        }
-        var newDataPoint = {
-          algorithm: this.elements.algorithmSelect.value,
-          size: this.currentArray.length,
-          time: metrics.time,
-          comparisons: metrics.comparisons
-        };
-        this.performanceData.push(newDataPoint);
-        (_this$algorithmAnalyt = this.algorithmAnalytics) === null || _this$algorithmAnalyt === void 0 || _this$algorithmAnalyt.update(this.performanceData);
-      } catch (error) {
-        console.error('Error updating performance data:', error);
-        throw error; // Re-throw para permitir tratamento externo
-      }
-    }
-  }, {
-    key: "handleSizeChange",
-    value: function handleSizeChange() {
-      this.elements.sizeInput.value = this.elements.sizeRange.value;
-      this.elements.sizeRange.value = this.elements.sizeInput.value;
-      this.generateNewArray();
-    }
-  }, {
-    key: "handleSpeedChange",
-    value: function handleSpeedChange() {
-      this.elements.speedInput.value = this.elements.speedRange.value;
-      this.elements.speedRange.value = this.elements.speedInput.value;
-    }
-  }, {
-    key: "destroy",
-    value: function destroy() {
-      try {
-        this.clearPerformanceData();
-
-        // Cleanup visualizers
-        [this.sortingVisualizer, this.algorithmAnalytics].forEach(function (visualizer) {
-          if (visualizer !== null && visualizer !== void 0 && visualizer.destroy) {
-            visualizer.destroy();
-          }
-        });
-
-        // Cleanup event listeners
-        var handlers = this.getEventHandlers();
-        this.removeEventListeners(handlers);
-
-        // Cleanup state
-        this.state = null;
-        this.elements = null;
-      } catch (error) {
-        console.error('Error during cleanup:', error);
-      }
-    }
-  }, {
-    key: "getEventHandlers",
-    value: function getEventHandlers() {
-      var _this5 = this;
-      return {
-        generateNewArray: function generateNewArray() {
-          return _this5.generateNewArray();
-        },
-        startSorting: function startSorting() {
-          return _this5.startSorting();
-        },
-        handleSizeChange: function handleSizeChange() {
-          return _this5.handleSizeChange();
-        },
-        handleSpeedChange: function handleSpeedChange() {
-          return _this5.handleSpeedChange();
-        },
-        resetToInitialArray: function resetToInitialArray() {
-          return _this5.resetToInitialArray();
-        }
-      };
-    }
-  }, {
-    key: "removeEventListeners",
-    value: function removeEventListeners(handlers) {
-      var bindings = [[this.elements.newArrayButton, 'click', handlers.generateNewArray], [this.elements.startButton, 'click', handlers.startSorting], [this.elements.sizeRange, 'input', handlers.handleSizeChange], [this.elements.sizeInput, 'input', handlers.handleSizeChange], [this.elements.speedRange, 'input', handlers.handleSpeedChange], [this.elements.speedInput, 'input', handlers.handleSpeedChange], [this.elements.resetArrayButton, 'click', handlers.resetToInitialArray]];
-      bindings.forEach(function (_ref7) {
-        var _ref8 = _slicedToArray(_ref7, 3),
-          element = _ref8[0],
-          event = _ref8[1],
-          handler = _ref8[2];
-        if (element) {
-          element.removeEventListener(event, handler);
-        }
-      });
-    }
-  }, {
-    key: "toggleControls",
-    value: function toggleControls(enabled) {
-      var _this6 = this;
-      Object.entries({
-        algorithmSelect: enabled,
-        sizeInput: enabled,
-        speedInput: enabled,
-        sizeRange: enabled,
-        newArrayButton: enabled,
-        speedRange: enabled,
-        startButton: enabled
-      }).forEach(function (_ref9) {
-        var _ref10 = _slicedToArray(_ref9, 2),
-          key = _ref10[0],
-          value = _ref10[1];
-        _this6.elements[key].disabled = !value;
-      });
-      this.elements.resetArrayButton.disabled = !enabled;
-      this.elements.startButton.textContent = enabled ? 'Iniciar Ordenação' : 'Ordenando...';
-    }
-  }]);
-}(); // Inicializar aplicação quando o DOM estiver pronto
-document.addEventListener('DOMContentLoaded', function () {
-  try {
-    new SortingApp();
-  } catch (error) {
-    console.error('Failed to initialize SortingApp:', error);
-  }
-});
-})();
-
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module is referenced by other modules so it can't be inlined
+/******/ 	var __webpack_exports__ = __webpack_require__("./src/renderer.js");
+/******/ 	
 /******/ })()
 ;
 //# sourceMappingURL=bundle.js.map
