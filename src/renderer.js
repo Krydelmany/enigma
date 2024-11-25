@@ -68,6 +68,7 @@ export async function highlightIndices(indices, status) {
     await sleep(50); // Ajuste o delay conforme necessário
 }
 
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -83,6 +84,7 @@ export class SortingApp {
             this.initializeDOMElements();
             this.bindEvents();
             this.generateNewArray();
+            this.debouncedSizeChange = this.debounce(this.generateNewArray.bind(this), 100);
         } catch (error) {
             console.error('Failed to initialize SortingApp:', error);
             throw error;
@@ -389,7 +391,7 @@ export class SortingApp {
     handleSizeChange() {
         this.elements.sizeInput.value = this.elements.sizeRange.value;
         this.elements.sizeRange.value = this.elements.sizeInput.value;
-        this.generateNewArray();
+        this.debouncedSizeChange();
     }
 
     handleSpeedChange() {
@@ -462,6 +464,18 @@ export class SortingApp {
         });
         this.elements.resetArrayButton.disabled = !enabled;
         this.elements.startButton.textContent = enabled ? 'Iniciar Ordenação' : 'Ordenando...';
+    }
+
+    debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
     }
 }
 

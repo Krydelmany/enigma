@@ -157,6 +157,7 @@ var SortingApp = /*#__PURE__*/function () {
       this.initializeDOMElements();
       this.bindEvents();
       this.generateNewArray();
+      this.debouncedSizeChange = this.debounce(this.generateNewArray.bind(this), 100);
     } catch (error) {
       console.error('Failed to initialize SortingApp:', error);
       throw error;
@@ -569,7 +570,7 @@ var SortingApp = /*#__PURE__*/function () {
     value: function handleSizeChange() {
       this.elements.sizeInput.value = this.elements.sizeRange.value;
       this.elements.sizeRange.value = this.elements.sizeInput.value;
-      this.generateNewArray();
+      this.debouncedSizeChange();
     }
   }, {
     key: "handleSpeedChange",
@@ -657,6 +658,22 @@ var SortingApp = /*#__PURE__*/function () {
       });
       this.elements.resetArrayButton.disabled = !enabled;
       this.elements.startButton.textContent = enabled ? 'Iniciar Ordenação' : 'Ordenando...';
+    }
+  }, {
+    key: "debounce",
+    value: function debounce(func, wait) {
+      var timeout;
+      return function executedFunction() {
+        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+        var later = function later() {
+          clearTimeout(timeout);
+          func.apply(void 0, args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
     }
   }]);
 }();

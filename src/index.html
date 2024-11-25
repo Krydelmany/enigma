@@ -238,192 +238,267 @@
                     </div>
                     <div class="sorting-legend" role="list" aria-label="Legenda da visualização">
                         <div class="search-legend__item" role="listitem">
-                            <span class="search-legend__color search-legend__color--found" style="background-color: var(--bar-special)"></span>
+                            <span class="search-legend__color search-legend__color--found"
+                                style="background-color: var(--bar-special)"></span>
                             <span class="search-legend__label">Encontrado</span>
                         </div>
                         <div class="search-legend__item" role="listitem">
-                            <span class="search-legend__color search-legend__color--checking" style="background-color: var(--bar-highlight)"></span>
+                            <span class="search-legend__color search-legend__color--checking"
+                                style="background-color: var(--bar-highlight)"></span>
                             <span class="search-legend__label">Verificando</span>
                         </div>
                         <div class="search-legend__item" role="listitem">
-                            <span class="search-legend__color search-legend__color--search" style="background-color: var(--info-color)"></span>
+                            <span class="search-legend__color search-legend__color--search"
+                                style="background-color: var(--info-color)"></span>
                             <span class="search-legend__label">Área de Busca</span>
                         </div>
                         <div class="search-legend__item" role="listitem">
-                            <span class="search-legend__color search-legend__color--discarded" style="background-color: var(--control-border)"></span>
+                            <span class="search-legend__color search-legend__color--discarded"
+                                style="background-color: var(--control-border)"></span>
                             <span class="search-legend__label">Descartado</span>
                         </div>
                     </div>
-                </div>
-                    </div>
-                </section>
             </div>
+    </div>
+    </section>
+    </div>
 
-            <script src="../dist/bundle.js"></script>
+    <script src="../dist/bundle.js"></script>
 
-            <script>
-                document.addEventListener('DOMContentLoaded', () => {
-                    let sortingVisualizerInitialized = false;
-                    const sortTab = document.getElementById('sort-tab');
-                    const searchTab = document.getElementById('search-tab');
-                    const sortPanel = document.getElementById('sort-panel');
-                    const searchPanel = document.getElementById('search-panel');
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let sortingVisualizerInitialized = false;
+            const sortTab = document.getElementById('sort-tab');
+            const searchTab = document.getElementById('search-tab');
+            const sortPanel = document.getElementById('sort-panel');
+            const searchPanel = document.getElementById('search-panel');
 
-                    function switchTab(activeTab, inactiveTab, activePanel, inactivePanel) {
-                        // Remove classes ativas de todas as abas
-                        [sortTab, searchTab].forEach(tab => {
-                            tab.classList.remove('active');
-                            tab.setAttribute('aria-selected', 'false');
-                        });
-
-                        // Remove classes ativas de todos os painéis
-                        [sortPanel, searchPanel].forEach(panel => {
-                            panel.classList.remove('active');
-                        });
-
-                        // Ativa a aba e painel selecionados
-                        activeTab.classList.add('active');
-                        activeTab.setAttribute('aria-selected', 'true');
-                        activePanel.classList.add('active');
-
-                        // Inicializa o visualizador de ordenação quando a aba é ativada
-                        if (activeTab === sortTab && !sortingVisualizerInitialized) {
-                            window.sortingApp.sortingVisualizer.setupResponsiveLayout();
-                            if (window.sortingApp.currentArray) {
-                                window.sortingApp.sortingVisualizer.update(window.sortingApp.currentArray);
-                            }
-                            sortingVisualizerInitialized = true;
-                        }
-                    }
-
-                    sortTab.addEventListener('click', () => {
-                        switchTab(sortTab, searchTab, sortPanel, searchPanel);
-                    });
-
-                    searchTab.addEventListener('click', () => {
-                        switchTab(searchTab, sortTab, searchPanel, sortPanel);
-                    });
+            function switchTab(activeTab, inactiveTab, activePanel, inactivePanel) {
+                // Remove classes ativas de todas as abas
+                [sortTab, searchTab].forEach(tab => {
+                    tab.classList.remove('active');
+                    tab.setAttribute('aria-selected', 'false');
                 });
-            </script>
 
-            <button id="info-button" class="info-button" aria-label="Informações sobre as cores">
-                ?
-            </button>
+                // Remove classes ativas de todos os painéis
+                [sortPanel, searchPanel].forEach(panel => {
+                    panel.classList.remove('active');
+                });
 
-            <!-- Pop-up de Legenda -->
-            <div id="legend-popup" class="legend-popup" role="dialog" aria-modal="false" aria-labelledby="legend-title"
-                hidden>
-                <h3 id="legend-title">Legenda das Cores</h3>
-                <ul class="legend-list">
-                    <li><span class="legend-color" style="background-color: var(--special-color, #0f9d58);"></span>
-                        Elemento
-                        Especial (Verde) / Concluido</li>
-                    <li><span class="legend-color" style="background-color: var(--highlight-color, #f4b400);"></span>
-                        Comparação
-                        (Amarelo)</li>
-                    <li><span class="legend-color" style="background-color: var(--swapping-color, #db4437);"></span>
-                        Troca
-                        (Vermelho)</li>
-                </ul>
-                <button id="close-legend-button" class="close-button" aria-label="Fechar">Fechar</button>
-            </div>
+                // Ativa a aba e painel selecionados
+                activeTab.classList.add('active');
+                activeTab.setAttribute('aria-selected', 'true');
+                activePanel.classList.add('active');
 
-            <script>
-                class ThemeSwitcher {
-                    constructor() {
-                        this.toggle = document.getElementById('dark-mode-toggle');
-                        this.body = document.body;
-                        this.init();
+                // Inicializa o visualizador de ordenação quando a aba é ativada
+                if (activeTab === sortTab && !sortingVisualizerInitialized) {
+                    window.sortingApp.sortingVisualizer.setupResponsiveLayout();
+                    if (window.sortingApp.currentArray) {
+                        window.sortingApp.sortingVisualizer.update(window.sortingApp.currentArray);
                     }
+                    sortingVisualizerInitialized = true;
+                }
+            }
 
-                    init() {
-                        // Verifica preferência do sistema
-                        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                        const savedTheme = localStorage.getItem('dark-mode');
+            sortTab.addEventListener('click', () => {
+                switchTab(sortTab, searchTab, sortPanel, searchPanel);
+            });
 
-                        // Aplica tema baseado na preferência salva ou do sistema
-                        if (savedTheme === 'enabled' || (!savedTheme && prefersDark)) {
-                            this.enableDarkMode();
-                        }
+            searchTab.addEventListener('click', () => {
+                switchTab(searchTab, sortTab, searchPanel, sortPanel);
+            });
+        });
+    </script>
 
-                        this.attachEventListeners();
+    <button id="info-button" class="info-button" aria-label="Informações sobre as cores">
+        ?
+    </button>
+
+    <!-- Pop-up de Legenda -->
+    <div id="algorithm-popup" class="algorithm-popup" role="dialog" aria-modal="false" aria-labelledby="legend-title"
+        hidden>
+        <button id="close-legend-button" class="close-button" aria-label="Fechar">×</button>
+        <h3 id="legend-title">Explicação dos Algoritmos</h3>
+        <ul class="algorithm-list">
+            <li class="algorithm-item">
+                <span class="algorithm-name">Bubble Sort</span>
+                <p class="algorithm-description">Um algoritmo simples que percorre repetidamente a lista, comparando
+                    elementos adjacentes e trocando-os se estiverem na ordem errada.</p>
+            </li>
+            <li class="algorithm-item">
+                <span class="algorithm-name">Insertion Sort</span>
+                <p class="algorithm-description">Constrói a lista ordenada um elemento por vez, inserindo cada novo
+                    elemento na posição correta.</p>
+            </li>
+            <li class="algorithm-item">
+                <span class="algorithm-name">Quick Sort</span>
+                <p class="algorithm-description">Utiliza o conceito de divisão e conquista, selecionando um pivô e
+                    particionando a lista em sublistas menores para ordenar.</p>
+            </li>
+            <li class="algorithm-item">
+                <span class="algorithm-name">Merge Sort</span>
+                <p class="algorithm-description">Divide recursivamente a lista em sublistas até que cada uma tenha um
+                    elemento e, em seguida, mescla-as em ordem.</p>
+            </li>
+            <li class="algorithm-item">
+                <span class="algorithm-name">Heap Sort</span>
+                <p class="algorithm-description">Constrói uma estrutura de dados heap e extrai o maior elemento
+                    repetidamente para ordenar a lista.</p>
+            </li>
+            <li class="algorithm-item">
+                <span class="algorithm-name">Selection Sort</span>
+                <p class="algorithm-description">Repetidamente encontra o menor elemento da lista não ordenada e o
+                    coloca na posição correta.</p>
+            </li>
+            <li class="algorithm-item">
+                <span class="algorithm-name">Shell Sort</span>
+                <p class="algorithm-description">Uma versão otimizada do Insertion Sort que permite trocas de elementos
+                    distantes para acelerar a ordenação.</p>
+            </li>
+            <li class="algorithm-item">
+                <span class="algorithm-name">Counting Sort</span>
+                <p class="algorithm-description">Conta o número de ocorrências de cada elemento e calcula a posição de
+                    cada um na lista ordenada.</p>
+            </li>
+            <li class="algorithm-item">
+                <span class="algorithm-name">Bucket Sort</span>
+                <p class="algorithm-description">Distribui os elementos em vários "baldes", ordena cada balde
+                    individualmente e os combina para formar a lista ordenada.</p>
+            </li>
+            <li class="algorithm-item">
+                <span class="algorithm-name">Radix Sort</span>
+                <p class="algorithm-description">Ordena os números processando um dígito de cada vez, a partir do dígito
+                    menos significativo.</p>
+            </li>
+            <li class="algorithm-item">
+                <span class="algorithm-name">Busca Binária</span>
+                <p class="algorithm-description">Procura um elemento em uma lista ordenada dividindo repetidamente o
+                    intervalo de busca pela metade.</p>
+            </li>
+            <li class="algorithm-item">
+                <span class="algorithm-name">Busca Sequencial</span>
+                <p class="algorithm-description">Percorre a lista sequencialmente até encontrar o elemento desejado ou
+                    alcançar o fim da lista.</p>
+            </li>
+        </ul>
+    </div>
+
+    <script>
+        class ThemeSwitcher {
+            constructor() {
+                this.toggle = document.getElementById('dark-mode-toggle');
+                this.body = document.body;
+                this.init();
+            }
+
+            init() {
+                // Verifica preferência do sistema
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const savedTheme = localStorage.getItem('dark-mode');
+
+                // Aplica tema baseado na preferência salva ou do sistema
+                if (savedTheme === 'enabled' || (!savedTheme && prefersDark)) {
+                    this.enableDarkMode();
+                }
+
+                this.attachEventListeners();
+            }
+
+            attachEventListeners() {
+                this.toggle.addEventListener('change', () => {
+                    if (this.toggle.checked) {
+                        this.enableDarkMode();
+                    } else {
+                        this.disableDarkMode();
                     }
+                });
 
-                    attachEventListeners() {
-                        this.toggle.addEventListener('change', () => {
-                            if (this.toggle.checked) {
+                // Atualiza quando a preferência do sistema mudar
+                window.matchMedia('(prefers-color-scheme: dark)')
+                    .addEventListener('change', e => {
+                        if (!localStorage.getItem('dark-mode')) {
+                            if (e.matches) {
                                 this.enableDarkMode();
                             } else {
                                 this.disableDarkMode();
                             }
-                        });
+                        }
+                    });
+            }
 
-                        // Atualiza quando a preferência do sistema mudar
-                        window.matchMedia('(prefers-color-scheme: dark)')
-                            .addEventListener('change', e => {
-                                if (!localStorage.getItem('dark-mode')) {
-                                    if (e.matches) {
-                                        this.enableDarkMode();
-                                    } else {
-                                        this.disableDarkMode();
-                                    }
-                                }
-                            });
-                    }
+            enableDarkMode() {
+                this.toggle.checked = true;
+                this.body.classList.add('dark-mode');
+                this.toggle.setAttribute('aria-checked', 'true');
+                localStorage.setItem('dark-mode', 'enabled');
+            }
 
-                    enableDarkMode() {
-                        this.toggle.checked = true;
-                        this.body.classList.add('dark-mode');
-                        this.toggle.setAttribute('aria-checked', 'true');
-                        localStorage.setItem('dark-mode', 'enabled');
-                    }
+            disableDarkMode() {
+                this.toggle.checked = false;
+                this.body.classList.remove('dark-mode');
+                this.toggle.setAttribute('aria-checked', 'false');
+                localStorage.setItem('dark-mode', 'disabled');
+            }
+        }
 
-                    disableDarkMode() {
-                        this.toggle.checked = false;
-                        this.body.classList.remove('dark-mode');
-                        this.toggle.setAttribute('aria-checked', 'false');
-                        localStorage.setItem('dark-mode', 'disabled');
-                    }
+        // Inicializa o theme switcher quando o DOM estiver pronto
+        document.addEventListener('DOMContentLoaded', () => {
+            new ThemeSwitcher();
+
+            // Referências aos elementos do pop-up
+            const infoButton = document.getElementById('info-button');
+            const legendPopup = document.getElementById('algorithm-popup');
+            const closeLegendButton = document.getElementById('close-legend-button');
+
+            // Mostra o pop-up ao clicar no botão de informação
+            infoButton.addEventListener('click', () => {
+                legendPopup.hidden = false;
+                legendPopup.setAttribute('aria-modal', 'true');
+            });
+
+            // Esconde o pop-up ao clicar no botão de fechar
+            closeLegendButton.addEventListener('click', () => {
+                legendPopup.hidden = true;
+                legendPopup.setAttribute('aria-modal', 'false');
+            });
+
+            // Esconde o pop-up ao clicar fora dele
+            window.addEventListener('click', (event) => {
+                if (event.target === legendPopup) {
+                    legendPopup.hidden = true;
+                    legendPopup.setAttribute('aria-modal', 'false');
                 }
+            });
 
-                // Inicializa o theme switcher quando o DOM estiver pronto
-                document.addEventListener('DOMContentLoaded', () => {
-                    new ThemeSwitcher();
+            function initializeAlgorithmPopup() {
+                // Seleciona o pop-up e o botão de fechar
+                const algorithmPopup = document.getElementById('algorithm-popup');
+                const closeButton = document.getElementById('close-legend-button');
 
-                    // Referências aos elementos do pop-up
-                    const infoButton = document.getElementById('info-button');
-                    const legendPopup = document.getElementById('legend-popup');
-                    const closeLegendButton = document.getElementById('close-legend-button');
-
-                    // Mostra o pop-up ao clicar no botão de informação
-                    infoButton.addEventListener('click', () => {
-                        legendPopup.hidden = false;
-                        legendPopup.setAttribute('aria-modal', 'true');
-                    });
-
-                    // Esconde o pop-up ao clicar no botão de fechar
-                    closeLegendButton.addEventListener('click', () => {
-                        legendPopup.hidden = true;
-                        legendPopup.setAttribute('aria-modal', 'false');
-                    });
-
-                    // Esconde o pop-up ao clicar fora dele
-                    window.addEventListener('click', (event) => {
-                        if (event.target === legendPopup) {
-                            legendPopup.hidden = true;
-                            legendPopup.setAttribute('aria-modal', 'false');
+                // Verifica se os elementos existem
+                if (algorithmPopup && closeButton) {
+                    // Adiciona um listener para o evento de scroll no pop-up
+                    algorithmPopup.addEventListener('scroll', () => {
+                        if (algorithmPopup.scrollTop > 50) {
+                            closeButton.classList.add('shrink');
+                        } else {
+                            closeButton.classList.remove('shrink');
                         }
                     });
-
-                    // Esconde o pop-up ao pressionar a tecla "Escape"
-                    window.addEventListener('keydown', (event) => {
-                        if (event.key === 'Escape' && !legendPopup.hidden) {
-                            legendPopup.hidden = true;
-                            legendPopup.setAttribute('aria-modal', 'false');
-                        }
-                    });
-                });
-            </script>
+                } else {
+                    console.warn('Algum elemento do pop-up não foi encontrado.');
+                }
+            }
+            initializeAlgorithmPopup();
+            // Esconde o pop-up ao pressionar a tecla "esc"
+            window.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && !legendPopup.hidden) {
+                    legendPopup.hidden = true;
+                    legendPopup.setAttribute('aria-modal', 'false');
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
